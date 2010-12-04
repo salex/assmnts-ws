@@ -1,0 +1,68 @@
+<%= form_for(@score) do |f| %>
+<fieldset class="form-list">
+	<legend>Score</legend>
+
+  <% if @score.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@score.errors.count, "error") %> prohibited this score from being saved:</h2>
+    <ul>
+    <% @score.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <table>
+    <tr class="field">
+      <th><%= f.label :assessor_id %></th>
+      <td><%= f.text_field :assessor_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :parent_id %></th>
+      <td><%= f.text_field :parent_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessed_id %></th>
+      <td><%= f.text_field :assessed_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessing_type %></th>
+      <td><%= f.text_field :assessing_type %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessing_id %></th>
+      <td><%= f.text_field :assessing_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessed_type %></th>
+      <td><%= f.text_field :assessed_type %></td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :score %></th>
+      <td><%= f.text_field :score %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :score_weighted %></th>
+      <td><%= f.text_field :score_weighted %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :score_object %></th>
+      <td><%= f.text_area :score_object, :rows => 4 %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :answers %></th>
+      <td><%= f.text_area :answers, :rows => 4 %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :status %></th>
+      <td><%= f.text_field :status %></td>
+    </tr>
+    </table>
+    
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+</fieldset>
+      
+<% end %>

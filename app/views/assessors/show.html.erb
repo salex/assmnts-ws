@@ -1,0 +1,45 @@
+<p class="notice"><%= notice %></p>
+<fieldset class="show-list">
+	<legend>Assessor</legend>
+  	<table>
+	  <tr>
+      <th>Assesses type:</th>
+      <td><%= @assessor.assessed_model %></td>
+    </tr>
+	  <tr>
+      <th>Assessment ID:</th>
+      <td><%= @assessor.assessment_id %></td>
+    </tr>
+
+	  <tr>
+      <th>Assessing Model:</th>
+      <td><%= @assessor.assessing_type %></td>
+    </tr>
+	  <tr>
+      <th>Assessing ID:</th>
+      <td><%= @assessor.assessing_id %></td>
+    </tr>
+	  <tr>
+      <th>Sequence:</th>
+      <td><%= @assessor.sequence %></td>
+    </tr>
+
+	  <tr>
+      <th>Status:</th>
+      <td><%= @assessor.status %></td>
+    </tr>
+	  <tr>
+      <th>Repeating:</th>
+      <td><%= @assessor.repeating %></td>
+    </tr>
+
+		</table>
+</fieldset>
+<div class="actions">
+	<%= link_to 'Edit', edit_assessor_path(@assessor) %> |
+	<%= link_to 'Back', assessors_path %>
+</div>
+<div class="relations">
+	<div id="related">
+	</div>
+</div>

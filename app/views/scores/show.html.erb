@@ -1,0 +1,64 @@
+<p class="notice"><%= notice %></p>
+<fieldset class="show-list">
+	<legend>Score</legend>
+  	<table>
+	    <tr>
+        <th>Assessment:</th>
+        <td><%= @score.assessor_id %><td>
+      </tr>
+	    <tr>
+        <th>Parent:</th>
+        <td><%= @score.parent_id %><td>
+      </tr>
+
+	    <tr>
+        <th>Assessed Type:</th>
+        <td><%= @score.assessed_type %><td>
+      </tr>
+	    <tr>
+        <th>Assessed ID:</th>
+        <td><%= @score.assessed_id %><td>
+      </tr>
+  	  <tr>
+        <th>Assessing Model:</th>
+        <td><%= @score.assessing_type %><td>
+      </tr>
+  	  <tr>
+        <th>Assessing ID:</th>
+        <td><%= @score.assessing_id %><td>
+      </tr>
+	    <tr>
+        <th>Score:</th>
+        <td><%= @score.score %><td>
+      </tr>
+	    <tr>
+        <th>Score Weighted:</th>
+        <td><%= @score.score_weighted %><td>
+      </tr>
+
+	    <tr>
+        <th>Score object:</th>
+        <td><textarea rows="4" disabled="disabled"><%= @score.score_object %></textarea><td>
+      </tr>
+
+	    <tr>
+        <th>Status:</th>
+        <td><%= @score.status %><td>
+      </tr>
+	    <tr>
+        <th>Answers:</th>
+        <td><textarea rows="4"><%= @score.answers %></textarea><td>
+      </tr>
+
+		</table>
+</fieldset>
+<%=@html%>
+
+<div class="actions">
+	<%= link_to 'Edit', edit_score_path(@score) %> |
+	<%= link_to 'Back', scores_path %>
+</div>
+<div class="relations">
+	<div id="related">
+	</div>
+</div>

@@ -1,0 +1,19 @@
+<%= javascript_include_tag "/javascripts/assmnt.js" %>
+<div class="f-left col-6">
+    <%=@sidebar.html_safe%>
+</div>
+<div class="f-left col-24">
+<%=form_tag "/actions/post/#{@assessor.id}/score/#{@score.id}", :method => :post, :id => "assessarea" %>
+
+    <div class="assmnt-actions"><%= @assessment.description %></div>
+    <%= display_assessment(@assessment) %>
+    <div style="clear:both"></div>
+    <div class="dactions">
+    	<input type="submit" name="submit" value="Continue" />
+    </div>
+</form>
+</div>
+<div class="f-clear"></div>
+
+<%= params.inspect %>
+<%= session.inspect %>

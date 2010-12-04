@@ -9,8 +9,22 @@ AssmntsWs::Application.routes.draw do
     member do
       get "get_xml_assmnt"
     end
-    
   end
+    resources :assessments do
+      member do
+        post :post
+        get :clone
+        get :display
+      end
+      resources :questions, :only => [:index, :new, :create] 
+    end
+
+    resources :questions, :only => [:show, :edit, :update, :destroy] do
+      resources :answers, :only => [:index, :new, :create] 
+    end
+
+    resources :answers, :only => [:show, :edit, :update, :destroy]
+    
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

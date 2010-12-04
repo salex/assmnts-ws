@@ -1,0 +1,23 @@
+<%= javascript_include_tag "/javascripts/assmnt.js" %>
+<div class="f-left col-6">hi steve</div>
+<div class="f-left col-24">
+<%=form_tag "/assessors/post/#{@assessor.id}/score/#{@score.id}", :method => :put, :id => "assessarea" %>
+
+    <div class="assmnt-actions"><%= @assessment.description %></div>
+    <%= display_assessment(@assessment) %>
+    <div style="clear:both"></div>
+    <div class="dactions">
+    	<input type="submit" name="submit" value="Continue" />
+    </div>
+</form>
+</div>
+<div class="f-clear"></div>
+<%
+=begin
+<script type="text/javascript">
+	var valid = new Validation('assessarea', { useTitles : true});
+</script>
+=end
+%>
+
+<%= params.inspect %>

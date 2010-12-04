@@ -1,0 +1,52 @@
+<%= form_for(@assessor) do |f| %>
+<fieldset class="form-list">
+	<legend>Assessor</legend>
+
+  <% if @assessor.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@assessor.errors.count, "error") %> prohibited this assessor from being saved:</h2>
+    <ul>
+    <% @assessor.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <table>
+    <tr class="field">
+      <th><%= f.label :assessed_model %></th>
+      <td><%= f.text_field :assessed_model %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessing_type %></th>
+      <td><%= f.text_field :assessing_type %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessing_id %></th>
+      <td><%= f.text_field :assessing_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :sequence %></th>
+      <td><%= f.text_field :sequence %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :assessment %></th>
+      <td><%= f.text_field :assessment_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :status %></th>
+      <td><%= f.text_field :status %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :repeating %></th>
+      <td><%= f.check_box :repeating %></td>
+    </tr>
+      
+    </table>
+    
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+</fieldset>
+      
+<% end %>

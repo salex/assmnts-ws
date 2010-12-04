@@ -1,0 +1,34 @@
+<h1>Listing scores</h1>
+<div class="index-list">
+	<div class="actions">
+    <%#= link_to 'New Score', new_score_path %>
+	</div>
+
+  <table>
+    <tr class="list-header">
+        <th>Assessor</th>
+        <th>Assessed</th>
+        <th>Score</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+
+  <% @scores.each do |score| %>
+    <tr>
+        <td><%= score.assessor_id %></td>
+        <td><%= score.assessed.name if score.assessed%></td>
+        <td><%= score.score %></td>
+        <td><%= score.assessor.assessment.category if !score.assessor_id.nil? %></td>
+        <td><%= score.status %></td>
+        <td>
+        <%= link_to 'Show', score %>
+        <%= link_to 'Edit', edit_score_path(score) %>
+        <%= link_to 'Destroy', score, :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+  <%= params.inspect%>
+</div>
+

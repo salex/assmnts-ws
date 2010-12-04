@@ -1,0 +1,36 @@
+<h1>Listing assessors</h1>
+<div class="index-list">
+	<div class="actions">
+    <%= link_to 'New Assessor', new_assessor_path %>
+	</div>
+
+  <table>
+    <tr class="list-header">
+      <th>ID</th>
+        <th>Assessment</th>
+        <th>Assesses</th>
+        <th>Assessing</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+
+  <% @assessors.each do |assessor| %>
+    <tr>
+      <td><%= assessor.id %></td>
+      
+      <td><%= assessor.assessment_id %></td>
+      <td><%= assessor.assessed_model %></td>
+      <td><%= assessor.assessing_type %>/<%= assessor.assessing_id %></td>
+      <td><%= assessor.assessment.category %></td>
+      <td><%= assessor.status %></td>
+      <td>
+      <%= link_to 'Show', assessor %>
+      <%= link_to 'Edit', edit_assessor_path(assessor) %>
+      <%= link_to 'Destroy', assessor, :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</div>
+

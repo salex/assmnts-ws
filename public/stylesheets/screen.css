@@ -224,6 +224,50 @@ ul.hmenu li {
   list-style: square;
 }
 
+#assmt {width:100%;}
+
+#assmnt {font-family: arial,helvetica,sans-serif;font-size:1.1em;margin-left:10px;}
+.assmnt-question {padding:4px 0 4px;}
+.assmnt-question-header {background: #f8f8f8; font-weight:bold;}
+.assmnt-other-ques {font-weight:normal;font-style:italic;font-size:.8em;}
+
+.assmnt-answer-header { font-weight:bold;}
+.assmnt-annotate {font-weight:normal;font-style:italic;font-size:.8em;}
+.assmnt-answers {padding:4px 0 4px;}
+.assmnt-answers th {text-align:right;padding-left:.5em;}
+.assmnt-answers td {padding-left:.5em;}
+.assmnt-answer-input { border: dotted 1px #abc; background: #f8f8f8;white-space:nowrap; margin-right:2px;}
+
+.assmnt-answer-text { padding-left: .5em }
+.assmnt-answer-text-bold { padding-left: .5em; font-weight:bold; }
+
+.assmnt-list table { border: solid 1px #036; width: 100%; }
+.assmnt-list td, .assmnt-list th { padding: 4px; }
+.assmnt-list table tr { background: #fff; border-bottom: dotted 1px #85ACC9; }
+.assmnt-list tr.alt { background: #f8f8f8; }
+.assmnt-list tr.list-header { background: #cde; padding: 2px; border:solid 1px #85ACC9; border-bottom: dotted 1px #85ACC9; }
+.assmnt-list th {font-weight: bold; }
+.assmnt-actions strong { font-size: 1.2em; font-family: arial,helvetica,sans-serif; font-weight: bold; }
+
+
+.assmnt-show table { border: solid 1px #036; }
+.assmnt-show td, .show-list th { padding: 4px; }
+.assmnt-show tr { background: #fff; border-bottom: dotted 1px #85ACC9; }
+.assmnt-show th { background: #f8f8f8; text-align: right; width: 10em; font-weight: bold; }
+.assmnt-show .header { background: #bcd; padding: 4px;font-weight: bold; }
+
+.assmnt-form-list table { border-top: solid 1px #8ac; border-left: solid 1px #8ac; border-right: solid 1px #8ac; }
+.assmnt-form-list div.validate { float: left; border: none; margin: 0; padding: 0; margin-right: 4px; }
+.assmnt-form-list th { width: 9em; padding: 2px 6px 2px 2px; background: #e0e0e0; border: none; text-align: right; font-weight: bold; border-right: solid 2px #8ac; margin-right: 4px; vertical-align: top; }
+.assmnt-form-list td { background: #fff; padding: 2px 6px 2px 2px; }
+.assmnt-form-list tr { margin-top: 2px; padding: 0px; background: #f8f8f8; border-bottom: solid 2px #8ac; }
+.assmnt-form-list b { color: #036; }
+.assmnt-form-list th label { font-size: .8em; }
+.assmnt-form-list input[type=text] { border: 1px solid #888; border-top: 1px solid #666; }
+
+.assmnt-form-list input.disabled { border: 1px solid #F2F2F2; background-color: #ddd; }
+.assmnt-form-list input.required { border: 1px solid #0ae; }
+
 @media print {  
 	html,body { background-color: #FFF; }  
 	#container {  
