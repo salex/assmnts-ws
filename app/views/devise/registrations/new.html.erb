@@ -1,0 +1,87 @@
+
+<fieldset class="form-list">
+	<legend>Sign up</legend>
+<%
+if session["citizen"] && session["citizen"] != nil
+  session["citizen"]["citizen"].each do |key,value|
+    resource[key] = value
+  end
+  session["citizen"] = nil
+end
+%>
+
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+  <table >
+    <tr class="field">
+      <th><%= f.label :name_first,"Name" %></th>
+      <td>
+        <strong>First</strong><%= f.text_field :name_first, :size => 15, :class => "required" %>
+        <strong>MI</strong><%= f.text_field :name_mi, :size => 1 %>
+        <strong>Last</strong><%= f.text_field :name_last, :size => 15, :class => "required" %>
+        <%= f.hidden_field :citizen_id %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><label>Birthday</label></th>
+      <td>
+        <%= select_month 0, { :prompt => "Month", :prefix => "user", :field_name => "birth_mm"}, :class => "required" %>
+        <%= select_day 0, {:prompt => "Day", :prefix => "user",:field_name=> "birth_dd"},  {:class => "required"}  %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :zip ,"Zip Code"%></th>
+      <td><%= f.text_field :zip, :size => 11, :class => "required"  %></td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :address, "Street Address" %></th>
+      <td><%= f.text_area :address, :rows => 2 , :cols => 25, :class => "required"  %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :city,"City/State" %></th>
+      <td>
+        <strong>City</strong><%= f.text_field :city, :class => "required"  %>
+        <strong>State</strong><%= f.text_field :state, :size => 2, :class => "required"  %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><label>Phone</label></th>
+      <td>
+        <strong><%= f.label :phone_primary,"Primary" %></strong>
+        <%= f.text_field :phone_primary, :size => 15, :class => "required"  %>
+        <strong><%= f.label :phone_secondary,"Secondary" %></strong>
+        <%= f.text_field :phone_secondary, :size => 15 %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :email %></th>
+      <td><%= f.text_field :email, :class => "required"  %>
+        <span class="annotate"><%= link_to_function "Click here if you do not have an email address",
+         "r = confirm('You will be assigned a fictitious email that is your login name @jobs.aidt.edu. Leave the email address blank and just fill in the login name. If the login name is unique, you can use it to login. New registrations without an email address will first be screened for duplicates before any applications are released to the application process.');alert(r);if ( r)   {$('user_email').value = ''; $('user_email').style.display = 'none';; $('no_email').style.display = 'inline'}; "%></span>
+        </td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :login %></th>
+      <td><span id="no_email" style="display:none"><%= f.text_field :login %><br /><span class="annotate">Must be unique. Used if you do not have an email address</span><span></td>
+    </tr>
+    <tr>
+      <th><%= f.label :password %></th>
+      <td><%= f.password_field :password %></td>
+    </tr>
+    <tr>
+      <th><%= f.label :password_confirmation %></th>
+      <td><%= f.password_field :password_confirmation %></td>
+    </tr>
+    
+    </table>
+  </fieldset>
+  <div class="actions navspan">
+      <p><%= f.submit "Sign up" %></p>
+      <%= link_to('Sign up', new_user_registration_path)  %>
+
+    <%= render :partial => "devise/shared/links" %>
+    
+  </div>
+<% end %>

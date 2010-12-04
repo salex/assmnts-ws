@@ -1,0 +1,89 @@
+<fieldset class="form-list">
+	<legend>Edit Account</legend>
+
+
+<%= form_for(@citizen) do |f| %>
+  <% if @citizen.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@citizen.errors.count, "error") %> prohibited this member from being saved:</h2>
+
+      <ul>
+      <% @citizen .errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <table class="f-left">
+    <tr class="field">
+      <th><%= f.label :name_first,"Name" %></th>
+      <td>
+        <strong>First</strong><%= f.text_field :name_first, :size => 15, :class => "required" %>
+        <strong>MI</strong><%= f.text_field :name_mi, :size => 1 %>
+        <strong>Last</strong><%= f.text_field :name_last, :size => 15, :class => "required" %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><label>Birthday</label></th>
+      <td>
+        <%= select_month @citizen.birth_mm.to_i, { :prompt => "Month", :prefix => "citizen", :field_name => "birth_mm"}, :class => "required" %>
+        <%= select_day @citizen.birth_dd.to_i, {:prompt => "Day", :prefix => "citizen",:field_name=> "birth_dd"},  {:class => "required"}  %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :zip ,"Zip Code"%></th>
+      <td><%= f.text_field :zip, :size => 11, :class => "required"  %></td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :address, "Street Address" %></th>
+      <td><%= f.text_area :address, :rows => 2 , :cols => 25, :class => "required"  %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :city,"City/State" %></th>
+      <td>
+        <strong>City</strong><%= f.text_field :city, :class => "required"  %>
+        <strong>State</strong><%= f.text_field :state, :size => 2, :class => "required"  %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><label>Phone</label></th>
+      <td>
+        <strong><%= f.label :phone_primary,"Primary" %></strong>
+        <%= f.text_field :phone_primary, :size => 15, :class => "required", :value => number_to_phone(@citizen.phone_primary.to_i)  %>
+        <strong><%= f.label :phone_secondary,"Secondary" %></strong>
+        <%= f.text_field :phone_secondary, :size => 15, :value => number_to_phone(@citizen.phone_secondary.to_i) %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :email %></th>
+      <td><%= f.text_field :email, :class => "required"  %>
+        <span class="annotate"><%= link_to_function "Click here if you do not have an email address",
+         "r = confirm('You will be assigned a fictitious email that is your login name @jobs.aidt.edu. Leave the email address blank and just fill in the login name. If the login name is unique, you can use it to login. New registrations without an email address will first be screened for duplicates before any applications are released to the application process.');if ( r)   {$('citizen_email').value = ''; $('citizen_email').style.display = 'none';; $('no_email').style.display = 'inline'}; "%></span>
+        </td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :login %></th>
+      <td><span id="no_email" style="display:none"><%= f.text_field :login %><br /><span class="annotate">Must be unique. Used if you do not have an email address</span><span></td>
+    </tr>
+    
+    <% if current_user.role?(:admin)%>
+    <tr class="field">
+      <th><%= f.label :user_type,"User Type" %></th>
+      <td><%= f.text_field :user_type %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :roles %></th>
+      <td><%= f.text_field :roles %></td>
+    </tr>
+    <% end%>
+    </table>
+  </fieldset>
+  <div class="actions navspan">
+    <%= f.submit :value => "Update Account" %>
+    <%= link_to 'Show', @citizen %> |
+    <%= link_to('Edit Password', edit_user_registration_path) %>
+    
+  </div>
+<% end %>

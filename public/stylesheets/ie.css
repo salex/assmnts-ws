@@ -1,0 +1,6 @@
+.index-list th, .index-list td { border-bottom: dotted 1px #85ACC9; }
+
+#content fieldset { margin-top: 15px; }
+#content fieldset legend { top: -15px; }
+
+.dtable td, .dtable th { border-bottom: dotted 1px #85ACC9; }

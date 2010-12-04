@@ -1,0 +1,20 @@
+<fieldset class="form-list">
+	<legend><%=singular_name.capitalize%> - Show</legend>
+  	<table>
+	<% for attribute in attributes -%>
+    <tr>
+      <th><%= attribute.human_name %>:</th>
+      <td><%%= @<%= singular_name %>.<%= attribute.name %> %></td>
+    </tr>
+
+	<% end -%>
+	</table>
+</fieldset>
+<div class="actions navspan">
+	<%%= link_to 'Edit', edit_<%= singular_name %>_path(@<%= singular_name %>) %> |
+	<%%= link_to 'Back to <%=plural_name.capitalize%>', <%= plural_name %>_path %>
+</div>
+<div class="relations">
+	<div id="related">
+	</div>
+</div>

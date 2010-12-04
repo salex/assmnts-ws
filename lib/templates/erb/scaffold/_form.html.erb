@@ -1,0 +1,32 @@
+<%%= form_for(@<%= singular_name %>) do |f| %>
+<fieldset class="form-list">
+	<legend><%=singular_name.capitalize%> - <%%= @<%= singular_name %>.id.nil? ? "New" : "Edit"%></legend>
+
+  <%% if @<%= singular_name %>.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%%= pluralize(@<%= singular_name %>.errors.count, "error") %> prohibited this <%= singular_name %> from being saved:</h2>
+    <ul>
+    <%% @<%= singular_name %>.errors.full_messages.each do |msg| %>
+      <li><%%= msg %></li>
+    <%% end %>
+    </ul>
+  </div>
+  <%% end %>
+  <table>
+  <% for attribute in attributes -%>
+  <tr class="field">
+      <th><%%= f.label :<%= attribute.name %> %></th>
+      <td><%%= f.<%= attribute.field_type %> :<%= attribute.name %> %></td>
+    </tr>
+  <% end -%>
+  </table>
+    
+  <div class="actions navspan" >
+    <%%= f.submit %>
+    <%%= link_to 'Show', @<%= singular_name %> if params[:action] == "edit"%> 
+    <%%= link_to 'Back to <%=plural_name.capitalize%> ', <%= plural_name %>_path %>
+    
+  </div>
+</fieldset>
+      
+<%% end %>

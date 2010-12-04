@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+		<title>Mox</title>
+		<%#= stylesheet_link_tag "scaffold.css"  %>
+		<%= stylesheet_link_tag "screen.css", :media => 'all'  %>
+		
+		
+		<!--[if lt IE 8]>
+		  <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css">
+		<![endif]-->
+		
+		<%= csrf_meta_tag %>
+	</head>
+	<body>
+		<div id="container-print">
+			<div id="content">
+				<%= yield %>
+			</div>
+		</div>
+		<div class="f-clear"></div>
+	</body>
+</html>

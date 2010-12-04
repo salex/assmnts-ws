@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+		<title>Mox</title>
+		<%#= stylesheet_link_tag "scaffold.css"  %>
+		<%= stylesheet_link_tag "screen.css", :media => 'all'  %>
+		
+		<%= javascript_include_tag :defaults %>
+		
+		<!--[if lt IE 8]>
+		  <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css">
+		<![endif]-->
+		
+		<%= csrf_meta_tag %>
+	</head>
+	<body>
+		<div id="container">
+			<div id="register" >
+				<ul class="hmenu f-right">
+		    <%= render 'devise/menu/registration_items' %>
+		    <%= render 'devise/menu/login_items' %>
+				</ul>
+				<div class="f-clear"></div>
+			</div>
+			
+			<div id="header" style="background-image:url('/images/aidt_bkg.jpg');height:96px">
+				<img src='/images/logo1.jpg' class="f-left" />hi
+			</div>
+			
+			<div id="navbar" class="navspan ">
+					<%= link_to 'Home', root_path %>
+				
+			</div>
+			<div id="content">
+				<%#= flash_messages %>
+				<div class="actions">
+				<div class="alert" style="color: red;font-size:1.3em;line-height:1.4em"><%= flash[:alert] ||= params[:alert]%> <%= error ||= params[:error]%></div>
+			 
+			 <div class="notice" style="color: green;font-size:1.3em;line-height:1.4em"><%= notice %></div>
+			</div>
+				<%= yield %>
+			</div>
+			<div id="footer">
+				Footer
+			</div>
+		</div>
+		<div class="f-clear"></div>
+	</body>
+</html>

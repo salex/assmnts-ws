@@ -1,0 +1,56 @@
+<div class="actions">Prior to registration, we will search our files to see if you have ever applied for training 
+  with AIDT. If data is not found, you will then be forwarded to the final registration page.
+  If you have previously used this site, please use the sign-in link.</div>
+<fieldset class="form-list">
+	<legend>Pre Registration Search
+	  <span class="annotate"></span>
+	  </legend>
+
+
+<%= form_for(@citizen, :url => '/citizen/lookup') do |f| %>
+  <table class="f-left">
+    <tr class="field">
+      <th><%= f.label :name_first,"Name" %></th>
+      <td>
+        <strong>First</strong><%= f.text_field :name_first, :size => 15 %>
+        <strong>MI</strong><%= f.text_field :name_mi, :size => 1 %>
+        <strong>Last</strong><%= f.text_field :name_last, :size => 15 %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><label>Birth</label></th>
+      <td>
+        <%= select_month 0, :prompt => "Month", :prefix => "citizen", :field_name => "birth_mm" %>
+        <%= select_day 0, :prompt => "Day", :prefix => "citizen",:field_name=> "birth_dd"  %>
+      </td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :zip ,"Zip Code"%></th>
+      <td><%= f.text_field :zip, :size => 11 %></td>
+    </tr>
+    <tr class="field">
+      <th><label>Phone</label></th>
+      <td>
+        <strong>Primary</strong><%= f.text_field :phone_primary, :size => 15 %>
+        <strong>Secondary</strong><%= f.text_field :phone_secondary, :size => 15 %>
+      </td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :email %></th>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    
+    <tr class="field">
+      <th><%= f.label :login %></th>
+      <td><%= f.text_field :login %><br /><span class="annotate">Used on previous version of jobs.aidt.edu</span></td>
+    </tr>
+    
+    
+    </table>
+  </fieldset>
+  <div class="actions navspan">
+    <%= f.submit %>
+    
+  </div>
+<% end %>
