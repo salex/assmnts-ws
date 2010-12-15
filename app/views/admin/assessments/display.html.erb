@@ -1,0 +1,31 @@
+<%= javascript_include_tag "/javascripts/assmnt.js" %>
+<fieldset class="f-left col-6">
+  <legend>Instructions</legend>
+  <div class="box">
+    <p>  This is just an example of how an assessment would be displayed.</p> 
+    <p><span class="annotate">If there were multiple assessments, this area would show the status in some form.</span>
+    </p>  
+      <ul>
+        <li><%=check_box("one",nil)%>Section 1</li>
+        <li><%=check_box("one",nil)%>Section 2</li>
+        <li><%=check_box("one",nil)%>Section 3</li>
+      </ul>
+  </div>
+</fieldset>
+<fieldset class="f-left col-24">
+  <legend>Section - <%=@assessment.category%></legend>
+<%=form_tag post_admin_assessment_path(@assessment), :id => "assessarea", :name => "assessarea", :"data-behaviors" => "validate" %>
+    <div class="box"><%= @assessment.instructions %></div>
+    <div class="box">
+      <div class="assmnt-actions"><%= @assessment.description %></div>
+      <%=raw display_assessment(@assessment) %>
+      <div style="clear:both"></div>
+      <div class="dactions">
+      	<input type="submit" name="submit" value="Continue" />
+      </div>
+    </div>
+</form>
+</fieldset>
+<div class="f-clear"></div>
+
+<%#= params["post"].inspect %>

@@ -1,0 +1,10 @@
+<fieldset id="administrator_dashboard" class="">
+  <legend>Administrator Dashboard</legend>
+  <div class="box">
+  <ul>
+    <li><%= link_to "Assessments", admin_assessments_path %></li>
+    <li><%= link_to "Stages", stages_path %></li>
+  </ul>
+  </div>
+  <%= "progressed".in?("Active Completed Failed Progressed")%>
+</fieldset>

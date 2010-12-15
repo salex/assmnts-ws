@@ -1,0 +1,50 @@
+<div class="actions">
+  <%= form_tag users_admin_dba_index_path, :method => 'get' do %>  
+    <p>  
+      Name <%= text_field_tag :name, params[:name] %>  
+      Phone <%= text_field_tag :phone, params[:phone] %>  
+      eMail <%= text_field_tag :email, params[:email] %>  
+      Type <%= text_field_tag :type, params[:status] %>
+      <%= submit_tag "Search", :name => "filter" %>  
+    </p>  
+  <% end %>  
+</div>
+
+<fieldset id="users" class="">
+  <legend>Users</legend>
+  
+  
+<div class="index-list">
+	<div class="actions">
+	</div>
+
+  <table>
+    <tr class="list-header">
+      <th>ID</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>eMail/login</th>
+      <th>Roles</th>
+      <th>Actions</th>
+    </tr>
+
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.id %></td>
+      
+      <td><%= user.name_full %></td>
+      <td><%= user.user_type %></td>
+      <td><%= user.email %>/<%= user.login %></td>
+      <td><%= user.roles %></td>
+      <td>
+      <%= link_to 'Show', citizen_path(user) %>
+      <%#= link_to 'Edit', edit_user_path(user) %>
+      <%#= link_to 'Destroy', user_path(user), :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+  <%= will_paginate @users %> 
+  
+</div>
+</fieldset>

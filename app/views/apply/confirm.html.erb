@@ -1,0 +1,26 @@
+<%= javascript_include_tag "/javascripts/assmnt.js" %>
+<fieldset class="f-left col-6 " style="margin-right:6px">
+  <legend>Instructions</legend>
+  <div class="box">
+    <p><span class="annotate">explain moving around between assessments</span></p>
+    <%= @sidebar.html_safe %>
+    <p><span class="annotate">any other stuff you want to splain</span></p>
+    
+  </div>
+</fieldset>
+<fieldset class="f-left col-24">
+  <legend>Confirmation</legend>
+  <div class="box">
+    <span class="annotate">I be through.</span>
+  </div>
+  <%=form_tag "/apply/confirm", :method => :post, :id => "assessarea" %>
+    <div class="box">
+      <p>splain what will happen if they cancel or save</p>
+      <div class="actions">
+      	<input type="submit" name="submit" value="Submit Application" />
+      	<input type="submit" name="submit" value="Cancel" />
+      </div>
+    </div>
+  </form>
+</fieldset>
+<div class="f-clear"></div>

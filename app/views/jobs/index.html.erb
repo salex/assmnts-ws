@@ -1,0 +1,30 @@
+<fieldset class="index-list">
+	<legend class="navspan">
+	   Current Jobs
+	</legend>
+
+  <table>
+    <tr class="list-header">
+        <th>Job Title</th>
+        <th>Company</th>
+        <th>Jobs</th>
+        <th>Expires</th>
+        <th>Note</th>
+        <th>Actions</th>
+    </tr>
+
+  <% @stages.each do |stage| %>
+    <tr>
+      <td><%= stage.job_title %></td>
+      <td><%= stage.project_name %></td>
+      <td><%= stage.number_jobs %></td>
+      <td>&nbsp;</td>
+      
+        <td><%= stage.note %></td>
+        <td>
+        <%= link_to 'View Details', view_job_path(stage) %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</fieldset>

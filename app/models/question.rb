@@ -3,9 +3,19 @@ class Question < ActiveRecord::Base
   
   belongs_to :assessment
   has_many :answers, :order => "sequence", :dependent => :destroy
+  before_validation :set_defaults
+  
   after_save :updateMax
   after_destroy :updateMax
   private
+  
+  def set_defaults
+    if (self.score_method.downcase == "sum") && ((self.answer_type.downcase == "checkbox") || (self.answer_type.downcase == "select-multiple") )
+    else
+      self.score_method = "Value"
+    end
+  end
+  
   def updateMax
     computeMax(self.assessment.id) if is_dirty?
   end

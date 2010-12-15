@@ -7,7 +7,9 @@ class Ability
       citizen.try(:id) == user.id  
     end
     can [:find,:lookup], Citizen
-    if user.role? :super_admin
+    if user.user_type == "admin"
+      can :manage, :all
+    elsif user.role? :super_admin
       can :manage, :all
     elsif user.role? :site_admin
       can :manage, [Estimate,Task,Task_item,Sales_order,Coa,Customer, Vendor, Sales_order,Purchase_order,Memo]

@@ -1,0 +1,37 @@
+<div class="assmnt-list">
+
+  <table>
+    <tr class="list-header">
+        <th>Sequence</th>
+        <th>Question</th>
+        <th>Shortname</th>
+        <th>Type</th>
+        <th>Display</th>
+        <th>Score</th>
+        <th>Weight</th>
+        <th>Critical</th>
+        <th>Actions</th>
+    </tr>
+<% alt = true%>
+  <% @questions.each do |question| %>
+  <% alt = !alt %>
+  
+    <tr <%=raw alt ? "class=\"alt\"" : ""%>>
+        <td><%= question.sequence %></td>
+        <td><%=raw truncateText(question.question,25) %></td>
+        <td><%= question.shortname %></td>
+        <td><%= question.answer_type %></td>
+        <td><%= question.display_type %></td>
+        <td><%= question.score_method %></td>
+        <td><%= question.weight %></td>
+        <td><%= question.critical %></td>
+        <td>
+        <%= link_to 'Show', admin_question_path(question) %>
+        <%= link_to 'Edit', edit_admin_question_path(question) %>
+        <%= link_to 'Destroy', admin_question_path(question), :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</div>
+

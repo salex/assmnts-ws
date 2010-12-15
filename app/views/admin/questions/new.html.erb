@@ -1,0 +1,13 @@
+
+<%= render 'form' %>
+
+<div class="actions">
+  <span class="route">
+    <%= link_to 'Cancel',  admin_assessment_path(@assessment) %> 
+  </span>
+  <span class="breadcrumbs f-right">
+  <%= link_to 'Assessments', admin_assessments_path %>
+  <%= link_to 'Assessment',   admin_assessment_path(@assessment)%> 
+
+  </span>
+</div>

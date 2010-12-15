@@ -1,5 +1,5 @@
 <fieldset class="form-list">
-	<legend>Edit Account</legend>
+	<legend>Edit Profile</legend>
 
 
 <%= form_for(@citizen) do |f| %>
@@ -68,7 +68,7 @@
       <td><span id="no_email" style="display:none"><%= f.text_field :login %><br /><span class="annotate">Must be unique. Used if you do not have an email address</span><span></td>
     </tr>
     
-    <% if current_user.role?(:admin)%>
+    <% if current_user.admin?%>
     <tr class="field">
       <th><%= f.label :user_type,"User Type" %></th>
       <td><%= f.text_field :user_type %></td>
@@ -81,7 +81,7 @@
     </table>
   </fieldset>
   <div class="actions navspan">
-    <%= f.submit :value => "Update Account" %>
+    <%= f.submit :value => "Update Profile" %>
     <%= link_to 'Show', @citizen %> |
     <%= link_to('Edit Password', edit_user_registration_path) %>
     

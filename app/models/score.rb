@@ -15,6 +15,7 @@ class Score < ActiveRecord::Base
     if assessor.repeating
       score = nil
     else  
+      # the reason for .last is the generic assmnt allow repeating assessment like instructor eval
       score = self.order(:updated_at).where(:assessor_id => assessor.id, :assessed_id => params[:model_id]).last
     end
     if score.nil?
@@ -29,3 +30,5 @@ class Score < ActiveRecord::Base
     return score
   end
 end
+
+#http://localhost:8080/public/ws/conv_score.a4d?fdata={%22jobstageid%22:1852,%22citizenid%22:153156}

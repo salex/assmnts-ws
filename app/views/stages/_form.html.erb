@@ -1,0 +1,66 @@
+<%= form_for(@stage) do |f| %>
+<fieldset class="form-list">
+	<legend>Stage - <%= @stage.id.nil? ? "New" : "Edit"%></legend>
+
+  <% if @stage.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@stage.errors.count, "error") %> prohibited this stage from being saved:</h2>
+    <ul>
+    <% @stage.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <table>
+    <tr class="field">
+      <th><%= f.label :name %></th>
+      <td><%= f.text_field :name %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :status %></th>
+      <td><%= f.text_field :status %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :note %></th>
+      <td><%= f.text_field :note %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :jobstage_id %></th>
+      <td><%= f.text_field :jobstage_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :stage_name %></th>
+      <td><%= f.text_field :stage_name %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :job_id %></th>
+      <td><%= f.text_field :job_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :job_title %></th>
+      <td><%= f.text_field :job_title %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :project_id %></th>
+      <td><%= f.text_field :project_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :project_name %></th>
+      <td><%= f.text_field :project_name %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :number_jobs %></th>
+      <td><%= f.text_field :number_jobs %></td>
+    </tr>
+    </table>
+    
+  <div class="actions navspan" >
+    <%= f.submit %>
+    <%= link_to 'Show', @stage if params[:action] == "edit"%> 
+    <%= link_to 'Back to Stages ', stages_path %>
+    
+  </div>
+</fieldset>
+      
+<% end %>

@@ -25,8 +25,8 @@ end
     <tr class="field">
       <th><label>Birthday</label></th>
       <td>
-        <%= select_month 0, { :prompt => "Month", :prefix => "user", :field_name => "birth_mm"}, :class => "required" %>
-        <%= select_day 0, {:prompt => "Day", :prefix => "user",:field_name=> "birth_dd"},  {:class => "required"}  %>
+        <%= select_month resource["birth_mm"].to_i, { :prompt => "Month", :prefix => "user", :field_name => "birth_mm"}, :class => "required" %>
+        <%= select_day resource["birth_dd"].to_i, {:prompt => "Day", :prefix => "user",:field_name=> "birth_dd"},  {:class => "required"}  %>
       </td>
     </tr>
     <tr class="field">

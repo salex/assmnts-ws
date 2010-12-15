@@ -1,0 +1,116 @@
+%h2 
+  Citizen Profile, Project:
+  = @applicant.stage.project_name
+  , Job: 
+  = @applicant.stage.job_title
+%fieldset{:class => "f-left form-list",:style => "width:40%"}
+  %legend Contact
+  %table.profile
+    = showfield("Name", @citizen.name_full)
+    = showfield("Address", @citizen.address)
+    = showfield("City/St/Zip","#{@citizen.city}, #{@citizen.state} #{@citizen.zip}")
+    = showfield("Primary Phone", @citizen.phone_primary)
+    = showfield("Secondary Phone", @citizen.phone_secondary)
+    = showfield("eMail", @citizen.email)
+    = showfield("BirthMMDD", "#{@citizen.birth_mm}#{@citizen.birth_dd}")
+    = showfield("Date",@applicant.status_date)
+    = showfield("Status",@applicant.status)
+    = showfield("Score",format_money(@applicant.score))
+    = showfield("Weighted",format_money(@applicant.weighted))
+    
+%fieldset{:class => "f-right form-list",:style => "width:55%"}
+  - @score = @scores["application.skills"].first
+  %legend 
+    Skills
+    %span.annotate
+      = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
+  - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
+  - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
+  - skills = dumpPost(@score_hash,@qa).html_safe
+  %table{:class => "f-left profile"}
+    <tr><td><strong>Area</strong></td><td><strong>Years</strong></td></tr>
+    - 0.upto(9) do |i|
+      = show_question(@qa[:questions][i])
+  %table{:class => "f-left profile"}
+    <tr><td><strong>Area</strong></td><td><strong>Years</strong></td></tr>
+  
+    - 0.upto(9) do |i|
+      = show_question(@qa[:questions][i])
+  .f-clear
+.f-clear
+
+%fieldset{:class => "f-left form-list",:style => "width:47%"}
+  - @score = @scores["application.education"].first
+  %legend 
+    Education
+    %span.annotate
+      = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
+  %table.profile
+    <tr><td><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
+  
+    - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
+    - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
+    - education = dumpPost(@score_hash,@qa).html_safe
+    
+    - @qa[:answers].each do |answer|
+      = show_answer(answer)
+%fieldset{:class => "f-right form-list",:style => "width:47%"}
+  - @score = @scores["application.general"].first
+  %legend 
+    General
+    %span.annotate
+      = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
+  %table.profile
+    <tr><td><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
+  
+    - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
+    - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
+    - general = dumpPost(@score_hash,@qa).html_safe
+    
+    - @qa[:questions].each do |question|
+      = show_question(question)
+.f-clear
+%fieldset.form-list
+  %legend Work Experience
+
+  - @score = @scores["application.experience"].first
+  - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
+  - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
+  %table{:class => "f-left profile"}
+    - 0.upto(7) do |i|
+      = show_answer_text(@qa[:answers][i])
+  %table{:class => "f-left profile"}
+    - 8.upto(15) do |i|
+      = show_answer_text(@qa[:answers][i])
+  %table{:class => "f-left profile"}
+    - 16.upto(23) do |i|
+      = show_answer_text(@qa[:answers][i])
+  .f-clear
+  %table{:class => "profile"}
+    = show_answer_text(@qa[:answers][24])
+
+.f-clear
+%fieldset
+  - @score = @scores["application.custom"].first
+  %legend 
+    Company Specific
+    %span.annotate
+      = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
+
+  - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
+  - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
+  =  dumpPost(@score_hash,@qa).html_safe
+  
+.f-clear
+
+%fieldset.page-break
+  %legend Scoring
+  = general
+  = education
+  = skills
+  
+.f-clear
+
+
+
+  

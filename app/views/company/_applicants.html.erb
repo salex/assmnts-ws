@@ -1,0 +1,45 @@
+<fieldset  id="applicants">
+  <legend>Applicants</legend>
+  
+  
+<div class="index-list">
+	<div class="actions">
+	</div>
+  <%= form_for(:applicant, :url => "select", :controller => "company") do |f| %>
+    <table>
+      <tr class="list-header">
+          <th>Applicant</th>
+          <th>City</th>
+          <th>score</th>
+          <th>Change Status</th>
+          <th>Date</th>
+          <td>Actions</td>
+      </tr>
+
+      <% @applicants.each do |applicant| 
+        citizen = applicant.user%>
+        <tr>
+          <td><%= citizen.name_full %></td>
+          <td><%= citizen.city %> <%= citizen.state %></td>
+          <td><%= format_money(applicant.score) %></td>
+          <td>
+            <%= f.hidden_field :id , :name => "applicant[id][]", :value => applicant.id%>
+            <%= f.select :status,applicant_status_options(nil), {},:name => "applicant[status][]" %>
+            <%= applicant.status %>
+            </td>
+          <td><%= applicant.status_date %></td>
+          <td>
+            <%= link_to "Profile", profile_applicant_path(applicant.id) %>
+          </td>
+        </tr>
+    
+    
+    <% end %>
+    </table>
+    <%= f.submit :value => "Update Applicants"%>
+  <% end%>
+  <%= will_paginate @applicants %> 
+  
+</div>
+</fieldset>
+

@@ -1,0 +1,80 @@
+<fieldset class="form-list">
+	<legend>Stage - Show</legend>
+  	<table class="f-left">
+	    <tr>
+      <th>Name:</th>
+      <td><%= @stage.name %></td>
+    </tr>
+
+	    <tr>
+      <th>Status:</th>
+      <td><%= @stage.status %></td>
+    </tr>
+
+	    <tr>
+      <th>Note:</th>
+      <td><%= @stage.note %></td>
+    </tr>
+
+	    <tr>
+      <th>Jobstage:</th>
+      <td><%= @stage.jobstage_id %></td>
+    </tr>
+
+	    <tr>
+      <th>Stage name:</th>
+      <td><%= @stage.stage_name %></td>
+    </tr>
+
+	    <tr>
+      <th>Job:</th>
+      <td><%= @stage.job_id %></td>
+    </tr>
+
+	    <tr>
+      <th>Job title:</th>
+      <td><%= @stage.job_title %></td>
+    </tr>
+  </table>
+  <table class="f-left">
+	    <tr>
+      <th>Project:</th>
+      <td><%= @stage.project_id %></td>
+    </tr>
+
+	    <tr>
+      <th>Project name:</th>
+      <td><%= @stage.project_name %></td>
+    </tr>
+
+	    <tr>
+      <th>Assessment json:</th>
+      <td><textarea rows="5" cols="50"><%= @stage.assessment_json %></textarea></td>
+    </tr>
+
+	    <tr>
+      <th>Number jobs:</th>
+      <td><%= @stage.number_jobs %></td>
+    </tr>
+
+		</table>
+</fieldset>
+<div class="actions">
+  <span class="crud">
+	<%= link_to 'Edit', edit_stage_path(@stage) %> 
+	</span>
+	<span class="breadcrumbs f-right">
+	<%= link_to 'Stages', stages_path %>
+	</span>
+</div>
+<fieldset  class="relations">
+  <legend>Related
+    <span class="route">
+    	<%= link_to 'Assessors', assessors_stage_path(@stage), :remote => true %> 
+    	<%= link_to 'Applicants', applicants_stage_path(@stage), :remote => true %> 
+    </span>
+    </legend>
+    <div id="related">
+	    <%= render :partial => "assessors" %>
+	  </div>
+</fieldset>

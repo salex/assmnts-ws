@@ -1,10 +1,21 @@
 class Assessment < ActiveRecord::Base
   has_many :questions, :order => "sequence", :dependent => :destroy
   
+    
+  def self.search(search)  
+    if search  
+      where('name LIKE ?', "%#{search}%")  
+    else  
+      order(:id).scoped  
+    end  
+  end  
+#  ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aids[0]}")
+#  ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aids[0]}")
   def getQandA
-    questions = Question.where(:assessment_id => self.id).select("id,question,shortname,minimum_value,critical,weight,score_method,answer_type")
+    questions = Question.where(:assessment_id => self.id).select("id,question,shortname,minimum_value,critical,weight,score_method,answer_type,xml_key")
     q_ids = questions.map(&:id)  # shorthand for @questions.map{|i| i.id}, which gets array of ids
-    answers = Answer.where(:question_id => q_ids).select("id,master_id,answer,shortname,answer_eval,value,question_id")
+    answers = Answer.where(:question_id => q_ids).select("id,master_id,answer,shortname,answer_eval,value,question_id,xml_key")
+    #ans = Answer.joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = 133")*
     a_ids = answers.map(&:id)
     return {:questions => questions ,:q_ids => q_ids, :answers => answers, :a_ids => a_ids}
   end

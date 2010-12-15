@@ -1,0 +1,41 @@
+<fieldset  class="">
+  <legend>Applicants</legend>
+  
+  
+<div class="index-list">
+	<div class="actions">
+	</div>
+
+  <table>
+    <tr class="list-header">
+        <th>Id</th>
+        <th>Applicant</th>
+        <th>Raw</th>
+        <th>Weighted</th>
+        <th>Status</th>
+        <th>Date</th>
+        <td>Actions</td>
+    </tr>
+
+  <% @applicants.each do |applicant| %>
+    <tr>
+      <td><%= applicant.id %></td>
+      <td><%= applicant.user.name_full %></td>
+      <td><%= format_money(applicant.score) %></td>
+      <td><%= format_money(applicant.weighted) %></td>
+      <td><%= applicant.status %></td>
+      <td><%= applicant.status_date %></td>
+      <td>
+        <%= link_to "Update 4D", update_4d_w_path(applicant.id) %>
+        <%= link_to "Profile", profile_applicant_path(applicant.id) %>
+      </td>
+    </tr>
+    
+    
+  <% end %>
+  </table>
+  <%= will_paginate @applicants %> 
+  
+</div>
+</fieldset>
+

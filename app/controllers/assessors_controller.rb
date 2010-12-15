@@ -2,11 +2,12 @@ class AssessorsController < ApplicationController
   # GET /assessors
   # GET /assessors.xml
   def index
-    @assessors = Assessor.includes(:assessment).order("assessed_model, assessing_type, sequence")
-
+    #@assessors = Assessor.includes(:assessment).order("assessed_model, assessing_type, sequence")
+    @assessors = Assessor.where(:assessing_id => params[:stage_id]).includes(:assessment).order("assessed_model, assessing_type, sequence")
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @assessors }
+      format.js 
     end
   end
 
@@ -39,6 +40,7 @@ class AssessorsController < ApplicationController
 
   # POST /assessors
   # POST /assessors.xml
+  load_and_authorize_resource
   def create
     @assessor = Assessor.new(params[:assessor])
 
@@ -60,7 +62,7 @@ class AssessorsController < ApplicationController
 
     respond_to do |format|
       if @assessor.update_attributes(params[:assessor])
-        format.html { redirect_to(@assessor, :notice => 'Assessor was successfully updated.') }
+        format.html { redirect_to(@assessor.assessing, :notice => 'Assessor was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

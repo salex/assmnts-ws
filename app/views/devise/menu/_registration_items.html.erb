@@ -1,7 +1,14 @@
 <% if user_signed_in? %>
-  <li>
-  <%= link_to('Edit account', edit_citizen_path(current_user)) %>
+<li>
+
+ <% if current_user.user_type == "citizen"%>
+  <%= link_to('Edit Profile', edit_citizen_path(current_user)) %>
+  <% else%>
+  <%= link_to('Edit Profile', edit_user_registration_path(current_user)) %>
+  
+  <% end %>
   </li>
+  
 <% else %>
   <li>
   <%= link_to('Sign up', "/citizen/find")  %>

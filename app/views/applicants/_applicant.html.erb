@@ -1,0 +1,33 @@
+<fieldset  class="">
+  <legend>Applicants</legend>
+  
+  
+<div class="index-list">
+	<div class="actions">
+	</div>
+
+  <table>
+    <tr class="list-header">
+        <th>Applicant</th>
+        <th>City</th>
+        <th>score</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+
+  <% @applicants.each do |applicant| 
+    citizen = applicant.user%>
+    <tr>
+      <td><%= citizen.name_full %></td>
+      <td><%= citizen.city %> <%= citizen.state %></td>
+      <td><%= applicant.score %></td>
+      <td><%= applicant.status %></td>
+      <td><%= applicant.status_date %></td>
+    </tr>
+    
+    
+  <% end %>
+  </table>
+</div>
+</fieldset>
+

@@ -1,8 +1,10 @@
 class ScoresController < ApplicationController
   # GET /scores
   # GET /scores.xml
+  load_and_authorize_resource
+  
   def index
-    @scores = Score.search(params)
+    @scores = Score.search(params).paginate(:per_page => 20, :page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,7 +19,6 @@ class ScoresController < ApplicationController
     @html = ""
     if !@score.score_object.blank?
       result =  ActiveSupport::JSON.decode(@score.score_object)
-      logger.info result.inspect
       @assessment = Assessment.find(result["assessment_id"])
       @html = dumpPost(result,@assessment.getQandA).html_safe
     end

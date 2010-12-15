@@ -2,28 +2,30 @@ class ActionsController < ApplicationController
 
   def take
     #reset_session
-    if !session[:steps]
-      session[:steps] = {}
-      session[:take] ={}
-      session[:take][:assessed_id] = params[:assessed_id]
-      session[:take][:assessing_id] =  params[:id]
-      session[:take][:assessed] =  params[:assessed]
-      session[:take][:total_raw] = 0
-      session[:take][:total_weighted] = 0
-      session[:take][:max_raw] = 0
-      session[:take][:max_weighted] = 0
-      session[:take][:answers] = ""
-      session[:take][:score_ids] = []
-      if params[:assessed].downcase == "default"
-        assessors = Assessor.order(:sequence).where(:id => params[:id])
-      else
-        assessors = Assessor.order(:sequence).where(:assessing_id => params[:id])
-      end
-      for assessor in assessors do
-        category = assessor.assessment.category
-        session[:steps][category] = {}
-        session[:steps][category][:id] = assessor.id
-        session[:steps][category][:complete] = false
+    if false
+      if !session[:steps]
+        session[:steps] = {}
+        session[:take] ={}
+        session[:take][:assessed_id] = params[:assessed_id]
+        session[:take][:assessing_id] =  params[:id]
+        session[:take][:assessed] =  params[:assessed]
+        session[:take][:total_raw] = 0
+        session[:take][:total_weighted] = 0
+        session[:take][:max_raw] = 0
+        session[:take][:max_weighted] = 0
+        session[:take][:answers] = ""
+        session[:take][:score_ids] = []
+        if params[:assessed].downcase == "default"
+          assessors = Assessor.order(:sequence).where(:id => params[:id])
+        else
+          assessors = Assessor.order(:sequence).where(:assessing_id => params[:id])
+        end
+        for assessor in assessors do
+          category = assessor.assessment.category
+          session[:steps][category] = {}
+          session[:steps][category][:id] = assessor.id
+          session[:steps][category][:complete] = false
+        end
       end
     end
     finished = true
@@ -48,11 +50,18 @@ class ActionsController < ApplicationController
     if finished
       if session[:steps].length > 1
         make_summary
+      else
+        applicant = Applicant.find(session[:take][:assessed_id])
+        if !applicant.nil?
+          applicant.score = (session[:take][:total_raw] / session[:take][:max_raw]) * 100 
+          applicant.status = "Completed"
+          applicant.status_date = Date.today
+          applicant.save
+        end
+        
       end
-      render :text => "I be finished! #{session.inspect}"
+      render :template => "actions/confirm"      
       
-      session[:steps] = nil
-      session[:take] = nil
     else
       @assessor = Assessor.find(aid)
       @assessment = @assessor.assessment
@@ -99,7 +108,7 @@ class ActionsController < ApplicationController
   
   def make_summary
     # this is an example of how to summarize a muliti-assessement and post an overall score
-    # for demo purposes, the scored is stored in both the generic score stub and candidate stub.
+    # for demo purposes, the scored is stored in both the generic score stub and applicant stub.
       clone = Score.where(:parent_id => session[:take][:assessing_id], :assessed_id => session[:take][:assessed_id] ).last
       if clone.nil?
         clone = Score.find(session[:take][:score_ids][0]).clone
@@ -119,10 +128,12 @@ class ActionsController < ApplicationController
         clone.score_weighted = (session[:take][:total_weighted] / session[:take][:max_weighted]) * 100 
       end
       clone.save
-      candidate = Candidate.find(session[:take][:assessed_id])
-      if !candidate.nil?
-        candidate.score = clone.score
-        candidate.save
+      applicant = Applicant.find(session[:take][:assessed_id])
+      if !applicant.nil?
+        applicant.score = clone.score
+        applicant.status = "Completed"
+        applicant.status_date = Date.today
+        applicant.save
       end
   end
   

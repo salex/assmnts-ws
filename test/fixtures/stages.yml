@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  status: MyString
+  note: MyString
+  jobstage_id: 1
+  stage_name: MyString
+  job_id: 1
+  job_title: MyString
+  project_id: 1
+  project_name: MyString
+  assessment_json: MyText
+  number_jobs: 1
+
+two:
+  name: MyString
+  status: MyString
+  note: MyString
+  jobstage_id: 1
+  stage_name: MyString
+  job_id: 1
+  job_title: MyString
+  project_id: 1
+  project_name: MyString
+  assessment_json: MyText
+  number_jobs: 1

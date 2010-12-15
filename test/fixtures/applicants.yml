@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  stage_id: 1
+  score: 9.99
+  score_object: MyText
+  status: MyString
+  status_date: 2010-12-05
+
+two:
+  user_id: 1
+  stage_id: 1
+  score: 9.99
+  score_object: MyText
+  status: MyString
+  status_date: 2010-12-05

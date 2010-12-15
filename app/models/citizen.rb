@@ -1,10 +1,8 @@
 class Citizen < User
-
+  validates_presence_of  :address, :city, :state, :zip, :phone_primary,:birth_mm, :birth_dd
   def self.lookup_citizen(params)
     #first check the users table
-    result, citizen = self.find_citizen(params) 
-       #puts "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa #{result}"
-       
+    result, citizen = self.find_citizen(params)        
     if !result 
       fdata = params.to_json
       citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.citizen.lookup']

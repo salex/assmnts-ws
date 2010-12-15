@@ -1,0 +1,50 @@
+<fieldset class="index-list">
+	<legend>Assessments
+	  <span class="crud">
+      <%= link_to 'New Assessment', new_admin_assessment_path %>
+  	</span>
+  	
+	</legend>
+  <%= form_tag admin_assessments_path, :method => 'get' do %>  
+    <p>  
+      <%= text_field_tag :search, params[:search] %>  
+      <%= submit_tag "Search", :name => nil %>  
+      <%if params[:search]%>
+        <span class="route"><%= link_to "All", admin_assessments_path%></span>
+      <%end%>
+    </p>  
+  <% end %>  
+
+  <table>
+    <tr class="list-header">
+        <th>Name</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Raw</th>
+        <th>Weight</th>
+        <th>Actions</th>
+    </tr>
+    <% alt = true%>
+    <% @assessments.each do |assessment| %>
+      <% alt = !alt %>
+
+      <tr <%=raw alt ? "class=\"alt\"" : ""%>>
+
+        <td><%= assessment.name %></td>
+        <td><%=raw truncateText(assessment.description,25,"middle") %></td>
+        <td><%= assessment.status %></td>
+        <td><%= assessment.category %></td>
+        <td><%= assessment.max_raw %></td>
+        <td><%= assessment.max_weighted %></td>
+        <td>
+        <%= link_to 'Show', admin_assessment_path(assessment) %>
+        <%= link_to 'Edit', edit_admin_assessment_path(assessment) %>
+        <%= link_to 'Destroy', admin_assessment_path(assessment), :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+  <%= will_paginate @assessments %> 
+</fieldset>
+<%= params.inspect%>

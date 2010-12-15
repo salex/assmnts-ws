@@ -114,8 +114,14 @@ assessments.each {|i|
   assessment.save
 }
 puts "Wrote assessment records"
+
+filepath = Rails.root.join("db","stage18521.json")
+json = File.read(filepath)
+conversion = json_parse(json)
+
 =end
 
+=begin
 filepath = Rails.root.join("db","questions.json")
 json = File.read(filepath)
 questions = json_parse(json)
@@ -135,5 +141,120 @@ answers.each {|i|
   answer.save
 }
 puts "Wrote answer records"
+=end
 
+=begin
+filepath = Rails.root.join("db","stage1852.json")
+json = File.read(filepath)
+jstage = json_parse(json)
+stage = jstage["jobstage"]["stage"]
+users = jstage["jobstage"]["user"]
+stuff = ""
+users.each do |key,user|
+  
+  citizen = user["citizen"]
+  if user["key"] == 'login'
+    citizen["email"] = user["login"] + "@jobs.aidt.edu"
+  elsif user["key"] == 'email'
+    citizen["email"] = user["email"] 
+  else
+    stuff <<  citizen["email"] +"-"+ user["key"] + " Not imported\n"
+    next
+  end
+  citizen["login"] = user["login"]
+  citizen["password"] = user["password"]
+  citizen["password_confirmation"] = user["password"]
+  u = User.find_for_database_authentication({:email => citizen["email"], :login => citizen["login"]})
+  if !u.nil?
+    stuff <<  citizen["email"] + "Already in db \n"
+    next
+  end
+  nu = User.new(citizen)
+  if nu.valid?
+    nu.save
+    nu.confirm!
+    nu.save
+  else
+    stuff << citizen["email"] + "invalid user #{nu.errors}"
+    next
+  end
+  applicant = {}
+  datedts = user["date.dts"]
+  applicant["status_date"] = datedts[0..3]+"-"+datedts[4..5]+"-"+datedts[6..7]
+  applicant["score"] = user["score"]
+  applicant["status"] = user["status"]
+  applicant["user_id"] = nu.id
+  applicant["stage_id"] = 11
+  na = Applicant.create(applicant)
+  puts citizen["email"] + " OK"
+end
 
+puts stuff
+
+=end
+
+stage = Stage.where(:id => 11).first
+aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
+applicants = stage.stage_applicants({:filter => true,:status => "conv."})
+ans_ids = []
+ans_xml = []
+ques_ids = []
+ques_xml = []
+categories = {}
+aids.each do |aid|
+  assmnt = Assessment.find(aid)
+  categories[assmnt.category] = aid
+  ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aid}")
+  ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aid}")
+  ans_ids << ans.map(&:id)
+  ans_xml << ans.map(&:xml_key)
+  ques_ids << ques.map(&:id)
+  ques_xml << ques.map(&:xml_key)
+end
+ans_ids = ans_ids.flatten
+ans_xml = ans_xml.flatten
+ques_ids = ques_ids.flatten
+ques_xml = ques_xml.flatten
+
+cnt = 0
+
+applicants.each do |applicant|
+  cnt += 1
+  fdata = {"jobstageid" => stage.jobstage_id, "citizenid" => applicant.user.citizen_id}.to_json
+  puts fdata+cnt.to_s
+  score =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.jobstage.conv_score']
+  if score[0..0] != "{"
+    puts "bad score json"
+    next
+  end      
+  ans_xml.each_index do |i|
+   score.gsub!(ans_xml[i], ans_ids[i].to_s)
+  end
+  ques_xml.each_index do |i|
+    score.gsub!(ques_xml[i], ques_ids[i].to_s)
+  end
+  score_hash = ActiveSupport::JSON.decode(score)
+  aids.each do |aid|
+    assessor = stage.assessors.where(:assessment_id => aid).first
+    assessment = assessor.assessment
+    area = score_hash["score"][assessment.category]
+    post = {"post.answer" => area["answers"], "post.answer_other" => area["answers_other"]}
+    scored = assessment.scoreAssessment(post)
+    score_params = {}
+    score_params[:assessor_id] = assessor.id
+    score_params[:assessed_type] = "Applicant"
+    score_params[:assessed_id] = applicant.id
+    score_params[:assessing_type] = "Stage"
+    score_params[:assessing_id] = stage.id
+    score_params[:score_object] = scored.to_json
+    score_params[:score] = scored["score_raw"]
+    score_params[:score_weighted] = scored["score_weighted"]
+    score_params[:answers]  = "|" + scored["all_answers"].join("|") + "|"
+    s = Score.create(score_params)
+  end
+  #applicant.score =  score_params[:score]
+  applicant.status = applicant.status.gsub("conv.","")
+  applicant.save
+  
+  #need a summary method
+end

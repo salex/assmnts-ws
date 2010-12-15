@@ -28,7 +28,6 @@ class CitizensController < ApplicationController
     attributes = params[:citizen]
     #attributes["name_full"] = attributes["name_last"]+", "+ attributes["name_first"]
     citizen = Citizen.lookup_citizen(attributes)
-    logger.info "AAAAAAAAAAAAAAAAAAAAAAAAAA #{citizen.inspect}"
     if citizen.has_key?("citizen")
       session["citizen"] = citizen
       redirect_to new_user_registration_path, :notice => "Information has been found matching your input. 
@@ -45,8 +44,14 @@ class CitizensController < ApplicationController
 
     respond_to do |format|
       if @citizen.update_attributes(params[:citizen])
-        format.html { redirect_to(@citizen, :notice => 'Member was successfully updated.') }
-        format.xml  { head :ok }
+        if session["take"].nil?
+          format.html { redirect_to(@citizen, :notice => 'Profile was successfully updated.') }
+          format.xml  { head :ok }
+          
+        else
+          format.html { redirect_to("/apply/area", :notice => 'Profile was successfully updated.') }
+          format.xml  { head :ok }
+        end
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @citizen.errors, :status => :unprocessable_entity }

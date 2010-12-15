@@ -1,4 +1,4 @@
-<%= form_for(@assessor) do |f| %>
+<%= form_for([@stage,@assessor]) do |f| %>
 <fieldset class="form-list">
 	<legend>Assessor</legend>
 
@@ -40,6 +40,10 @@
     <tr class="field">
       <th><%= f.label :repeating %></th>
       <td><%= f.check_box :repeating %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :xml_key %></th>
+      <td><%= f.text_field :xml_key %></td>
     </tr>
       
     </table>

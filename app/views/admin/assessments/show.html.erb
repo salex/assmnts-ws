@@ -1,0 +1,83 @@
+<fieldset class="assmnt-show">
+	<legend>Assessment</legend>
+  	<table>
+  	<tr>
+  	  <th>Name:</th>
+  	  <td><%= @assessment.name %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Description:</th>
+  	  <td><%= @assessment.description %></td>
+  	</tr>
+  	<tr>
+  	  <th>Instructions:</th>
+  	  <td><%= @assessment.instructions %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Status:</th>
+  	  <td><%= @assessment.status %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Category:</th>
+  	  <td><%= @assessment.category %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Answer type:</th>
+  	  <td><%= @assessment.answer_type %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Display type:</th>
+  	  <td><%= @assessment.display_type %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Max raw:</th>
+  	  <td><%= @assessment.max_raw %></td>
+  	</tr>
+
+  	<tr>
+  	  <th>Max weighted:</th>
+  	  <td><%= @assessment.max_weighted %></td>
+  	</tr>
+  	<tr>
+  	  <th>xml Key:</th>
+  	  <td><%= @assessment.xml_key %></td>
+  	</tr>
+
+	</table>
+</fieldset>
+
+<div class="actions">
+	<span class="crud">
+  	<%= link_to 'Edit', edit_admin_assessment_path(@assessment) %> |
+	</span>
+	<span class="route">
+	  <%= link_to 'Test Assessment', display_admin_assessment_path(@assessment) %>
+  	
+	</span>
+	<span class="f-right breadcrumbs">
+	  
+  	<%= link_to 'Assessments', admin_assessments_path %>
+	</span>
+	
+</div>
+
+<fieldset class="relations">
+  <legend>Questions
+    <span class="crud">
+  	  <%if params[:assessment_id] %>
+      <%= link_to 'New Question', new_admin_assessment_question_path(params[:assessment_id]) %>
+      <%else%>
+      <%= link_to 'New Question', new_admin_assessment_question_path(params[:id]) %>
+      <%end%>
+  	</span>
+  </legend>
+	<div id="related">
+	  <%= render :file => 'admin/questions/index' %>
+	</div>
+</fieldset>

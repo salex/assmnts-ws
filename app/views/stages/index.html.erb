@@ -1,0 +1,39 @@
+<fieldset class="index-list">
+	<legend class="navspan">
+	   Stages
+    <%= link_to 'New Stage', new_stage_path %>
+	</legend>
+
+  <table>
+    <tr class="list-header">
+        <th>Name</th>
+        <th>Status</th>
+        <th>Note</th>
+        <th>JS Id</th>
+        <th>Stage</th>
+        <th>Title</th>
+        <th>Project</th>
+        <th>Jobs</th>
+        <th>Actions</th>
+    </tr>
+
+  <% @stages.each do |stage| %>
+    <tr>
+        <td><%= stage.name %></td>
+        <td><%= stage.status %></td>
+        <td><%= stage.note %></td>
+        <td><%= stage.jobstage_id %></td>
+        <td><%= stage.stage_name %></td>
+        <td><%= stage.job_title %></td>
+        <td><%= stage.project_name %></td>
+        <td><%= stage.number_jobs %></td>
+        <td>
+        <%= link_to 'Show', stage %>
+        <%= link_to 'Edit', edit_stage_path(stage) %>
+        <%= link_to 'Destroy', stage, :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</fieldset>
+

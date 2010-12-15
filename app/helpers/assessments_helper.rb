@@ -223,7 +223,6 @@ QUES
     end
     assmnt = %Q(
     <div id="assmnt">
-      <div class="assmnt-header">#{assessment.instructions}</div>
         #{html}
     </div>
 )

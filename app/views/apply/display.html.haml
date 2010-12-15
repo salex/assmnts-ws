@@ -1,0 +1,27 @@
+= javascript_include_tag "/javascripts/assmnt.js" 
+%fieldset{:class => "f-left col-6 ", :style => "margin-right:6px"}
+  %legend Instructions
+  .box
+    %p 
+      %span{:class =>"annotate"} explain moving around between assessments
+    = @sidebar.html_safe 
+    %p
+      %span{:class => "annotate"} any other stuff you want to splain
+
+%fieldset{:class => "f-left col-24"}
+  %legend= "Area - #{session[:take][:current_area]}"
+  = form_tag "/apply/next", :method => :post, :id => "assessarea"
+  %div
+    = hidden_field_tag "id",  @assessor.id
+    = hidden_field_tag  "score_id",  @score.id
+  .box
+    %span{:class => "annotate" }= @assessment.instructions
+  .box
+    %span{:class => "annotate" }= @assessment.description
+    = display_assessment(@assessment) 
+    .f-clear
+    .actions
+      <input type="submit" name="submit" value="Continue" />
+  </form>
+.f-clear
+

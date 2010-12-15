@@ -1,0 +1,57 @@
+<fieldset class="assmnt-show">
+	<legend>Answer</legend>
+  	<table>
+  		<tr>
+  	  <th>Sequence:</th>
+  	  <td><%= @answer.sequence %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Answer:</th>
+  	  <td><%= @answer.answer %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Shortname:</th>
+  	  <td><%= @answer.shortname %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Value:</th>
+  	  <td><%= @answer.value %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Requires other:</th>
+  	  <td><%= @answer.requires_other %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Other question:</th>
+  	  <td><%= @answer.other_question %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>Answer eval:</th>
+  	  <td><%= @answer.answer_eval %></td>
+  	</tr>
+
+  		<tr>
+  	  <th>xml_key:</th>
+  	  <td><%= @answer.xml_key %></td>
+  	</tr>
+
+	</table>
+</fieldset>
+
+<div class="actions">
+  <span class="crud">
+  	<%= link_to 'Edit', edit_admin_answer_path(@answer) %> |
+  </span>
+  <span class="breadcrumbs f-right">
+  <%= link_to 'Assessments', admin_assessments_path %>
+  <%= link_to 'Assessment',  admin_assessment_path(@answer.question.assessment_id) %> 
+  <%= link_to 'Question',  admin_question_path(@answer.question_id) %> 
+
+  </span>
+</div>

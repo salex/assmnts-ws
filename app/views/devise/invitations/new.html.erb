@@ -1,0 +1,31 @@
+<h2>Send invitation</h2>
+
+<%= form_for resource, :as => resource_name, :url => invitation_path(resource_name) do |f| %>
+  <%= devise_error_messages! %>
+    <table >
+      <tr class="field">
+        <th><%= f.label :name_first,"Name" %></th>
+        <td>
+          <strong>First</strong><%= f.text_field :name_first, :size => 15, :class => "required" %>
+          <strong>Last</strong><%= f.text_field :name_last, :size => 15, :class => "required" %>
+        </td>
+      </tr>
+      <tr>
+      <th><%= f.label :email %></th>
+      <td><%= f.text_field :email %></td>
+      </tr>
+      <tr>
+      <th><%= f.label :user_type %></th>
+      <td><%= f.text_field :user_type %></td>
+      <tr>
+        <tr>
+        <th><label>Project Roles</label></th>
+        <td><%= f.text_field :roles %> <span class="annotate">Add project number delimited by | </span></td>
+        <tr>
+  </table>
+
+
+  <p><%= f.submit "Send an invitation" %></p>
+<% end %>
+
+<%= link_to "Home", after_sign_in_path_for(resource_name) %><br />

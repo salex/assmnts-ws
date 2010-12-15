@@ -7,17 +7,17 @@
   <table>
     <tr class="list-header">
         <th>Assessor</th>
-        <th>Assessed</th>
+        <th>User Id</th>
         <th>Score</th>
         <th>Category</th>
         <th>Status</th>
         <th>Actions</th>
     </tr>
 
-  <% @scores.each do |score| %>
+  <% @scores.each do |score|  %>
     <tr>
         <td><%= score.assessor_id %></td>
-        <td><%= score.assessed.name if score.assessed%></td>
+        <td><%= score.assessed.user.name_full %></td>
         <td><%= score.score %></td>
         <td><%= score.assessor.assessment.category if !score.assessor_id.nil? %></td>
         <td><%= score.status %></td>
@@ -29,6 +29,8 @@
     </tr>
   <% end %>
   </table>
+  <%= will_paginate @assessments %> 
+  
   <%= params.inspect%>
 </div>
 

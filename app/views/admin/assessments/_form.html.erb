@@ -1,0 +1,60 @@
+<%= form_for([:admin,@assessment]) do |f| %>
+<fieldset class="assmnt-form-list">
+	<legend><%= params[:action] == "edit" ? "Edit" : "New" %> Assessment</legend>
+
+  <% if @assessment.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@assessment.errors.count, "error") %> prohibited this assessment from being saved:</h2>
+    <ul>
+    <% @assessment.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <table>
+    <tr class="field">
+      <th><%= f.label :name %></th>
+      <td><%= f.text_field :name %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :description %></th>
+      <td><%= f.text_area :description, :rows => 4 %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :status %></th>
+      <td><%= f.select :status, status_options(@assessment.status) %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :category %></th>
+      <td><%= f.text_field :category %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :answer_type %></th>
+      <td><%= f.select :answer_type, answer_type_options(@assessment.answer_type) %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :display_type %></th>
+      <td><%= f.select :display_type, display_type_options(@assessment.display_type) %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :max_raw %></th>
+      <td><%= f.text_field :max_raw %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :max_weighted %></th>
+      <td><%= f.text_field :max_weighted %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :insructions %></th>
+      <td><%= f.text_area :instructions, :rows => 4 %></td>
+    </tr>
+    
+    </table>
+    
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+</fieldset>
+      
+<% end %>

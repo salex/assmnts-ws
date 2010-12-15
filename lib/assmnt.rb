@@ -1,7 +1,5 @@
 module Assmnt
-  def huh(data)
-    return "sent "+data
-  end
+  
   
   def status_options(status)
     if status.nil?
@@ -69,7 +67,7 @@ module Assmnt
           end
         end
       end
-      if ((scoreMethod == "sum")) # and ((ansType == "checkbox") or (ansType == "select-multiple")))
+      if ((scoreMethod == "sum")  and ((ansType == "checkbox") or (ansType == "select-multiple")))
         maxRaw += sumQues
         maxWeighted += (sumQues * weight)
       else
@@ -100,9 +98,9 @@ module Assmnt
     end
   end
   
-  def dumpPost(post,qa)
+  def dumpPost(post,qa,obj = false,ids = false)
     html = "<div class=\"assmnt-list\" style=\"font-size:.8em\">"
-    html << "<table><tr class=\"list-header\"><th width=\"130\">Scores/(Fail)</th><th colspan=\"2\" class=\"center\">#{post["category"]}</th></tr>"
+    html << "<table><tr class=\"list-header\"><th width=\"150\">Scores/(Fail)</th><th colspan=\"2\" class=\"center\">#{post["category"]}</th></tr>"
     html << "<tr class=\"list-header\"><th width=\"120\">rs*w=ws (F)</th><th>Question</th><th>Answer(s)</th></tr>\n"
     logger.info post.inspect
     post["answers"].each {|key,value|
@@ -115,7 +113,7 @@ module Assmnt
         dropped = " <span style=\"color:red\">(F)</span>"
       end
       ques = qa[:questions][queIDX][:shortname].blank? ? truncateText(qa[:questions][queIDX][:question],30) : qa[:questions][queIDX][:shortname]
-      ques = "[#{key}:#{ques}]"
+      ques = "[#{(key+":") if ids}#{ques}]"
       ansOther = ""
       isArray = value.kind_of? Array
       weight = qa[:questions][queIDX][:weight].nil? ? 0 :qa[:questions][queIDX][:weight]
@@ -135,7 +133,7 @@ module Assmnt
           if post["answers_other"][value[i]]
             ansOther = "{"+post["answers_other"][value[i]]+"}"
           end
-          value_display += "[#{value[i]}:#{ansans}=>#{ansText}#{ansOther}] "
+          value_display += "[#{(value[i]+":") if ids}#{ansans}=>#{ansText}#{ansOther}] "
           
         }
       elsif isArray
@@ -145,11 +143,11 @@ module Assmnt
           if ansIDX.blank?
             next
           end
-          ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],30) : qa[:answers][ansIDX][:shortname]
+          ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],20) : truncateText(qa[:answers][ansIDX][:shortname],20)
           if post["answers_other"][value[i]]
             ansOther = "{"+post["answers_other"][value[i]]+"}"
           end
-          value_display += "[#{value[i]}:#{ansans}#{ansOther}] "
+          value_display += "[#{(value[i]+":") if ids}#{ansans}#{ansOther}] "
         end
       else
         ansID = value.to_i
@@ -157,7 +155,7 @@ module Assmnt
         if ansIDX.blank?
           next
         end    
-        ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],30) : qa[:answers][ansIDX][:shortname]
+        ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],20) : truncateText(qa[:answers][ansIDX][:shortname],20)
         if post["answers_other"][value]
           ansOther = "{"+post["answers_other"][value]+"}"
         end
@@ -177,8 +175,10 @@ module Assmnt
       html << "<tr><td>#{score}</td><td>#{ques}</td><td>#{value_display}</td></tr>"
     }
     html << "</table>"
-    
-    html << "<div class=\"actions\">"+post.inspect+"</div></div>"
+    if obj
+      html << "<div class=\"actions\">"+post.inspect+"</div>"
+    end
+    html << "</div>"
     return html
   end
   
@@ -243,5 +243,23 @@ module Assmnt
       end
     end
     return val
+  end
+end
+
+class String < Object
+=begin 
+      I got tired of trying to use gsub, reqexp, downcase, etc to see if 
+      something was in a list of words. Maybe there is already something
+      out there, but wrote my own
+      in console (or put in lib)
+      
+      status = "progressed"
+      status.in?("Dropped Completed Failed Progressed")
+=end
+  def in?(list,down=true)
+    me =  down ? self.downcase : self
+    list = list.downcase if down
+    inarray = list.split
+    return inarray.include?(me)
   end
 end

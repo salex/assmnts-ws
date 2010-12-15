@@ -1,0 +1,18 @@
+= javascript_include_tag "/javascripts/assmnt.js" 
+%fieldset{:class => "f-left col-6 ", :style => "margin-right:6px"}
+  %legend Instructions
+  .box
+    %p 
+      %span{:class =>"annotate"} explain moving around between assessments
+    = @sidebar.html_safe 
+    %p
+      %span{:class => "annotate"} any other stuff you want to splain
+    
+%fieldset{:class => "f-left col-24"}
+  %legend Area - Profile
+  .box
+    %span{:class => "annotate" }
+      Tis the first of x pages. First check you profile and update any information. If you need to 
+      update your email, edit your account and you will be required to reconfirm your email address.
+  = render "profile"
+.f-clear
