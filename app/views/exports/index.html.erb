@@ -1,0 +1,33 @@
+<fieldset class="index-list">
+	<legend class="navspan">
+	   Exports
+    <%= link_to 'New Export', new_export_path %>
+	</legend>
+
+  <table>
+    <tr class="list-header">
+        <th>Status</th>
+        <th>Token</th>
+        <th>User</th>
+        <th>Sent</th>
+        <th>Received</th>
+        <th>Actions</th>
+    </tr>
+
+  <% @exports.each do |export| %>
+    <tr>
+        <td><%= export.status %></td>
+        <td><%= export.token %></td>
+        <td><%= export.user_id %></td>
+        <td><%= export.sent %></td>
+        <td><%= export.received %></td>
+        <td>
+        <%= link_to 'Show', export %>
+        <%= link_to 'Edit', edit_export_path(export) %>
+        <%= link_to 'Destroy', export, :confirm => 'Are you sure?', :method => :delete %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</fieldset>
+

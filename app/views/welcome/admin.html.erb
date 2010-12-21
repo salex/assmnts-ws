@@ -4,7 +4,13 @@
   <ul>
     <li><%= link_to "Assessments", admin_assessments_path %></li>
     <li><%= link_to "Stages", stages_path %></li>
+    <li><%= link_to "Jobs", jobs_path %> - What citizens see in their job tab</li>
+    <li><%= link_to "Company", company_index_path %> - What company users see in their job tab</li>
+    <li><%= link_to "Scores", scores_path %> - Of little use, but have not removed</li>
+    <li><%= link_to "Exports", exports_path %> - Where company selections are stored and send to 4d</li>
+    <li><%= link_to "Invitation", "/users/invitation/new" %> - To invite company and project manager</li>
+    
+    
   </ul>
   </div>
-  <%= "progressed".in?("Active Completed Failed Progressed")%>
 </fieldset>

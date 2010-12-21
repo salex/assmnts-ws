@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
 
          before_validation :set_defaults
          validates_uniqueness_of  :email, :case_sensitive => false
-         validates_presence_of :email,:name_first, :name_last
+         validates_presence_of :email
          before_create :create_login
          
          attr_accessor :no_email  # used to ???

@@ -15,7 +15,7 @@ module ApplicantsHelper
       status = ""
     end
     types = {"--Status--" => "", "Dropped" => "Dropped", "Selected" => "Selected",
-      "Failed" => "Failed", "Incomplete" => "Incomplete", "New" => "New", "Completed" => "Completed", "All" => "All"}
+      "Failed" => "Failed", "Incomplete" => "Incomplete", "Hold" => "Hold", "Completed" => "Completed", "Withdrew" => "Withdrew","All" => "All"}
     result = options_for_select(types,status.capitalize)
     return result.html_safe
   end

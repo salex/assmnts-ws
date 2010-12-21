@@ -4,13 +4,6 @@
   <%= devise_error_messages! %>
   <%= f.hidden_field :invitation_token %>
   <table >
-    <tr class="field">
-      <th><%= f.label :name_first,"Name" %></th>
-      <td>
-        <strong>First</strong><%= f.text_field :name_first, :size => 15, :class => "required" %>
-        <strong>Last</strong><%= f.text_field :name_last, :size => 15, :class => "required" %>
-      </td>
-    </tr>
     <tr>
     <th><%= f.label :password %></th>
     <td><%= f.password_field :password %></td>

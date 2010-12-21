@@ -51,7 +51,7 @@ a:hover { color: white;background-color:#4C6D99;  }
 
 .f-clear { clear: both; height: 0; width: 0; }
 
-.text-right {text-a lign:right;}
+.text-right {text-align:right;}
 
 #footer { background: #0D2344;border-top:solid 2px #89a;padding:2px; color:#fff; }
 .col-6 { width: 180px; padding-right: 10px; }
@@ -141,7 +141,7 @@ a.crud a.crud:hover { color: #f00!important; }
 a.route { background: transparent url(/images/table_action.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
 a.route a.route:hover { color: #f00!important; }
 a.help { background: transparent url(/images/information.png) no-repeat center left; margin-left: 2px; padding: 4px 4px 1px 18px; }
-
+a.help:hover { color: #00f!important; }
 a.area-show { background: transparent url(/images/page_add.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
 a.area-show a.crud:hover { color: #f00!important; }
 a.area-hide { background: transparent url(/images/page_delete.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
@@ -182,6 +182,8 @@ span.detail-button {border:solid 1px #aaa;vertical-align:middle;margin-right:2px
 	border:solid 1px #000;
 	margin-top:6px;
 }
+.little-box { border: solid 1px #567; background: #fff;white-space:nowrap; margin-right:4px;padding:2px;margin-top:2px;}
+
 .profile {
 	padding:6px;
 	background:#fff;

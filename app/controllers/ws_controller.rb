@@ -1,10 +1,44 @@
 class WsController < ApplicationController
-  #load_and_authorize_resource
+  skip_before_filter :verify_authenticity_token
+  
+  def ruok
+    logger.info request.ip
+    render :text => '{"yes":"I am okay","rail":"rails"}'
+  end
+  
+  def getwork
+    logger.info request.ip
+    export = Export.getwork
+    if export
+     result =  %x[curl  --form-string 'params=#{export.request}'  http://localhost:8080/ws.work.#{export.token}]
+    else
+      result = %x[curl  --form-string 'params=nowork'  http://localhost:8080/ws.work.nowork]
+    end
+    if result.blank?
+      #logger.info "BBBBBBBBBBBBBB got blank back"
+    else
+      Export.didwork(result)
+      #logger.info "RRRRRRRRRRRRRRRR #{result}"
+    end
+    render :nothing => true
+  end
+  
+=begin
+  Everything below here is either convervion routines or
+  test routines. Most can deleted after conversion.
+
+=end
   def get_xml_assmnt
     assmnt =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://localhost:8080/ws.jobstage.get_xml_assmnt']
     hash = ActiveSupport::JSON.decode(assmnt)
     
     render :text => "<textarea>#{assmnt}</textarea>", :layout => true
+  end
+  
+  def verify_authenticity_token
+    return true
+    #curl -X PUT -d '"jobstage":{"jobstage_id":1852,"responses":[{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153517,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153843,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154004,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154020,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154260,"result":"success"},"citizen_stage":{"result":"Success"}}],"result":"Success"}' -H "Content-Type: application/json" http://localhost:3000/ws/88788/didwork
+    #curl -X POST -d 'jobstage={"jobstage_id":1852,"responses":[{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153517,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153843,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154004,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154020,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154260,"result":"success"},"citizen_stage":{"result":"Success"}}],"result":"Success"}' -H "Content-Type: application/json" http://localhost:8080/ws.test.87887
   end
   
   def get_stages
@@ -34,9 +68,10 @@ class WsController < ApplicationController
     end
   end
   
+  
   def test
     # generic test get test routine, pass id and append params in query string  /ws/:id/test?x=y;y=x
-    test_import
+    
     #render :text => params.inspect, :layout => true
     
   end
@@ -107,6 +142,27 @@ class WsController < ApplicationController
     render :text => "I be thruuuu", :layout => true
   end
   
+  def set_status
+    applicants = Applicant.all
+    test = ""
+    applicants.each do |applicant|
+      if applicant.id % 8 == 0
+        applicant.status = "Dropped"
+      elsif applicant.id % 35 == 0
+        applicant.status = "Failed"
+      elsif applicant.id % 25 == 0
+        applicant.status = "Incomplete"
+      elsif applicant.id % 5 == 0
+        applicant.status = "Selected"
+      else
+        applicant.status = "Completed"
+      end
+      test << "set #{applicant.status} <br />"
+      applicant.save
+    end
+    render :text => test, :layout => true
+  end
+  
   def test_import
     jstage ='{"jobstage":{"stage":{"jobstage_id":1852,"job_id":1484,"job_title":"Customer Service Representati","project_id":6367909,"project_name":"RYLA 2009","stage_name":"Application"},
     "user":{"106243":{"adid":105536,"citizen":{"address":"1416 Center Street","birth_dd":"11","birth_mm":"05","citizen_id":106243,"city":"Mobile","email":"bernice1416@yahoo.com","name_first":"Bernice","name_last":"Jones","name_mi":"C","phone_primary":"2514330413","phone_secondary":"2514016081","state":"AL","zip":"36604"},
@@ -167,4 +223,33 @@ class WsController < ApplicationController
     
   end
   
+  def xml_keys
+    assessments = Assessment.where(:status => "Master")
+    assessments.each do |assessment|
+      dot = assessment.category.index(".")
+      if assessment.category.include?("experience")
+        key = "w"
+      else
+        key = assessment.category[dot+1..dot+1]
+      end
+      if assessment.xml_key.blank?
+        assessment.xml_key = key
+        assessment.save
+      end
+      assessment.questions.each do |question|
+        qkey = key + question.sequence.to_s.rjust(2,"0")
+        if question.xml_key.blank?
+          question.xml_key = qkey
+          question.save
+        end
+        question.answers.each do |answer|
+          akey = qkey + answer.sequence.to_s.rjust(2,"0")
+          if answer.xml_key.blank?
+            answer.xml_key = akey
+            answer.save
+          end
+        end
+      end
+    end
+  end
 end

@@ -1,13 +1,17 @@
 AssmntsWs::Application.routes.draw do
+  resources :exports
+
   resources :applicants do
     member do
       get "profile"
+      get "rescore"
     end
   end
   resources :company, :only => [:index] do
     member do
       get "search"
       post "select"
+      get "qa_summary"
     end
   end
 
@@ -18,6 +22,7 @@ AssmntsWs::Application.routes.draw do
       get "applicants"
       get "assessors"
       get "details"
+      get "rescore"
     end
   end
   
@@ -48,13 +53,19 @@ AssmntsWs::Application.routes.draw do
   match 'citizen/lookup' => 'citizens#lookup'
   match 'citizen/:id' => 'citizens#get'
   
-  resources :ws, :except => [:index, :show, :new, :edit, :update, :create, :destroy] do
+  resources :ws do
     member do
       get "get_xml_assmnt"
       get "get_stages"
       get "update_4d"
       get "conv_score"
       get "test"
+      put "didwork"
+      
+    end
+    collection do
+      get "ruok"
+      get "getwork"
     end
   end
 
@@ -73,6 +84,9 @@ AssmntsWs::Application.routes.draw do
            post :post
            get :clone
            get :display
+         end
+         collection do
+           get :group
          end
          resources :questions, :only => [:index, :new, :create] 
        end

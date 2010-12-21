@@ -195,7 +195,7 @@ puts stuff
 
 stage = Stage.where(:id => 11).first
 aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
-applicants = stage.stage_applicants({:filter => true,:status => "conv."})
+applicants = stage.applicants.all
 ans_ids = []
 ans_xml = []
 ques_ids = []
@@ -226,7 +226,11 @@ applicants.each do |applicant|
   if score[0..0] != "{"
     puts "bad score json"
     next
-  end      
+  end 
+  if !score["result"].nil? 
+    puts score.inspect
+    next
+  end    
   ans_xml.each_index do |i|
    score.gsub!(ans_xml[i], ans_ids[i].to_s)
   end
@@ -236,25 +240,28 @@ applicants.each do |applicant|
   score_hash = ActiveSupport::JSON.decode(score)
   aids.each do |aid|
     assessor = stage.assessors.where(:assessment_id => aid).first
-    assessment = assessor.assessment
-    area = score_hash["score"][assessment.category]
-    post = {"post.answer" => area["answers"], "post.answer_other" => area["answers_other"]}
-    scored = assessment.scoreAssessment(post)
-    score_params = {}
-    score_params[:assessor_id] = assessor.id
-    score_params[:assessed_type] = "Applicant"
-    score_params[:assessed_id] = applicant.id
-    score_params[:assessing_type] = "Stage"
-    score_params[:assessing_id] = stage.id
-    score_params[:score_object] = scored.to_json
-    score_params[:score] = scored["score_raw"]
-    score_params[:score_weighted] = scored["score_weighted"]
-    score_params[:answers]  = "|" + scored["all_answers"].join("|") + "|"
-    s = Score.create(score_params)
+    test_score = Score.where(:assessor_id => assessor.id, :assessed_id => applicant.id).first
+    if test_score.nil?
+      assessment = assessor.assessment
+      area = score_hash["score"][assessment.category]
+      post = {"post.answer" => area["answers"], "post.answer_other" => area["answers_other"]}
+      scored = assessment.scoreAssessment(post)
+      score_params = {}
+      score_params[:assessor_id] = assessor.id
+      score_params[:assessed_type] = "Applicant"
+      score_params[:assessed_id] = applicant.id
+      score_params[:assessing_type] = "Stage"
+      score_params[:assessing_id] = stage.id
+      score_params[:score_object] = scored.to_json
+      score_params[:score] = scored["score_raw"]
+      score_params[:score_weighted] = scored["score_weighted"]
+      score_params[:answers]  = "|" + scored["all_answers"].join("|") + "|"
+      s = Score.create(score_params)
+    end
   end
   #applicant.score =  score_params[:score]
   applicant.status = applicant.status.gsub("conv.","")
-  applicant.save
+  applicant.rescore
   
   #need a summary method
 end

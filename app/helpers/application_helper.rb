@@ -5,9 +5,9 @@ module ApplicationHelper
       case current_user.user_type
       when "admin"
         navbar << (link_to "My Dashboard", admin_welcome_index_path, :class => "#{params["action"] == "admin" ? "set" : ""}")
-        navbar << (link_to "Assessments", admin_assessments_path, :class => "#{params["action"] == "assessments" ? "set" : ""}")
+        navbar << (link_to "Assessments", group_admin_assessments_path, :class => "#{params["action"] == "assessments" ? "set" : ""}")
         navbar << (link_to "Assessors", assessors_admin_dba_index_path, :class => "#{params["assessors"] == "admin" ? "set" : ""}")
-        
+        navbar << (link_to "Stages(jobs)", stages_path, :class => "#{params["assessors"] == "admin" ? "set" : ""}")
         navbar << (link_to "Users", users_admin_dba_index_path)
         
       when "company"

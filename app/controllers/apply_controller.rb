@@ -27,6 +27,7 @@ class ApplyController < ApplicationController
     if session[:take].nil?
       redirect_to root_url, :alert => "Your have been logged out or something else screwed up"
     else
+      #aid is a query parameter if they jump back to an area.
       aid = params[:aid] ? params[:aid] : nil
       area = "unknown"
       finished = true
@@ -40,6 +41,7 @@ class ApplyController < ApplicationController
         if session[:steps][key][:complete]
           @sidebar << "<p><a href=\"/apply/area?aid=#{session[:steps][key][:id]}\" >#{cbc} #{section}</a></p>"
           if !aid.nil?
+            #even if complete, if there aid exists, it may be going to this area
             area = session[:steps][key][:section] if session[:steps][key][:id] == aid.to_i
           end
         else
@@ -60,7 +62,7 @@ class ApplyController < ApplicationController
         @assessment = @assessor.assessment
         params[:model_id] = session[:take][:assessed_id]
         @score = Score.get_or_create_score(@assessor,params)
-        session[:take][:score_ids] << @score.id
+        session[:steps][@assessor.sequence][:score_id] = @score.id
         if !@score.score_object.blank?
           params[:post] = json_parse(@score.score_object)
         end
@@ -76,20 +78,20 @@ class ApplyController < ApplicationController
       category = @assessment.category
       @score = Score.find(params[:score_id])
       result = @assessment.scoreAssessment(params)
-      @score.answers = "|" + result["all_answers"].join("|") + "|"
-      # for summary
-      session[:take][:total_raw] += result["total_raw"]
-      session[:take][:total_weighted] += result["total_weighted"]
-      session[:take][:max_raw] += result["max_raw"]
-      session[:take][:max_weighted] += result["max_weighted"]
-      session[:take][:answers] +=  @score.answers
-      
+      @score.answers = "|" + result["all_answers"].join("|") + "|"      
       @score.score_object = result.to_json
       @score.status = "Completed"
       @score.score =  result["score_raw"]
       @score.score_weighted =  result["score_weighted"]
       @score.save
-      session[:steps][category][:complete] = true
+      session[:steps][@assessor.sequence][:complete] = true
+      session[:steps][@assessor.sequence][:total_raw] = result["total_raw"]
+      session[:steps][@assessor.sequence][:total_weighted] = result["total_weighted"]
+      session[:steps][@assessor.sequence][:max_raw] = result["max_raw"]
+      session[:steps][@assessor.sequence][:max_weighted] = result["max_weighted"]
+      session[:steps][@assessor.sequence][:answers] =  result["all_keys"]
+      session[:steps][@assessor.sequence][:score_id] =  @score.id
+      
       area # see if any more assessments
     else
       #TODO need error and redirect
@@ -106,17 +108,29 @@ class ApplyController < ApplicationController
   def make_summary
       summary_score = 0
       summary_score_weighted = 0
-      if session[:take][:max_raw] > 0
-        summary_score = (session[:take][:total_raw] / session[:take][:max_raw]) * 100 
+      total_raw = 0
+      total_weighted = 0
+      max_raw = 0
+      max_weighted = 0
+      answers = ""
+      session[:steps].each do |key,value|
+        total_raw += session[:steps][key][:total_raw]
+        total_weighted += session[:steps][key][:total_weighted]
+        max_raw += session[:steps][key][:max_raw]
+        max_weighted += session[:steps][key][:max_weighted]
+        answers += session[:steps][key][:answers].join
       end
-      if session[:take][:max_weighted] > 0
-        summary_score_weighted = (session[:take][:total_weighted] / session[:take][:max_weighted]) * 100 
+      if max_raw > 0
+        summary_score = (total_raw / max_raw) * 100 
+      end
+      if max_weighted > 0
+        summary_score_weighted = (total_weighted / max_weighted) * 100 
       end
       applicant = Applicant.find(session[:take][:assessed_id])
       if !applicant.nil?
         applicant.score = summary_score
         applicant.weighted = summary_score_weighted
-        applicant.answers =  session[:take][:answers].gsub("||","|")
+        applicant.answers =  answers
         applicant.status = "Completed"
         applicant.status_date = Date.today
         applicant.save

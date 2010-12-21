@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  status: MyString
+  token: MyString
+  request: MyText
+  response: MyText
+  user_id: 1
+  sent: 2010-12-19 06:21:18
+  received: 2010-12-19 06:21:18
+
+two:
+  status: MyString
+  token: MyString
+  request: MyText
+  response: MyText
+  user_id: 1
+  sent: 2010-12-19 06:21:18
+  received: 2010-12-19 06:21:18

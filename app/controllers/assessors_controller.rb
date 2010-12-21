@@ -40,7 +40,6 @@ class AssessorsController < ApplicationController
 
   # POST /assessors
   # POST /assessors.xml
-  load_and_authorize_resource
   def create
     @assessor = Assessor.new(params[:assessor])
 
@@ -78,7 +77,7 @@ class AssessorsController < ApplicationController
     @assessor.destroy
 
     respond_to do |format|
-      format.html { redirect_to(assessors_url) }
+      format.html { redirect_to(assessors_admin_dba_index_path) }
       format.xml  { head :ok }
     end
   end

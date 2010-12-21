@@ -89,4 +89,10 @@ class ApplicantsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  def rescore
+    @applicant = Applicant.find(params[:id])
+    @applicant.rescore
+    redirect_to @applicant
+  end
 end

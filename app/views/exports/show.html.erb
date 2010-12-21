@@ -1,0 +1,48 @@
+<fieldset class="form-list">
+	<legend>Export - Show</legend>
+  	<table>
+	    <tr>
+      <th>Status:</th>
+      <td><%= @export.status %></td>
+    </tr>
+
+	    <tr>
+      <th>Token:</th>
+      <td><%= @export.token %></td>
+    </tr>
+
+	    <tr>
+      <th>Request:</th>
+      <td><%= content_tag(:textarea,@export.request,:rows => 6, :cols => 80) %></td>
+    </tr>
+
+	    <tr>
+      <th>Response:</th>
+      <td><%= content_tag(:textarea,@export.response,:rows => 6, :cols => 80) %></td>
+    </tr>
+
+	    <tr>
+      <th>User:</th>
+      <td><%= @export.user_id %></td>
+    </tr>
+
+	    <tr>
+      <th>Sent:</th>
+      <td><%= @export.sent %></td>
+    </tr>
+
+	    <tr>
+      <th>Received:</th>
+      <td><%= @export.received %></td>
+    </tr>
+
+		</table>
+</fieldset>
+<div class="actions navspan">
+	<%= link_to 'Edit', edit_export_path(@export) %> |
+	<%= link_to 'Back to Exports', exports_path %>
+</div>
+<div class="relations">
+	<div id="related">
+	</div>
+</div>

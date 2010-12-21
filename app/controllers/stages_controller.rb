@@ -93,7 +93,7 @@ class StagesController < ApplicationController
   end
   
   def applicants
-    @stage = Stage.find(params[:id])
+    #@stage = Stage.find(params[:id])
     @applicants = @stage.applicants.order("weighted DESC").paginate(:per_page => 20, :page => params[:page])
     respond_to do |format|
       format.html {render :template => "stages/_applicants"}
@@ -119,5 +119,11 @@ class StagesController < ApplicationController
     render :text => "hi details"
   end
   
+  def rescore
+    @stage = Stage.find(params[:id])
+    @stage.rescore
+    redirect_to @stage
+    
+  end
   
 end

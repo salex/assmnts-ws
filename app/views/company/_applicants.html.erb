@@ -1,45 +1,68 @@
-<fieldset  id="applicants">
-  <legend>Applicants</legend>
+
+<fieldset class="index-list">
+  <legend>Applicants
+    </legend>
+    <%= form_for(:applicant, :url => "select", :controller => "company") do |f| %>
   
-  
-<div class="index-list">
-	<div class="actions">
+	<div class="actions">    
+	  <select id="selection" name="applicant[selection]">
+			<option value="">--Select Action--</option>
+			<option value="Dropped">Drop</option>
+			<option value="Withdrew">Withdraw</option>
+			<option value="Selected">Select</option>
+			<option value="Hold">Hold</option>
+			<option value="Profile">Print Profiles</option>
+		</select>
+    <%= f.submit :value => "Update Applicants"%>
+    
 	</div>
-  <%= form_for(:applicant, :url => "select", :controller => "company") do |f| %>
     <table>
       <tr class="list-header">
-          <th>Applicant</th>
-          <th>City</th>
-          <th>score</th>
-          <th>Change Status</th>
-          <th>Date</th>
-          <td>Actions</td>
+        <th><a class="route" href="javascript:toggle_checkbox_class('sel');">Select</a></th>
+        <th>Applicant <span class="annotate">Click on name for summary</span></th>
+        <th>City</th>
+        <th>Weighted</th>
+        <th>Status</th>
+        <th>Date</th>
+        <td>Actions
+          <%= f.hidden_field :fullpath ,:value => request.fullpath%>
+          </td>
       </tr>
+      <% alt = true%>
 
-      <% @applicants.each do |applicant| 
-        citizen = applicant.user%>
-        <tr>
-          <td><%= citizen.name_full %></td>
-          <td><%= citizen.city %> <%= citizen.state %></td>
-          <td><%= format_money(applicant.score) %></td>
+      <% @applicants.each do |applicant| %>
+        <% citizen = applicant.user%>
+        <% alt = !alt %>
+        
+        <tr <%=raw alt ? "class=\"alt\"" : ""%>>
           <td>
-            <%= f.hidden_field :id , :name => "applicant[id][]", :value => applicant.id%>
-            <%= f.select :status,applicant_status_options(nil), {},:name => "applicant[status][]" %>
+            <%= check_box_tag  "applicant[id][]", applicant.id, false,:class => "sel", :id => nil if applicant.status != "Selected"%>
+          </td>
+          <td><a class="help" href="#" 
+            onclick="if ($(sum<%=applicant.id%>).style.display == 'table-row') { $(sum<%=applicant.id%>).style.display = 'none'}else {$(sum<%=applicant.id%>).style.display = 'table-row'} ;"
+            
+            ><%= citizen.name_full %></a>
+            </td>
+          <td><%= citizen.city %> <%= citizen.state %></td>
+          <td><%= format_money(applicant.weighted) %></td>
+          <td>
             <%= applicant.status %>
             </td>
           <td><%= applicant.status_date %></td>
           <td>
-            <%= link_to "Profile", profile_applicant_path(applicant.id) %>
+            <%= link_to "Profile", profile_applicant_path(applicant.id), :target => "_blank" %>
+          </td>
+        </tr>
+        <tr style="display:none" id="sum<%=applicant.id%>">
+          <td colspan="7">
+            <pre><%=applicant.make_score_summary%></pre>
           </td>
         </tr>
     
     
     <% end %>
     </table>
-    <%= f.submit :value => "Update Applicants"%>
   <% end%>
   <%= will_paginate @applicants %> 
   
-</div>
 </fieldset>
-

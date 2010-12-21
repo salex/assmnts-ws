@@ -1,10 +1,16 @@
 <div class="actions">
   <%= form_tag search_company_path, :method => 'get' do %>  
     <p>  
-      Name <%= text_field_tag :name, params[:name] %>  
-      Phone <%= text_field_tag :phone, params[:phone] %>  
-      eMail <%= text_field_tag :email, params[:email] %>  
+      Name <%= text_field_tag :name, params[:name], :size =>15 %>  
+      Phone <%= text_field_tag :phone, params[:phone], :size =>15 %>  
+      eMail <%= text_field_tag :email, params[:email], :size =>15 %>
+      <a class="help" href="<%=qa_summary_company_path(@stage)%>" target="_blank">aKey</a> <%= text_field_tag :answers, params[:answers] %>  
+        
       Status <%= select_tag :status, applicant_status_options_all(params[:status]) %>
+      <%if params[:filter]%>
+        <span class="route"><%= link_to "All", search_company_path(@stage)%></span>
+      <%end%>
+      
       <%= submit_tag "Search", :name => "filter" %>  
     </p>  
   <% end %>  

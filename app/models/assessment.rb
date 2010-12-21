@@ -1,7 +1,16 @@
 class Assessment < ActiveRecord::Base
   has_many :questions, :order => "sequence", :dependent => :destroy
-  
+  has_many :assessors
+  attr_accessor :assessor_count
     
+  def assessor_count
+    assessors.count
+  end
+  
+  def can_destroy?
+    (assessor_count == 0) && (status != "Master")
+  end
+  
   def self.search(search)  
     if search  
       where('name LIKE ?', "%#{search}%")  
@@ -26,8 +35,11 @@ class Assessment < ActiveRecord::Base
     totalScoreWeighted = 0
     category = self.category
     all_answers = []
+    all_keys = []
     failed = []
     question_raw = {}
+    akeys = qa[:answers].map(&:xml_key)
+    akeys.collect! {|k| k.gsub("_","").delete(k.slice(1..1))}
     params["post.answer"].each { |key, value| # key = question.id, value = arrary of answer_id and, if text, text value
       queIDX = qa[:q_ids].index(key.to_i)
       if queIDX.blank?
@@ -56,6 +68,7 @@ class Assessment < ActiveRecord::Base
           if ansIDX.blank?
             next
           end
+          all_keys << akeys[ansIDX]
           isTextScored =  !qa[:answers][ansIDX][:answer_eval].blank? 
           if isTextScored and isScored
             val = scoreText(qa[:answers][ansIDX][:value],qa[:answers][ansIDX][:answer_eval],ansText,ansType) if !ansText.blank?
@@ -79,6 +92,7 @@ class Assessment < ActiveRecord::Base
           if ansIDX.blank?
             next
           end
+          all_keys << akeys[ansIDX]
           if (isScored)
             val = qa[:answers][ansIDX][:value].to_f
           else
@@ -101,6 +115,7 @@ class Assessment < ActiveRecord::Base
         if ansIDX.blank?
           next
         end
+        all_keys << akeys[ansIDX]
         if (isScored)
           val = qa[:answers][ansIDX][:value]
         else
@@ -145,6 +160,7 @@ class Assessment < ActiveRecord::Base
 
     score = {"answers" => params["post.answer"],
       "all_answers" => all_answers,
+      "all_keys" => all_keys,
       "failed" => failed, 
       "answers_other" => params["post.answer_other"].nil? ? {} : params["post.answer_other"],
       "question_raw" => question_raw,

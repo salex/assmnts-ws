@@ -1,5 +1,5 @@
 class Citizen < User
-  validates_presence_of  :address, :city, :state, :zip, :phone_primary,:birth_mm, :birth_dd
+  validates_presence_of  :address, :city, :state, :zip, :phone_primary,:birth_mm, :birth_dd,:name_first, :name_last
   def self.lookup_citizen(params)
     #first check the users table
     result, citizen = self.find_citizen(params)        

@@ -1,0 +1,54 @@
+<%= form_for(@export) do |f| %>
+<fieldset class="form-list">
+	<legend>Export - <%= @export.id.nil? ? "New" : "Edit"%></legend>
+
+  <% if @export.errors.any? %>
+  <div id="errorExplanation">
+    <h2><%= pluralize(@export.errors.count, "error") %> prohibited this export from being saved:</h2>
+    <ul>
+    <% @export.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <table>
+    <tr class="field">
+      <th><%= f.label :status %></th>
+      <td><%= f.text_field :status %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :token %></th>
+      <td><%= f.text_field :token %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :request %></th>
+      <td><%= f.text_area :request %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :response %></th>
+      <td><%= f.text_area :response %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :user_id %></th>
+      <td><%= f.text_field :user_id %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :sent %></th>
+      <td><%= f.datetime_select :sent %></td>
+    </tr>
+    <tr class="field">
+      <th><%= f.label :received %></th>
+      <td><%= f.datetime_select :received %></td>
+    </tr>
+    </table>
+    
+  <div class="actions navspan" >
+    <%= f.submit %>
+    <%= link_to 'Show', @export if params[:action] == "edit"%> 
+    <%= link_to 'Back to Exports ', exports_path %>
+    
+  </div>
+</fieldset>
+      
+<% end %>

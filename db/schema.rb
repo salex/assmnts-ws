@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101213225723) do
+ActiveRecord::Schema.define(:version => 20101219122118) do
 
   create_table "answers", :force => true do |t|
     t.integer  "master_id"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20101213225723) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.decimal  "weighted"
+    t.date     "applied_date"
   end
 
   create_table "assessments", :force => true do |t|
@@ -74,6 +75,21 @@ ActiveRecord::Schema.define(:version => 20101213225723) do
   end
 
   add_index "assessors", ["assessed_model"], :name => "index_assessors_on_assessed_model"
+
+  create_table "exports", :force => true do |t|
+    t.string   "status"
+    t.string   "token"
+    t.text     "request"
+    t.text     "response"
+    t.integer  "user_id"
+    t.datetime "sent"
+    t.datetime "received"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "exports", ["status"], :name => "index_exports_on_status"
+  add_index "exports", ["token"], :name => "index_exports_on_token"
 
   create_table "questions", :force => true do |t|
     t.integer  "master_id"
@@ -127,6 +143,8 @@ ActiveRecord::Schema.define(:version => 20101213225723) do
     t.integer  "number_jobs"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "expires_date"
+    t.string   "ad_url"
   end
 
   create_table "users", :force => true do |t|

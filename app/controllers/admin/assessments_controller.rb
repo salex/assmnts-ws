@@ -11,6 +11,15 @@ module Admin
         format.xml  { render :xml => @assessments }
       end
     end
+    
+    def group
+      @assessments = Assessment.group(:name).paginate(:per_page => 20, :page => params[:page])
+
+      respond_to do |format|
+        format.html # index.html.erb
+        format.xml  { render :xml => @assessments }
+      end
+    end
 
     # GET /assessments/1
     # GET /assessments/1.xml

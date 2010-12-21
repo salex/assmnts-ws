@@ -28,7 +28,7 @@
         <td>
         <%= link_to 'Show', admin_question_path(question) %>
         <%= link_to 'Edit', edit_admin_question_path(question) %>
-        <%= link_to 'Destroy', admin_question_path(question), :confirm => 'Are you sure?', :method => :delete %>
+        <%= link_to 'Destroy', admin_question_path(question), :confirm => 'Are you sure?', :method => :delete if question.can_destroy? %>
       </td>
     </tr>
   <% end %>

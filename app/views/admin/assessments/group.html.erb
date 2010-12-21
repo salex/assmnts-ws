@@ -1,5 +1,5 @@
 <fieldset class="index-list">
-	<legend>Assessments
+	<legend>Assessment Groups
 	  <span class="crud">
       <%= link_to 'New Assessment', new_admin_assessment_path %>
   	</span>
@@ -21,8 +21,7 @@
         <th>Description</th>
         <th>Status</th>
         <th>Category</th>
-        <th>Raw</th>
-        <th>Weight</th>
+        <th>Assessors</th>
         <th>Actions</th>
     </tr>
     <% alt = true%>
@@ -35,12 +34,9 @@
         <td><%=raw truncateText(assessment.description,25,"middle") %></td>
         <td><%= assessment.status %></td>
         <td><%= assessment.category %></td>
-        <td><%= assessment.max_raw %></td>
-        <td><%= assessment.max_weighted %></td>
+        <td><%= assessment.assessors.count %></td>
         <td>
-        <%= link_to 'Show', admin_assessment_path(assessment) %>
-        <%= link_to 'Edit', edit_admin_assessment_path(assessment) %>
-        <%= link_to 'Destroy', admin_assessment_path(assessment), :confirm => 'Are you sure?', :method => :delete if assessment.can_destroy? %>
+        <%= link_to 'List Assessments', admin_assessments_path(:search => assessment.name) %>
       </td>
     </tr>
   <% end %>

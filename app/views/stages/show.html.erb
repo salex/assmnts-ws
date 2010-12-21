@@ -11,9 +11,17 @@
       <td><%= @stage.status %></td>
     </tr>
 
-	    <tr>
+	  <tr>
       <th>Note:</th>
       <td><%= @stage.note %></td>
+    </tr>
+	  <tr>
+      <th>Expires Date:</th>
+      <td><%= @stage.expires_date %></td>
+    </tr>
+	  <tr>
+      <th>Ad url:</th>
+      <td><%= @stage.ad_url %></td>
     </tr>
 
 	    <tr>
@@ -71,7 +79,7 @@
   <legend>Related
     <span class="route">
     	<%= link_to 'Assessors', assessors_stage_path(@stage), :remote => true %> 
-    	<%= link_to 'Applicants', applicants_stage_path(@stage), :remote => true %> 
+    	<%= link_to 'Applicants', applicants_stage_path(@stage) %> 
     </span>
     </legend>
     <div id="related">

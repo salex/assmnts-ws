@@ -2,20 +2,69 @@
 class Applicant < ActiveRecord::Base
   belongs_to :stage
   belongs_to :user
-  has_many :scores, :as => :assessed
-  include Assmnt
-  CAN_APPLY = "New Incomplete Complete Failed"
+  has_many :scores, :as => :assessed, :dependent => :destroy
 
+  def application_reviewed?
+    not_reviewed = %w{incomplete completed failed}.include?(self.status.downcase)
+    return !not_reviewed
+  end
+  
+  def make_score_summary
+    summary = ""
+    scores = self.scores
+    scores.each do |score|
+      so = score.score_object
+      cat_start = so.index('"category"')
+      cat_end = so.index('"max_raw"')
+      cat = so.slice(cat_start..cat_end)
+      score_start =  so.index('"score_weighted"')
+      score_end = score_start + 22
+      dascore = so.slice(score_start..score_end)
+      if cat.include?("experience")
+        keys_start = 1 
+        keys_end = so.index('"all_answers"') - 1
+        keys = so.slice(keys_start..keys_end).gsub(/"\d+"/,"")
+        keys.gsub!(/,,/,",")
+        keyarray = keys.split("],")
+        keys = keyarray.join("],\n\t")
+        dascore = ""
+      else
+        keys_start = so.index('"all_keys"') 
+        keys_end = so.index('"answers_other"')  - 1
+        keys = so.slice(keys_start..keys_end)
+        if keys.length > 100
+          pos = keys.index(",",100)
+          keys = keys.slice(0..pos)+"\n\t" + keys.slice((pos + 1)..-1)
+        end
+      end
+      score_start =  so.index('"score_weighted"')
+      score_end = score_start + 22
+      tmp = cat+"\n\t"+keys+"\n\t"+ dascore
+      #summary << so.slice((so.index("total_raw") - 1)..-1)+"\n\n"
+      summary << tmp.gsub(/"/,"") + "\n\n"
+    end
+    summary
+  end
   def update_4d
+    citizen_update = {"citizen" => citizen}
+    fdata = citizen_update.to_json
+    citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.citizen.update4d']
+    if citizen[0..0] == "{"
+      citizen = ActiveSupport::JSON.decode(citizen)
+    else
+      citizen = {"error" => citizen, "fdata" => fdata}
+    end
+    #TODO need to evaluate at some placess if success
+    return citizen
+		
+  end
+  def citizen_to_4d
     user = self.user
     if user.citizen_id.nil? || user.citizen_id == 0
       action = "create"
     else
       action = "update"
     end
-        
-    stage = {}
-    
     citizen = {}
     citizen["citizen.phone1"] = user.phone_primary
     citizen["citizen.phone2"] = user.phone_secondary
@@ -33,16 +82,8 @@ class Applicant < ActiveRecord::Base
     if action == "update"
       citizen["id"] = user.citizen_id
     end
-    update4d = {"citizen" => citizen}
-    fdata = update4d.to_json
-    citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.citizen.update4d']
-    if citizen[0..0] == "{"
-      citizen = ActiveSupport::JSON.decode(citizen)
-    else
-      citizen = {"error" => citizen, "fdata" => fdata}
-    end
-    #TODO need to evaluate at some placess if success
-    return citizen
+    citizen_update = citizen
+    return citizen_update
 		
   end
   
@@ -67,6 +108,7 @@ class Applicant < ActiveRecord::Base
     answers = ""
     score_raw = []
     score_weighted = []
+    self.answers = ""
     assessors.each do |assessor|
       assessment = assessor.assessment
       max_raw << assessment.max_raw
@@ -86,7 +128,8 @@ class Applicant < ActiveRecord::Base
       score.update_attributes(score_params)
       score_raw << scored["total_raw"]
       score_weighted << scored["total_weighted"]
-      answers << score_params[:answers] 
+      #answers << score_params[:answers] 
+      self.answers << scored["all_keys"].join 
       score.save
     end
     if score_raw.length > 0
@@ -98,10 +141,12 @@ class Applicant < ActiveRecord::Base
       end
       self.score = max_raw[0] > 0 ? (score_raw[0] / max_raw[0]) * 100 : 0
       self.weighted = max_weighted[0] > 0 ? (score_weighted[0] / max_weighted[0]) * 100 : 0
-      self.answers = answers.gsub("||","|")
+      #self.answers = answers.gsub("||","|")
       self.save
+      
     end
-    
   end
+  
+  
   
 end
