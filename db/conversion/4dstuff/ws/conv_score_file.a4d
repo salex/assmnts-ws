@@ -1,0 +1,193 @@
+<%
+	set current script timeout(6000)
+	
+/*
+	This method is passed a jobstage id and citizen id to find the applicationData record
+	The scoring object is extracted and converted to a collection. The collection is
+	then filtered to extract the scores based on an xml_key that all legacy applications
+	followed.
+	
+	The scoring object is then converted to json and returned.
+
+
+*/
+method "make_score"($score_hash;$wh)
+	
+	$experience_temp := a4d.utils.filterCollection($score_hash;"f_wh@")
+	$skill_temp := a4d.utils.filterCollection($score_hash;"f_ans_sk@")
+	$general_temp := a4d.utils.filterCollection($score_hash;"f_ans_ge@")
+	$education_temp := a4d.utils.filterCollection($score_hash;"f_ans_ed@")
+	$custom_temp := a4d.utils.filterCollection($score_hash;"f_ans_cu@")
+
+	$other_temp := a4d.utils.filterCollection($score_hash;"@_other")
+	$experience_conv := new collection
+	for each ($experience_temp; $key; $value)
+		$experience_conv{$wh{$key}} := $value 
+	end for each
+	$experience_conv{"f_ans_wh_04_01"} := $other_temp{"f_wh_other"}
+	delete collection item($other_temp;"f_wh_other")
+	array text($exarray;0)
+	$experience := new collection("answers"; new collection("wh_01";$exarray;"wh_02";$exarray;"wh_03";$exarray;"wh_04";$exarray);"answers_other";new collection)
+	for each ($experience_conv; $key; $value)
+		$akey := substring($key;7)
+		$qkey := substring($akey;1;5)
+		$experience{"answers"}{$qkey}{} := $akey
+		$experience{"answers"}{$qkey}{} := replace string($value;"\\";"")
+	
+	end for each
+
+	$general := new collection("answers"; new collection;"answers_other";new collection )
+	for each ($general_temp; $key; $value)
+		$akey := substring($key;7)
+		$qkey := substring($akey;1;5)
+		$general{"answers"}{$qkey} := $exarray
+		if (is array(type($value)))
+			for each ($value; $ans; $index)
+				$general{"answers"}{$qkey}{} := $qkey + "_" + $ans
+			end for each
+		else
+			$general{"answers"}{$qkey}{} := $qkey + "_" + $value
+		end if
+	end for each
+	$general{"answers_other"}{"ge_01_01"} := $other_temp{"f_ge_01_other"}
+	$general{"answers_other"}{"ge_02_01"} := $other_temp{"f_ge_02_other"}
+	$general{"answers_other"}{"ge_06_02"} := $other_temp{"f_ge_06_other"}
+
+	$education := new collection("answers"; new collection;"answers_other";new collection)
+	for each ($education_temp; $key; $value)
+		$akey := substring($key;7)
+		$qkey := substring($akey;1;5)
+		$education{"answers"}{$qkey} := $exarray
+		if (is array(type($value)))
+			for each ($value; $ans; $index)
+				$education{"answers"}{$qkey}{} := $qkey + "_" + $ans
+			end for each
+		else
+			$education{"answers"}{$qkey}{} := $qkey + "_" + $value
+		end if
+	end for each
+	$education{"answers_other"}{"ed_01_02"} := $other_temp{"f_ed_01_02_other"}
+	$education{"answers_other"}{"ed_01_05"} := $other_temp{"f_ed_01_05_other"}
+	$education{"answers_other"}{"ed_01_06"} := $other_temp{"f_ed_01_06_other"}
+	$education{"answers_other"}{"ed_01_07"} := $other_temp{"f_ed_01_07_other"}
+	$education{"answers_other"}{"ed_01_09"} := $other_temp{"f_ed_01_09_other"}
+	$education{"answers_other"}{"ed_01_11"} := $other_temp{"f_ed_01_11_other"}
+	$education{"answers_other"}{"ed_01_13"} := $other_temp{"f_ed_01_13_other"}
+
+	$skill := new collection("answers"; new collection;"answers_other";new collection)
+	for each ($skill_temp; $key; $value)
+		$akey := substring($key;7)
+		$qkey := substring($akey;1;5)
+		$skill{"answers"}{$qkey} := $exarray
+		if (is array(type($value)))
+			for each ($value; $ans; $index)
+				$skill{"answers"}{$qkey}{} := $qkey + "_" + $ans
+			end for each
+		else
+			$skill{"answers"}{$qkey}{} := $qkey + "_" + $value
+		end if
+	end for each
+
+	$custom := new collection("answers"; new collection;"answers_other";new collection)
+	for each ($custom_temp; $key; $value)
+		$akey := substring($key;7)
+		$qkey := substring($akey;1;5)
+		$custom{"answers"}{$qkey} := $exarray
+		if (is array(type($value)))
+			for each ($value; $ans; $index)
+				$custom{"answers"}{$qkey}{} := $qkey + "_" + $ans
+			end for each
+		else
+			$custom{"answers"}{$qkey}{} := $qkey + "_" + $value
+		end if
+	end for each
+	return (new collection("application.general";$general;"application.education";$education;"application.experience";$experience;"application.skills";$skill;"application.custom";$custom))
+	
+end method
+method "getWHxref"
+	$conv := new collection
+	$conv{"f_wh1"} := "f_ans_wh_01"
+	$conv{"f_wh2"} := "f_ans_wh_02"
+	$conv{"f_wh3"} := "f_ans_wh_03"
+	$conv{"f_wh1_addr"} := "f_ans_wh_01_02"
+	$conv{"f_wh1_duty"} := "f_ans_wh_01_03"
+	$conv{"f_wh1_esal"} := "f_ans_wh_01_07"
+	$conv{"f_wh1_from"} := "f_ans_wh_01_04"
+	$conv{"f_wh1_leav"} := "f_ans_wh_01_08"
+	$conv{"f_wh1_name"} := "f_ans_wh_01_01"
+	$conv{"f_wh1_ssal"} := "f_ans_wh_01_06"
+	$conv{"f_wh1_to"} :=   "f_ans_wh_01_05"
+	$conv{"f_wh2_addr"} := "f_ans_wh_02_02"
+	$conv{"f_wh2_duty"} := "f_ans_wh_02_03"
+	$conv{"f_wh2_esal"} := "f_ans_wh_02_07"
+	$conv{"f_wh2_from"} := "f_ans_wh_02_04"
+	$conv{"f_wh2_leav"} := "f_ans_wh_02_08"
+	$conv{"f_wh2_name"} := "f_ans_wh_02_01"
+	$conv{"f_wh2_ssal"} := "f_ans_wh_02_06"
+	$conv{"f_wh2_to"} :=   "f_ans_wh_02_05"
+	$conv{"f_wh3_addr"} := "f_ans_wh_03_02"
+	$conv{"f_wh3_duty"} := "f_ans_wh_03_03"
+	$conv{"f_wh3_esal"} := "f_ans_wh_03_07"
+	$conv{"f_wh3_from"} := "f_ans_wh_03_04"
+	$conv{"f_wh3_leav"} := "f_ans_wh_03_08"
+	$conv{"f_wh3_name"} := "f_ans_wh_03_01"
+	$conv{"f_wh3_ssal"} := "f_ans_wh_03_06"
+	$conv{"f_wh3_to"} :=   "f_ans_wh_03_05"
+	$conv{"f_wh"} := "f_ans_wh_04"
+	$conv{"f_wh_other"} := "f_ans_wh_04_01"
+	$rev := new collection
+	for each ($conv; $key; $value)
+		$rev{$value} := $key
+	end for each
+	$conv := merge collections($conv;$rev)
+	return($conv)
+end method
+writebr(current time)
+writebr(tickcount)
+$tc := tickcount
+
+c_blob($scores)
+$form := _form
+$query := _query
+$params := merge collections($form;$query)
+//a4d.console.dump collection($params)
+
+//$arg := rest.utils.jsonParseSimple($params{"fdata"})
+
+$wh := getwhxref
+query([applicationdata]; [applicationdata]jobstageid = num($params{"jobstageid"}))
+//query([applicationdata]; &;[applicationdata]citizenid = num($arg{"citizenid"}))
+
+//reduce selection([applicationdata];200)
+writebr(records in selection([applicationdata]))
+First Record([applicationdata])
+$cnt := 0
+while (not(end selection([applicationdata])))
+	$who := new collection("jobstageid";[applicationdata]jobstageid;"citizenid";[applicationdata]citizenid)
+	if (blob size([applicationdata]import_obj) # 0)
+		$obj := ot_blobToObject(->[applicationdata]import_obj)
+		$score_hash := xml.ObjToColl($obj)
+		OT_Clear ($obj)
+		if (is a collection($score_hash))
+			$score_object := make_score($score_hash; $wh)
+			$score_object{"who"} := $who
+			$json := a4d.json.new
+			$json->add("score";$score_object)
+			$score := $json->tojson
+			$score_text := BLOB to text ($score; text without length) 
+			text to blob($score_text+"\n"; $scores; text without length; *)
+			deep clear collection($score_object)
+			deep clear collection($score_hash)
+			write to console($cnt++)
+		end if
+	end if
+	next record([applicationdata])
+end while
+write to console("out of loop")
+$file := "stage_"+$params{"jobstageid"}+"_scores.json"
+blob to document(join paths(get root; "public"; $file);$scores)
+writebr(current time)
+writebr(tickcount)
+writebr(tickcount - $tc)
+
+%>

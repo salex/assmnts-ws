@@ -1,0 +1,23 @@
+<%
+	set current script timeout(6000)
+	
+	$x := tickcount
+	writebr($x)
+	writebr(current time)
+	c_blob($result)
+	query([applicationdata]; [applicationdata]jobstageid = 1852)
+	//reduce selection([applicationdata];60)
+	array longint($citizens;0)
+	selection to array([applicationdata]citizenID;$citizens)
+	
+	for each ($citizens; $value; $index)
+		$score_json := rails.get_ad_score(1852;$value)
+		text to blob($score_json + "\n"; $result; text without length; *)
+	end for each
+	writebr((tickcount - $x)/60)
+	writebr(current time)
+	writebr(blob size($result))
+	$file := "stage_1852_scores.json"
+	blob to document(join paths(get root; "public/conversion"; $file);$result)
+	
+%>

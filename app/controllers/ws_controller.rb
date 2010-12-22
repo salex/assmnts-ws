@@ -23,6 +23,15 @@ class WsController < ApplicationController
     render :nothing => true
   end
   
+  def getprofile
+    @applicant = Applicant.joins(:user).where("users.citizen_id" => 141708).joins(:stage).where("stages.jobstage_id" => 1840).first
+    @scores = @applicant.stage.get_applicant_scores(@applicant)
+    @citizen = @applicant.user
+    respond_to do |format|
+      format.html {render :template => "applicants/profile"}
+    end
+  end
+  
 =begin
   Everything below here is either convervion routines or
   test routines. Most can deleted after conversion.
@@ -72,7 +81,7 @@ class WsController < ApplicationController
   def test
     # generic test get test routine, pass id and append params in query string  /ws/:id/test?x=y;y=x
     
-    #render :text => params.inspect, :layout => true
+    render :text => current_user.to_json, :layout => true
     
   end
   

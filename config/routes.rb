@@ -60,12 +60,12 @@ AssmntsWs::Application.routes.draw do
       get "update_4d"
       get "conv_score"
       get "test"
-      put "didwork"
       
     end
     collection do
       get "ruok"
       get "getwork"
+      get "getprofile"
     end
   end
 
@@ -97,9 +97,9 @@ AssmntsWs::Application.routes.draw do
        resources :answers, :only => [:show, :edit, :update, :destroy]
        
      end
-    match 'job/apply' => 'actions#take'
+    #match 'job/apply' => 'actions#take'
     match 'apply/:action' => 'apply#:action'
-    match ':controller/:action/:id/:assessed/:assessed_id'
+    #match ':controller/:action/:id/:assessed/:assessed_id'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

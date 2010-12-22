@@ -5,7 +5,7 @@
   = @applicant.stage.job_title
 %fieldset{:class => "f-left form-list",:style => "width:40%"}
   %legend Contact
-  %table.profile
+  %table{:class => "profile p100"}
     = showfield("Name", @citizen.name_full)
     = showfield("Address", @citizen.address)
     = showfield("City/St/Zip","#{@citizen.city}, #{@citizen.state} #{@citizen.zip}")
@@ -27,14 +27,14 @@
   - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
   - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
   - skills = dumpPost(@score_hash,@qa).html_safe
-  %table{:class => "f-left profile"}
+  %table{:class => "f-left profile p50"}
     <tr><td><strong>Area</strong></td><td><strong>Years</strong></td></tr>
     - 0.upto(9) do |i|
       = show_question(@qa[:questions][i])
-  %table{:class => "f-left profile"}
+  %table{:class => "f-left profile p50"}
     <tr><td><strong>Area</strong></td><td><strong>Years</strong></td></tr>
   
-    - 0.upto(9) do |i|
+    - 10.upto(19) do |i|
       = show_question(@qa[:questions][i])
   .f-clear
 .f-clear
@@ -45,8 +45,8 @@
     Education
     %span.annotate
       = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
-  %table.profile
-    <tr><td><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
+  %table{:class => "profile p100"}
+    <tr><td class="p30"><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
   
     - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
     - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
@@ -60,8 +60,8 @@
     General
     %span.annotate
       = "Raw #{format_money(@score.score)}, Weighted #{format_money(@score.score_weighted)} "
-  %table.profile
-    <tr><td><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
+  %table{:class => "profile p100"}
+    <tr><td class="p30"><strong>Question</strong></td><td><strong>Ans</strong></td></tr>
   
     - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
     - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
@@ -76,13 +76,13 @@
   - @score = @scores["application.experience"].first
   - @score_hash = ActiveSupport::JSON.decode(@score.score_object)
   - @qa = Assessment.find(@score_hash["assessment_id"]).getQandA
-  %table{:class => "f-left profile"}
+  %table{:class => "f-left profile p30"}
     - 0.upto(7) do |i|
       = show_answer_text(@qa[:answers][i])
-  %table{:class => "f-left profile"}
+  %table{:class => "f-left profile p30"}
     - 8.upto(15) do |i|
       = show_answer_text(@qa[:answers][i])
-  %table{:class => "f-left profile"}
+  %table{:class => "f-left profile p30"}
     - 16.upto(23) do |i|
       = show_answer_text(@qa[:answers][i])
   .f-clear

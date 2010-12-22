@@ -1,0 +1,150 @@
+<% 
+	global($rest)
+	$rest := rest.get
+	
+	method "get_citizen_hash"
+		$hash := new collection("email"; [citizen]emailaddress ;"name_full"; [citizen]fullname ;"name_first"; [citizen]firstname ;\\
+		"name_last"; [citizen]lastname ;"name_mi"; [citizen]mi ;"phone_primary"; [citizen]phone1 ;"phone_secondary"; [citizen]phone2 ;\\
+		"address"; [citizen]address ;"city"; [citizen]city ;"state"; [citizen]state ;"zip"; [citizen]zip ;\\
+		"birth_mm"; substring([citizen]birthmmdd;1;2) ;"birth_dd"; substring([citizen]birthmmdd;3;4);"citizen_id"; [citizen]id)
+		a4d.console.dump collection($hash)
+		return($hash)
+	end method
+	
+	method "get_citizen"($zip)
+		query([citizen]; [citizen]id = [webuser]citizenID)
+		if ((records in selection([citizen]) # 1) | ([citizen]zip # $zip))
+			return(new collection)
+		end if
+		return(get_citizen_hash)
+	end method
+	
+	method "find_citizen"($citizen)
+		$fullname := $citizen{"name_last"} + ", " + $citizen{"name_first"}
+		query([webuser]; [webuser]email = $citizen{"email"})
+		$notFound := records in selection([webuser]) # 1
+		$manyFound := records in selection([webuser]) > 1
+		if ($notFound)
+			if ($manyFound)
+				query([webuser]; [webuser]fullname = $fullname)
+			else
+				query([webuser]; [webuser]login = $citizen{"login"})
+			end if
+			$notFound := records in selection([webuser]) # 1
+			$manyFound := records in selection([webuser]) > 1
+		end if
+		if ($notFound)
+			query([webuser]; [webuser]fullname = $fullname)
+			$notFound := records in selection([webuser]) # 1
+			$manyFound := records in selection([webuser]) > 1
+		end if
+		if (not($notFound))
+			return(get_citizen($citizen{"zip"}))
+		end if
+		$mmdd := string($citizen{"birth_mm"};"00") + string($citizen{"birth_dd"};"00")
+		query([citizen]; [citizen]phone1 = main.unformatPhone($citizen{"phone_primary"});*)
+		query([citizen]; |; [citizen]phone1 = main.unformatPhone($citizen{"phone_secondary"});*)
+		query([citizen]; |; [citizen]phone2 = main.unformatPhone($citizen{"phone_sprimary"});*)
+		query([citizen]; |; [citizen]phone2 = main.unformatPhone($citizen{"phone_secondary"}))
+		$notFound := records in selection([citizen]) # 1
+		$manyFound := records in selection([citizen]) > 1
+		if ($notFound)
+			if ($manyFound)
+				query selection([citizen]; [citizen]birthmmdd = $mmdd)
+			else
+				query([citizen]; [citizen]birthmmdd = $mmdd)
+			end if
+			$notFound := records in selection([citizen]) # 1
+			$manyFound := records in selection([citizen]) > 1
+		end if
+		if ($notFound)
+			query([citizen]; [citizen]fullname = $fullname+"@")
+			$notFound := records in selection([citizen]) # 1
+			$manyFound := records in selection([citizen]) > 1
+		end if
+		if (not($notFound))
+			return(get_citizen_hash)
+		end if
+		return(new collection)
+	end method
+	
+	method "update_citizen"($citizen)
+		if ($citizen{"action"} = "create")
+			$result := Citizen.create($citizen)
+		else
+			$result := Citizen.update($citizen)
+		end if
+		$id := _request{"new_id"}
+		return( new collection("result";$result;"citizen_id";$id))
+	end method
+	
+	method "update4d"($request)
+		$update := new collection("result";"success")
+		if (is a collection($request))
+			if (collection has($request;"citizen"))
+				$update{"citizen"} := update_citizen($request{"citizen"})
+				if ($update{"citizen"}{"result"} # "success")
+					$update{"result"} := "error:failed on citizen"
+				end if
+			end if
+		else
+			$update{"result"} := "error:bad request"
+		end if
+		return ($update)
+	end method
+	
+	//query([citizen]; [citizen]id= 13223)
+/*-----------------------------*/	
+	$params := _form{"fdata"}
+	//$params := base64 decode($params64)
+  case of
+  	:(_request{"_params"} = "lookup")
+			$citizen := rest.utils.jsonParseSimple($params)
+			$result := find_citizen($citizen)
+			if (is a collection($result))
+				if (count collection items($result) > 0)
+					$json := a4d.json.new
+					$json->add("citizen";$result)
+					//$x := $json->tojson	
+					//write($x)
+					$json->write
+				else
+					write('{"result":"Error: No matches found"}')
+				end if
+			end if
+		:(_request{"_params"} = "get")
+			query([citizen]; [citizen]id = num($params))
+			a4d.debug.dump selection(->[citizen])
+		:(_request{"_params"} = "update4d")
+			$request := rest.utils.jsonParseSimple($params)
+			$result := update4d($request)
+			if (is a collection($result))
+				if (count collection items($result) > 0)
+					$json := a4d.json.new
+					$json->add("result";$result)
+					//$x := $json->tojson	
+					//write($x)
+					$json->write
+				else
+					write('{"result":"Error: $result}"')
+				end if
+			end if
+		else
+			write('{"result":"Error: Unknown Action"}')
+  end case
+//$params := _form{"fdata"}
+//$lookup := rest.utils.jsonParseSimple($params)
+
+/*
+
+{"name_first"=>"Steve", "name_mi"=>"", "name_last"=>"Alex", "birth_mm"=>"3", 
+"birth_dd"=>"3", "zip"=>"45666", "phone_primary"=>"123445", "phone_secondary"=>"", "email"=>"sakskd", "login"=>"dfdf"}
+//$cit := rest.find_all_by_attr("Webuser";"email";"salex@aidt";new collection)
+a4d.debug.dump selection(->[webuser])
+$rtoa := new collection("email"; "emailaddress" ;"name_full"; "fullname" ;"name_first"; "firstname" ;"name_last"; "lastnamw" ;"name_mi"; "mi" ;"phone_primary"; "phone1" ;"phone_secondary"; "phone2" ;"address"; "address" ;"city"; "city" ;"state"; "state" ;"zip"; "zip" ;"login"; "" ;"birth_mm"; "substring(birthmmdd;1;2)" ;"birth_dd"; "substring(birthmmdd,3;4)")
+$ator := new collection( "emailaddress";"email" ; "fullname";"name_full" ; "firstname";"name_first" ; "lastnamw";"name_last" ; "mi";"name_mi" ; "phone1";"phone_primary" ; "phone2";"phone_secondary" ; "address";"address" ; "city";"city" ; "state";"state" ; "zip";"zip" ;"login"; "" ; "birthmmdd";"birth_mm + birth_dd" )
+a4d.debug.dump collection($rtoa)
+a4d.debug.dump collection($ator)
+*/
+%>
+

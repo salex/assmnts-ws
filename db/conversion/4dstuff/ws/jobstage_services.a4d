@@ -1,0 +1,31 @@
+<% 
+
+	/*-----------------------------*/	
+		$params := _form{"fdata"}
+	  case of
+	  	:(_request{"_params"} = "get_xml_assmnt")
+				$assmnt := jobs.getQuestionCollection(num($params))
+				$general := a4d.utils.filterCollection($assmnt;"ge@")
+				$education := a4d.utils.filterCollection($assmnt;"ed@")
+				$skills := a4d.utils.filterCollection($assmnt;"sk@")
+				$custom := a4d.utils.filterCollection($assmnt;"cu@")
+				$experience := convert.makeWHassmnt
+				
+				$json := a4d.json.new
+				$json->add("general";$general)
+				$json->add("education";$education)
+				$json->add("skills";$skills)
+				$json->add("custom";$custom)
+				$json->add("experience";$experience)
+				$json->write
+			:(_request{"_params"} = "get_stages")
+				include("/common/conversion/getstages.a4d")
+				
+			:(_request{"_params"} = "conv_score")
+				include("conv_score.a4d")
+			else
+				write('{"Error":"Unknown Action"}')
+	  end case
+
+%>
+

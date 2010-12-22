@@ -1,0 +1,26 @@
+<%
+	set current script timeout(300)
+	
+	all records([jobstage]) 
+	First Record([jobstage])
+	array longint($jobs;0)
+	c_blob($stages)
+	c_blob($jblob)
+	create empty set([citizen];"citizens")
+	for each ([jobstage]; $index)
+		
+		if (blob size([jobstage]assessment_ot) > 0)
+			query([applicationdata]; [applicationdata]jobstageid = [jobstage]id)
+			relate one selection([applicationdata];[citizen])
+			writebr(records in selection([citizen]))
+			create set([citizen];"stage")
+			union("citizens";"stage";"citizens")
+			
+		end if
+	end for each
+	writebr(records in set("citizens"))
+	//a4d.debug.dump array($jobs)
+	//$file := "jobstages.json"
+//	blob to document(join paths(get root; "public/conversion"; $file);$stages)
+	
+%>

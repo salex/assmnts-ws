@@ -10,6 +10,8 @@ def json_parse(json)
   return ActiveSupport::JSON.decode(json)
 end
 
+require File.expand_path('../conversion/stage', __FILE__)
+
 # archive records using json
 =begin
 filepath = Rails.root.join("db","people.json")
@@ -193,6 +195,7 @@ puts stuff
 
 =end
 
+=begin
 stage = Stage.where(:id => 11).first
 aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
 applicants = stage.applicants.all
@@ -265,3 +268,4 @@ applicants.each do |applicant|
   
   #need a summary method
 end
+=end

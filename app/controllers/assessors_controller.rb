@@ -56,6 +56,8 @@ class AssessorsController < ApplicationController
 
   # PUT /assessors/1
   # PUT /assessors/1.xml
+  load_and_authorize_resource
+  
   def update
     @assessor = Assessor.find(params[:id])
 

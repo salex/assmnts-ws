@@ -1,6 +1,8 @@
 class ExportsController < ApplicationController
   # GET /exports
   # GET /exports.xml
+  load_and_authorize_resource
+  
   def index
     @exports = Export.all
 

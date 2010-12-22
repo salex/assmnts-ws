@@ -1,0 +1,129 @@
+
+library "Citizen"
+
+method "cudCitizen"($cudAction; $cudPhase; $cudTable; $cudResult; $params; $cudTimestampField; $cudTimestamp)
+	case of 
+		:($cudPhase = "query")
+			unload record([citizen])
+			if ($cudAction # "create")
+					query([citizen]; [citizen]id = num($params{"Citizen.id"}))
+			end if
+		:($cudPhase = "update") 
+			$params{"citizen.phone1"} := main.unformatPhone($params{"citizen.phone1"})
+			$params{"citizen.phone2"} := main.unformatPhone($params{"citizen.phone2"})
+			$params{"Citizen.Address"}	:=	Str_Capitalize(main.convLineEnding($params{"Citizen.Address"});true)
+			$params{"Citizen.City"}	:=	Str_Capitalize($params{"Citizen.City"};true)
+			$params{"Citizen.FirstName"}	:=	Str_Capitalize($params{"Citizen.FirstName"};true)
+			$params{"Citizen.LastName"}	:=	Str_Capitalize($params{"Citizen.LastName"};true)
+			$params{"Citizen.MI"}	:=	uppercase($params{"Citizen.MI"})
+			
+			rest.buildFromParams("citizen";$params)
+		:($cudPhase = "post") 
+			_request{"new_id"} := [citizen]id
+			_request{"fullname"} := [citizen]fullname
+		:($cudPhase = "delete") 
+		:($cudPhase = "cleanup") 
+	end case
+	return ("success") 
+end method 
+
+method "create"($attributes)
+	start transaction
+	$cudAction := "create"
+	$params := a4d.utils.filtercollection($attributes;"Citizen.@")
+	$result := a4d.utils.cud($cudAction; ->[citizen]; "cudCitizen"; $params)
+	if ($result # "success")
+		cancel transaction
+		return($result)
+	end if
+	
+	validate transaction
+	return($result)
+end method
+
+method "update"($attributes)
+	start transaction
+	$cudAction := "update"
+	$params := a4d.utils.filtercollection($attributes;"Citizen.@")
+	$params{"Citizen.id"} := $attributes{"id"} // id is in rest path
+	$result := a4d.utils.cud($cudAction; ->[citizen]; "cudCitizen"; $params)
+	if ($result # "success")
+		cancel transaction
+		return($result)
+	end if
+	
+	validate transaction
+	return($result)
+	
+end method
+
+method "delete"($attributes)
+	start transaction
+	$params := a4d.utils.filtercollection($attributes;"Citizen.@")
+	$cudAction := "delete"
+	$params{"Citizen.id"} := $attributes{"id"} // id is in rest path
+	$result := a4d.utils.cud($cudAction; ->[citizen]; "cudCitizen"; $params)
+	if ($result # "success")
+		cancel transaction
+		return("Failed in Citizen: "$result)
+	end if
+	
+	
+	
+	
+	validate transaction
+	return($result)
+end method
+
+method "find_all"($attributes;$fkey="")
+	
+	all records([citizen])
+	
+	$callback := """
+	
+	"""
+	$include_map := ""
+	if ($attributes{"ftr"})
+		_filter($attributes)
+	end if
+	if ($attributes{"bst"})
+		$attributes{"pbst"} := $attributes{"bst"}
+	else
+		if ($attributes{"pbst"})
+			$attributes{"bst"} := $attributes{"pbst"}
+		end if
+	end if
+	order by([citizen];[citizen]fullname;>)
+	return(rest.build_rowset("Citizen";$attributes;new collection("include_map";$include_map;"callback" ;$callback)))
+end method
+
+method "find"($attributes)
+	$result := rest.find("Citizen";$attributes{"id"})
+	$result{"citizen.phone1"} :=  main.formatPhone($result{"citizen.phone1"})
+	$result{"citizen.phone2"} :=  main.formatPhone($result{"citizen.phone2"})
+	return($result)
+end method
+
+method "find_related"($relModel;$attributes;$parent=0;$opt=0)
+	return(rest.find_related("Citizen";$relModel;$attributes;$parent;$opt))
+end method
+
+method "new"($attributes)
+	return(rest.new("Citizen"))
+end method
+
+method "_filter"($attributes)
+		
+	if ($attributes{"ftr_FullName"}) 
+		query selection([citizen]; [citizen]FullName = replace string($attributes{"ftr_FullName"};"*";"@")) 
+	end if
+			
+	if ($attributes{"ftr_City"}) 
+		query selection([citizen]; [citizen]City = replace string($attributes{"ftr_City"};"*";"@")) 
+	end if
+			
+	
+end method
+
+end library
+

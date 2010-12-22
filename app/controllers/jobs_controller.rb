@@ -1,4 +1,5 @@
 class JobsController < ApplicationController
+  
   def index
     @stages = Stage.all
   end

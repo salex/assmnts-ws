@@ -1,0 +1,116 @@
+<%
+	
+	method "get_citizen_hash"
+		$hash := new collection("email"; [citizen]emailaddress  ;"name_first"; [citizen]firstname ;\\
+		"name_last"; [citizen]lastname ;"name_mi"; [citizen]mi ;"phone_primary"; [citizen]phone1 ;"phone_secondary"; [citizen]phone2 ;\\
+		"address"; [citizen]address ;"city"; [citizen]city ;"state"; [citizen]state ;"zip"; [citizen]zip ;\\
+		"birth_mm"; substring([citizen]birthmmdd;1;2) ;"birth_dd"; substring([citizen]birthmmdd;3;4);"citizen_id"; [citizen]id)
+		return($hash)
+	end method
+	set current script timeout(360)
+	
+	// start with app data
+	/*
+	query([webuser]; [webuser]citizenid = 153467;*)
+	query([webuser]; |;[webuser]citizenid = 153188;*)
+	query([webuser]; |;[webuser]citizenid = 153189)
+	a4d.debug.dump selection(->[webuser])
+	query([webuser]; [webuser]login = "noblesl0425";*)
+	query([webuser]; |;[webuser]login = "shatoriaa0526";*)
+	query([webuser]; |;[webuser]login = "celenaf0225")
+	a4d.debug.dump selection(->[webuser])
+	
+	return
+	*/
+	query([applicationdata]; [applicationdata]jobstageid = 1840)
+	create set([applicationdata];"all")
+	$maxchunks := 40
+	$adris := records in selection([applicationdata])
+/*	
+	For ($lPage ; 1; 1+(($adris-1)\$maxchunks) )
+		use set("all")
+		
+		array longint($ids;0)
+    SELECTION RANGE TO ARRAY (1+($maxchunks*($lPage-1));$maxchunks*$lPage;[applicationdata]id;$ids)
+		query with array([applicationdata]id; $ids)
+*/
+		$conv := new collection("user";new collection;"stage";new collection)
+
+		relate one([applicationdata]jobstageid)
+		relate one([jobstage]jobid)
+		relate one([job]projectid)
+		$conv{"stage"}{"jobstage_id"} := [jobstage]id
+		$conv{"stage"}{"stage_name"} := [jobstage]stagename
+		$conv{"stage"}{"job_id"} := [job]id
+		$conv{"stage"}{"job_title"} := [job]title
+		$conv{"stage"}{"project_id"} := [project]id
+		$conv{"stage"}{"project_name"} := [project]name
+		//reduce selection([applicationdata];200)
+		$json := a4d.json.new
+		//$json->add("jobstage";$conv{"stage"})
+		
+		First Record([applicationdata])
+		for each ([applicationdata]; $index)
+			
+			$cid := string([applicationdata]citizenid)
+			$conv{"user"}{$cid} := new collection 
+			relate one([applicationdata]citizenid)
+			query([webuser]; [webuser]citizenid = [applicationdata]citizenid)
+			order by([webuser]; [webuser]id; <)
+			$wuris := records in selection([webuser])
+			if ($wuris > 1)
+				$conv{"user"}{$cid}{"duplicate_webuser"} :=  [applicationdata]citizenid
+			end if
+			if ($wuris = 0 ) // not online
+				continue
+			end if
+			$conv{"user"}{$cid}{"email"} := [webuser]email
+			$conv{"user"}{$cid}{"adid"} := [applicationdata]id
+			$conv{"user"}{$cid}{"applied_date"} := [applicationdata]appliedDate
+			
+			$conv{"user"}{$cid}{"login"} := [webuser]login
+			$conv{"user"}{$cid}{"password"} := [webuser]pwd
+			$conv{"user"}{$cid}{"citizen"} := get_citizen_hash
+			query([citizen_stage]; [citizen_stage]citizenid = [applicationdata]citizenid ; *)
+			query([citizen_stage]; &;[citizen_stage]jobstageid = [applicationdata]jobstageid)
+			$conv{"user"}{$cid}{"status"} := "conv."+[citizen_stage]status
+			$conv{"user"}{$cid}{"date.dts"} := [citizen_stage]modstatus_dts
+			$conv{"user"}{$cid}{"date.completed"} := [citizen_stage]datecompleted
+			$conv{"user"}{$cid}{"score"} := [citizen_stage]score
+			$ris := -1
+			if (([webuser]email # "") & ([webuser]email # "none") & ([webuser]email # "noemail@"))
+				query([webuser]; [webuser]email = $conv{"user"}{$cid}{"email"})
+				$ris := records in selection([webuser])
+			end if
+			if ($ris = 1)
+				$conv{"user"}{$cid}{"key"} := "email"
+			else
+				if ($ris > 1)
+					$conv{"user"}{$cid}{"key"} := "duplicate email "
+				end if
+				query([webuser]; [webuser]login = $conv{"user"}{$cid}{"login"})
+				$ris := records in selection([webuser])
+				if ($ris = 1)
+					$conv{"user"}{$cid}{"key"} := "login"
+				else
+					if ($ris > 1)
+						if ($conv{"user"}{$cid}{"key"})
+							$conv{"user"}{$cid}{"key"} += " duplicate login"
+						else
+							$conv{"user"}{$cid}{"key"} := "huh!"
+						end if
+					end if
+				end if
+			end if
+			//$json->add($cid;$conv{"user"}{$cid})
+			
+		end for each
+		$json->add("jobstage";$conv)
+		
+	$blob := $json->toJSON
+	writebr(blob size($blob) )
+	writebr(count collection items($conv{"user"}))
+	blob to document(join paths(get root; "public/conversion"; "stage1840.json");$blob)
+//End for
+	
+%>

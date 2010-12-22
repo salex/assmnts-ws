@@ -1,0 +1,21 @@
+<%
+	
+/*
+	This method is passed a jobstage id and citizen id to find the applicationData record
+	The scoring object is extracted and converted to a collection. The collection is
+	then filtered to extract the scores based on an xml_key that all legacy applications
+	followed.
+	
+	The scoring object is then converted to json and returned.
+
+
+*/
+
+$form := _form
+$query := _query
+$params := merge collections($form;$query)
+//a4d.console.dump collection($params)
+$arg := rest.utils.jsonParseSimple($params{"fdata"})
+$score := rails.get_ad_score(num($arg{"jobstageid"});num($arg{"citizenid"}))
+write($score)
+%>

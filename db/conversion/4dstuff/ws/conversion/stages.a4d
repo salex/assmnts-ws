@@ -1,0 +1,50 @@
+<%
+	set current script timeout(300)
+	
+	all records([jobstage]) 
+	First Record([jobstage])
+	array longint($jobs;0)
+	c_blob($stages)
+	c_blob($jblob)
+	
+	for each ([jobstage]; $index)
+		
+		if (blob size([jobstage]assessment_ot) > 0)
+			relate one([jobstage]jobid)
+			relate one([job]projectid)
+			$job := new collection
+			$job{"jobstage_id"} := [jobstage]id
+			$job{"stage_name"} := [jobstage]stagename
+			$job{"job_id"} := [job]id
+			$job{"job_title"} := [job]title
+			$job{"number_jobs"} := [job]numjobs
+			$job{"project_id"} := [project]id
+			$job{"project_name"} := [project]name
+			$job{"assessment_json"} := ""
+			$job{"name"} := [job]title
+			$job{"status"} := "Unknown"
+			$job{"note"} := ""
+			$assessments := new collection
+			$obj := ot_blobToObject(->[jobstage]assessment_ot)
+			$assmnt := xml.ObjToColl($obj)
+			OT_Clear ($obj)
+			$assessments{"general"} := a4d.utils.filterCollection($assmnt;"ge@")
+			$assessments{"education"} := a4d.utils.filterCollection($assmnt;"ed@")
+			$assessments{"experience"} := convert.makeWHassmnt
+			$assessments{"skills"} := a4d.utils.filterCollection($assmnt;"sk@")
+			$assessments{"custom"} := a4d.utils.filterCollection($assmnt;"cu@")
+			$stage := new collection("jobstage" ; $job;"assessments";$assessments)
+			$json := a4d.json.new(false)
+			$json->add("stage";$stage)
+			$jblob := $json->toJSON
+			$stage_text := BLOB to text ($jblob; text without length) 
+			text to blob($stage_text+"\n"; $stages; text without length; *)
+			deep clear collection($stage)
+			write to console($index)
+		end if
+	end for each
+	//a4d.debug.dump array($jobs)
+	$file := "jobstages.json"
+	blob to document(join paths(get root; "public/conversion"; $file);$stages)
+	
+%>

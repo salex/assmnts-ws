@@ -9,8 +9,8 @@ class Ability
     can [:find,:lookup], Citizen
     if user.user_type == "admin"
       can :manage, :all
-    elsif user.role? :super_admin
-      can :manage, :all
+    elsif user.user_type  == "company"
+      can [:read,:profile], Applicant
     elsif user.role? :site_admin
       can :manage, [Estimate,Task,Task_item,Sales_order,Coa,Customer, Vendor, Sales_order,Purchase_order,Memo]
     elsif user.role? :admin

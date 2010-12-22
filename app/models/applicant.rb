@@ -147,6 +147,70 @@ class Applicant < ActiveRecord::Base
     end
   end
   
+  def conv_4d_scores
+    stage = self.stage
+    aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
+    ans_ids = []
+    ans_xml = []
+    ques_ids = []
+    ques_xml = []
+    categories = {}
+    aids.each do |aid|
+      assmnt = Assessment.find(aid)
+      categories[assmnt.category] = aid
+      ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aid}")
+      ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aid}")
+      ans_ids << ans.map(&:id)
+      ans_xml << ans.map(&:xml_key)
+      ques_ids << ques.map(&:id)
+      ques_xml << ques.map(&:xml_key)
+    end
+    ans_ids = ans_ids.flatten
+    ans_xml = ans_xml.flatten
+    ques_ids = ques_ids.flatten
+    ques_xml = ques_xml.flatten
+    fdata = {"jobstageid" => stage.jobstage_id, "citizenid" => self.user.citizen_id}.to_json
+    
+    score =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.jobstage.conv_score']
+    if score.include?("Error")
+      puts "bad score json"
+      return false
+    end 
+    ans_xml.each_index do |i|
+     score.gsub!(ans_xml[i], ans_ids[i].to_s)
+    end
+    ques_xml.each_index do |i|
+      score.gsub!(ques_xml[i], ques_ids[i].to_s)
+    end
+    score_hash = ActiveSupport::JSON.decode(score)
+    aids.each do |aid|
+      assessor = stage.assessors.where(:assessment_id => aid).first
+      test_score = Score.where(:assessor_id => assessor.id, :assessed_id => self.id).first
+      if test_score.nil?
+        assessment = assessor.assessment
+        area = score_hash["score"][assessment.category]
+        post = {"post.answer" => area["answers"], "post.answer_other" => area["answers_other"]}
+        scored = assessment.scoreAssessment(post)
+        score_params = {}
+        score_params[:assessor_id] = assessor.id
+        score_params[:assessed_type] = "Applicant"
+        score_params[:assessed_id] = self.id
+        score_params[:assessing_type] = "Stage"
+        score_params[:assessing_id] = stage.id
+        score_params[:score_object] = scored.to_json
+        score_params[:score] = scored["score_raw"]
+        score_params[:score_weighted] = scored["score_weighted"]
+        score_params[:answers]  = "|" + scored["all_answers"].join("|") + "|"
+        s = Score.create(score_params)
+      end
+    end
+    #self.score =  score_params[:score]
+    self.status = self.status.gsub("conv.","")
+
+    self.rescore
+    return true
+    
+  end
   
   
 end

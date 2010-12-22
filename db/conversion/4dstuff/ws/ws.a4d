@@ -1,0 +1,104 @@
+<% 
+  case of
+		:(_request{"_service"} = "test")
+			$params := merge collections(_form;_query)
+			if (_request{"_params"})
+				writebr(_request{"_params"})
+			end if
+			a4d.debug.dump collection($params)
+			writebr($params{"jobstage"})
+			
+		:(_request{"_service"} = "getwork")
+			//write to console("got getwork - sending getwork to rails and wait for work")
+			$output := a4dx_launch_curl("curl http://localhost:3000/ws/getwork";"")
+			
+		:(_request{"_service"} = "getprofile")
+			//write to console("got getwork - sending getwork to rails and wait for work")
+			$output := a4dx_launch_curl("curl http://localhost:3000/ws/getprofile";"")
+			//set content type("application/pdf")
+			write($output)
+
+		:(_request{"_service"} = "work")
+			//write to console("start work")
+			$params := merge collections(_form;_query)
+			$token := _request{"_params"}
+			//a4d.console.dump collection($params)
+			get collection keys($params; $outKeys)
+			//write to console($token)
+			//a4d.console.dump array($outKeys)
+			//write to console($params{"params"})
+			
+			if ($params{"params"} # "nowork") & ($token # "")
+				$response := rails.process_selected($params{"params"})
+				$response{"export.token"} := $token
+				$json := a4d.json.new(false) // don't wrap
+				$json->add("jobstage";$response)
+				$blob := $json->toJSON
+				$jobstage :=  blob to text($blob;3)
+				//write to console("work")
+	    else
+				$jobstage := ''
+				//write to console("nowork")
+			end if
+			write($jobstage) // done with request
+			
+		:(_request{"_service"} = "gotwork")
+			//write to console("in gotwork")
+			rails.set_cron_runNow()
+			write('{"gotwork":"I\'ll get to work!. Setting cron startNow"}')
+			
+		:(_request{"_service"} = "jobstage")
+			include("jobstage_services.a4d")
+			
+		:(_request{"_service"} = "citizen")
+			include("citizen_services.a4d")
+			
+		:(_request{"_service"} = "ruok")
+			write('{"Yes":"I am Okay"}')
+		else
+			write('{"Error":"Unknown Service"}')
+  end case
+
+
+/*
+	if (_request{"_service"} = "123")
+		
+		$url := "http://localhost:3000/ws/445"
+		$cmd := a4d.utils.choptext('curl $url ')
+		C_TEXT(input;output)
+		execute in 4d( 'LAUNCH EXTERNAL PROCESS ("$cmd";input;output)')
+		$x := rest.utils.jsonParseSimple(output)
+		writebr(type($x))
+		a4d.debug.dump collection($x)
+		return
+	end if
+	write(_form{"fdata"})
+	return
+	query([task];[task]parentID = 100)
+	$json := a4d.json.new
+	$json->add("model";"task")->add("controller";"tasks")
+	$json->addSelection(->[task]; "count"; "tasks")
+	//write("<textarea>")
+	$x := $json->tojson	
+	//$json->write
+	write($x)
+	//write("</textarea>")	
+	
+	return
+	for each (_form; $key; $value)
+		writebr('$key = $value')
+	end for each
+	for each (_query; $key; $value)
+		writebr('$key = $value')
+	end for each
+	
+	return
+	
+	a4d.debug.dump collection(_request)
+	$blobpath := (directory of(current path))+"html2pdf.pdf"
+	c_blob($blob;$base64)
+	writebr(test path name($blobpath))
+	document to blob($blobpath;$blob)
+	write blob($blob;"application/pdf")
+*/
+%>

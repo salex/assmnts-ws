@@ -1,0 +1,511 @@
+/*
+	rest.utils library
+	
+	$Id: library.a4l 3200 2006-05-01 21:50:46Z aparajita $
+*/
+
+library "rest.utils"
+
+
+
+
+/* jsonParseSimple methods - does not do everything, but work from a4d.json */
+method "emptyArray"
+	array text($result;0)
+	return($result)
+end method
+
+method "newArray"($list)
+	// convert semi-colon delimited list to a text or longint array (based on first element)
+	$list := trim($list)
+	$nc := $list = "new collection@"
+	if ($nc)
+		$level := 0
+		for each ($list; $char; $index)
+			case of
+				:($char = "(")
+					$level++
+				:(($char = ")") )
+					$level--
+				:(($char = ";") & ($level = 0))
+					$list[[$index]] := "|"
+			end case
+		end for each
+		$cnt := split string($list;"|";$chunks)
+		array longint($result;size of array($chunks))
+		for each ($chunks; $value; $index)
+			$ncoll := trim($value)
+			$result{$index} := execute("return ("+ $ncoll+ ")")
+		end for each
+		return($result)
+	end if
+	$cnt := split string($list;";";$chunks)
+	$test := trim($chunks{1})
+	$isText:= $test[[1]] = '"'
+	if ($isText)
+		array text($result;size of array($chunks))
+		for each ($chunks; $value; $index)
+			$result{$index} := trim(replace string($value;'"';''))
+		end for each
+	else
+		array longint($result;size of array($chunks))
+		for each ($chunks; $value; $index)
+			$result{$index} := num($value)
+		end for each
+	end if
+	return($result)
+end method
+
+method "null1"
+	return(char(0))
+end method
+
+method "newDate"($date)
+	array string(3; $months; *; "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec")
+	$date := replace string($date;",";"")
+	$cnt := split string($date;" ";$chunks)
+	$tmp := string(find in array($months;$chunks{1}))+'/$chunks{2}/$chunks{3}'
+	
+	return(date($tmp))
+end method
+
+method "elemToArray"(&$elem;&$result)
+	if (is array(type($elem)))
+		copy array($elem;$result)
+	else
+		$result{} := $elem
+	end if
+	return($result)
+end method
+
+
+method "jsonParseSimple"($json)
+	/*given a json object,convert it to an Active4D collection*/
+	// First convert any dates in IETF format to 4d date
+	$re1 := "~\"?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)( \\d\\d*, \d{4})\"~"
+	$rp1 := "newDate(\"\1\2\")"
+	regex replace($re1; $json; $rp1; $json)
+	$json := trim($json)
+	if ($json[[1]] = "[")
+		$json := '{"array":$json}'
+	end if
+	//Next, hide commas, colon, apostrophe between quotes
+	
+	$inQuote := false
+	for each ($json; $char; $index)
+		case of
+			:($char = '"')
+				$inQuote := not($inQuote)
+			:(($char = ",") & $inQuote)
+				$json[[$index]] := char(254)
+			:(($char = ":") & $inQuote)
+				$json[[$index]] := char(253)
+			:(($char = "'") & $inQuote)
+				$json[[$index]] := char(252)
+			:(($char = "\n") & not($inQuote))
+				$json[[$index]] := " "
+			:(($char = "\r") & not($inQuote))
+				$json[[$index]] := " "
+			:(($char = "\n") & ($inQuote))
+				$json[[$index]] := char(251)
+			:(($char = "\r") & ($inQuote))
+				$json[[$index]] := char(251)
+			
+		end case
+	end for each
+	
+	//Now convert objects
+	array text($re;0) // regex array
+	array text($rp;0) // replace array
+	// set the reqex array
+	$re{} := "|:\\s*{|"  // object => convert :{ to ;new collection(
+	$re{} := "|\\[\\]|" // replace empty array with empty text array
+	$re{} := "|:\\s*\\[|" //  text or longint array  => convert :[ to ;new array1(  -- local method see above
+	$re{} := "|\\]|" // end  array => convert ] to )
+	$re{} := "|}|" // end object => convert } to )
+	$re{} := "|[:,]|" // replace comma and colon  with semi-colon
+	$re{} := "|{|" // replace begining object with new collection()
+	//$re{} := "|\\[|" // replace begining object with new collection()
+	$re{} := "|n\\(\\)|" // replace empty collection convert n() to new n
+	//set the replacement array
+	$rp{} := ";new collection("
+	$rp{} := "emptyArray"
+	$rp{} := ";newArray( ''' "
+	$rp{} := " ''')"
+	$rp{} := ")"
+	$rp{} := ";"
+	$rp{} := "new collection("
+	//$rp{} := "newArray( ''' "
+	$rp{} := "n"
+
+	regex replace($re; $json; $rp; $results)
+	//put commas, colon, apos back
+	$results := replace string($results;char(254);",")
+	$results := replace string($results;char(253);":")
+	$results := replace string($results;char(252);"'")
+	$results := replace string($results;char(251);"\\n")
+	
+	$collection := execute("return ("+ $results+ ")")
+	//writebr('<textarea>$results</textarea>')
+	//$collection := new collection
+	return($collection)
+end method
+
+method "moveDocument"($fpath;$tpath)
+	$fdir := directory of($fpath) 
+	$tdir := directory of($tpath)
+	$ffile := filename of($fpath)
+	$tfile := filename of($tpath)
+	if ($ffile = $tfile) //Plain move
+		move document($fpath;$tpath)
+		if (ok = 0)
+			return(false)
+		end if
+	else //move and rename
+		move document($fpath;$tdir+$ffile)
+		if (ok = 0)
+			return(false)
+		end if
+		move document($tdir+$ffile;$tdir+$tfile)
+		if (ok = 0)
+			move document($tdir+$ffile;$fpath) //? put file back??
+			return(false)
+		end if
+	end if
+	return(true)
+end method
+
+method "copyDocument"($fpath;$tpath;$replace="")
+	if ($replace)
+		copy document($fpath;$tpath;*)
+		if (ok = 0)
+			return(false)
+		end if
+	else
+		copy document($fpath;$tpath)
+		if (ok = 0)
+			return(false)
+		end if
+	end if
+	return(true)
+end method
+
+
+/* just threw in another version of a calendar generation method 
+and a differnt way of generating a bacth div to provide some filler*/
+method "MakeCal"($curDate= current date;$fuseAction = "")
+	$today := current date
+	$todayd := day of($today)
+	$isCurr := $curDate = current date
+	$curMonth := month of($curDate)
+	$day := day of($curDate)
+	$year := year of($curDate)
+	$holMonth := $year*100 + $curMonth
+	$html := '<div class="calendar">' //xml_openTag("div";"class";"calendar")
+	$html += "<table>"
+	if($fuseAction # "")
+		$xxx := '<a href="$fuseaction?m=$holMonth">`get indexed string(11;12+month of($curDate))+" "+year of($curDate)`</a>'
+	else
+		$xxx := get indexed string(11;12+month of($curDate))+" "+year of($curDate)
+	end if
+	$html += '<caption>$xxx</caption>'
+	$html += "<tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr>"
+		
+	//$curDate := current Date
+	$tmpDate := add to date($curDate;0;0;(-$day)+1)
+	$endDate := add to date($tmpDate;0;1;0)
+	$endDate -= 1
+	$endDay := day of($endDate)
+	$wday := day number($tmpDate)
+	// holiday crap
+	array date($holidays;0)
+	$holidays{} :=  !09/06/2010!
+	$holidays{} :=  !12/24/2010!
+	$holidays{} :=  !12/27/2010!
+	$holidays{} :=  !12/28/2010!
+	$holidays{} :=  !12/29/2010!
+	$holidays{} :=  !12/30/2010!
+	$holidays{} :=  !11/11/2010!
+	$holidays{} :=  !11/25/2010!
+	$holidays{} :=  !11/26/2010!
+	
+
+	$html += "<tr>"
+	for($i;1;$wday-1)
+		$html += "<td>&nbsp;</td>"
+	end for
+	$theDay:=1
+	for($i;$wday;7)
+		$curr := add to date($tmpdate ;0;0;$theday-1)
+		if($curr = $today)
+			$html += "<td class=\"today\"><span style=\"background:#ddd;\" >"+$theDay+"</span></td>"
+		else
+			if($curr ~ $holidays)
+				$html += "<td class=\"holiday\">"+$theDay+"</td>"
+			else
+				$html += "<td>"+$theDay+"</td>"
+			end if
+		end if
+		$theDay += 1
+	end for
+	$html += "</tr>\n"
+	$dow := 1
+	while ($theDay <= $endDay)
+		$curr := add to date($tmpdate ;0;0;$theday-1)
+		if($dow = 1)
+			$html += "<tr>"
+		end if
+		if($curr = $today)
+			$html += "<td class=\"today\">"+$theDay+"</td>"
+		else
+			if($curr ~ $holidays)
+				$html += "<td class=\"holiday\">"+$theDay+"</td>"
+			else
+				$html += "<td>"+$theDay+"</td>"
+			end if
+		end if
+		$theDay += 1
+		$dow += 1
+		if($dow = 8)
+			$html += "</tr>\n"
+			$dow := 1
+		end if
+	end while
+	if($dow#1)
+		$html += "</tr>\n"
+	end if
+	
+
+	
+	$html += "</table>"
+	$html += "</div>"
+	return($html)
+end method
+
+method "testwho"
+	//if (not(session id))
+	//get request infos($keys;$values)
+	//a4d.console.dump array($values)
+		session{"start"} := timestamp
+		session{"current_user"} := string(session internal id)
+		if(globals has("who"))
+			lock globals
+			globals{"who"}{string(session internal id)} := timestamp+" : "+session id+" : "+ get request value("X-Forwarded-For")
+			unlock globals
+		end if
+	//end if
+end method
+
+method "makeBatchDiv"($batch;$filter;$attributes;$numLinks=20)
+	/* generate a div that contains the batch links formatted with some css */
+	
+	array longint($starts; 0)
+	$batch->getStarts($starts)
+	$lastbst:= $starts{-1}
+	c_text($prev; $batches; $next)
+	$endi :=  '<img style="vertical-align:middle" src="/images/resultset_last.png" alt="" />'
+	$begini :=  '<img style="vertical-align:middle" src="/images/resultset_first.png" alt="" />'
+	$next := '<img style="vertical-align:middle" src="/images/resultset_next.png" alt="" />'
+	$prev := '<img style="vertical-align:middle" src="/images/resultset_previous.png" alt="" />'
+	$needBatch := $batch->makeFuseboxLinks($prev; $batches; $next; $attributes;""; $filter;"";"";$numLinks)
+	if (not($needBatch))
+		if ($batch{"row_count"} > 0)
+			$batchDiv := '''
+			<div id="new-batch"> 
+				<div class="left">Records $batch{"start"} - $batch{"end"} of $batch{"row_count"}</div>
+			</div>
+			<div style="clear:both"></div>
+			'''
+		else
+			$batchDiv := '''
+			<div id="new-batch"> 
+				<div class="left">No Records Selected</div>
+			</div>
+			<div style="clear:both"></div>
+			'''
+		end if
+		// This is what $batches looks like from the makeFuseboxLinks - there are pages - 1 links and one <strong> for the current page.
+//<strong >1</strong>&nbsp;<a href="/ads:transactions/list?bst=21" >2</a>&nbsp;<a href="/ads:transactions/list?bst=41" >3</a>&nbsp;<a href="/ads:transactions/list?bst=61" >4</a>
+// <(a [^>]*)>([^<]+)(</a>)    -- find anchor
+// href="[^"]+"  - find href
+
+	else
+
+		$firstLink := regex match( "|<a href=\"[^\"]+\"[^a]+a>|";$batches ;$match)
+		if($firstLink)
+			$found := regex match("|bst=(\d+)[^\d]+(\d+)|";$match{0};$bst)
+			if ($found)
+				$first := replace string($match{0};"bst="+$bst{1};"bst=1")
+				$first := " "+replace string($first;">"+$bst{2}+"<";">First<")+" "
+				$last := replace string($match{0};"bst="+$bst{1};"bst="+$lastbst)
+				$last := " "+replace string($last;">"+$bst{2}+"<";">Last<")+" "
+				$endlink := replace string($last;"Last";$endi)
+				$beginlink := replace string($first;"First";$begini)
+				$batches := $first + $batches + $last
+				$batch{"first"} := $first
+				$batch{"last"} := $last
+			end if
+		end if
+
+		$size := $batch{"size"}
+
+		$start := position('<a href=';$batches)
+		$end := position('bst=';$batches)
+		$burl  := substring($batches;$start+9;$end-$start-1)
+		$lastEqual := last of($burl;"=")
+		$burl := "'"+substring($burl;1;$lastEqual)+"'"		
+		$current := regex match('|<strong >(\d+)\<|';$batches;$list) 
+		if ($current)
+			$currpage := $list{1}
+		else
+			$currpage := "1"
+		end if
+		//$pagemax := regex match all('|\<a href|';$batches;$links) +1
+
+		$pagemax := $batch{"row_count"} \ $size
+		$remain := $batch{"row_count"} - ($pagemax * $size)
+		if ($remain >= $batch{"orphan"})
+			$pagemax++
+		end if
+
+		array text($re;0) // regex array
+		array text($rp;0) // replace array
+		// set the reqex array
+		$re{} := "|<a |"  
+		$re{} := "|href=|" 
+		$re{} := "|<strong|" 
+		$re{} := "|</strong>|" 
+		$re{} := "|</a>|" 
+		$re{} := "|&nbsp;|" 
+		//set the replacement array
+		$rp{} := "<option "
+		$rp{} := "value="
+		$rp{} := '<option selected="selected"'
+		$rp{} := "</option>"
+		$rp{} := "</option>"
+		$rp{} := "\n"
+		regex replace($re; $batches; $rp; $results)
+
+		$sel := "\n<select "+'onchange="window.location.href = this.value;"'+' name="batchOpt" id="batchOpt"'+">"+$results+"\n</select>\n"+ \\
+		'<input type="text" size="5" style="font-size:.8em" value="$currpage" onchange="window.location.href = $burl + ((this.value*$size) + 1 - $size);" />'
+
+		$prev := choose($prev;$prev;'<img style="vertical-align:middle" src="/images/resultset_previousoff.png" alt="" /> ')
+		$next := choose($next;$next;'<img style="vertical-align:middle" src="/images/resultset_nextoff.png" alt="" />')
+		/* Now make the div */
+		$batchDiv := '''
+		<div id="new-batch"> 
+			<div class="left">
+				Records $batch{"start"} - $batch{"end"} of $batch{"row_count"}
+			</div>
+			<div class="center"> 
+				$beginlink $prev 	<span style="vertical-align:middle"> Page $currpage of $pagemax </span>	$next $endlink
+			</div>
+			<div class="right">Go To Page: 
+				<span style="vertical-align:middle">$sel</span>
+			</div>
+		</div>
+		<div style="clear:both"></div>
+		'''
+
+	end if
+	return($batchDiv)
+
+end method
+
+/* This is a kludge that I just have not gotten around to cleaning up, it provides a different kind of layout for the batch div */
+method "makeBatchDivold"($batch;$filter;$attributes;$numLinks=20;$rbst="")
+	/* generate a div that contains the batch links formatted with some css */
+	c_text($prev; $batches; $next)
+	$next := '<img style="vertical-align:middle" src="/images/pgNextOn.gif" alt="" />'
+	$prev := '<img style="vertical-align:middle" src="/images/pgBackOn.gif" alt="" />'
+	$needBatch := $batch->makeFuseboxLinks($prev; $batches; $next; $attributes;""; $filter;"";"";$numLinks)
+	if (not($needBatch))
+		if ($batch{"row_count"} > 0)
+			$batchDiv := '''
+			<div id="new-batch"> 
+				<div class="left">Records $batch{"start"} - $batch{"end"} of $batch{"row_count"}</div>
+			</div>
+			<div style="clear:both"></div>
+			'''
+		else
+			$batchDiv := '''
+			<div id="new-batch"> 
+				<div class="left">No Records Selected</div>
+			</div>
+			<div style="clear:both"></div>
+			'''
+		end if
+		// This is what $batches looks like from the makeFuseboxLinks - there are pages - 1 links and one <strong> for the current page.
+//<strong >1</strong>&nbsp;<a href="/ads:transactions/list?bst=21" >2</a>&nbsp;<a href="/ads:transactions/list?bst=41" >3</a>&nbsp;<a href="/ads:transactions/list?bst=61" >4</a>
+// <(a [^>]*)>([^<]+)(</a>)    -- find anchor
+// href="[^"]+"  - find href
+
+	else
+		
+		$size := $batch{"size"}
+		
+		$start := position('<a href=';$batches)
+		$end := position('bst=';$batches)
+		$burl  := substring($batches;$start+9;$end-$start-1)
+		$lastEqual := last of($burl;"=")
+		$burl := "'"+substring($burl;1;$lastEqual)+"'"		
+		$current := regex match('|<strong >(\d+)\<|';$batches;$list) 
+		if ($current)
+			$currpage := $list{1}
+		else
+			$currpage := "1"
+		end if
+		//$pagemax := regex match all('|\<a href|';$batches;$links) +1
+		
+		$pagemax := $batch{"row_count"} \ $size
+		$remain := $batch{"row_count"} - ($pagemax * $size)
+		if ($remain >= $batch{"orphan"})
+			$pagemax++
+		end if
+		
+		array text($re;0) // regex array
+		array text($rp;0) // replace array
+		// set the reqex array
+		$re{} := "|<a |"  
+		$re{} := "|href=|" 
+		$re{} := "|<strong|" 
+		$re{} := "|</strong>|" 
+		$re{} := "|</a>|" 
+		$re{} := "|&nbsp;|" 
+		//set the replacement array
+		$rp{} := "<option "
+		$rp{} := "value="
+		$rp{} := '<option selected="selected"'
+		$rp{} := "</option>"
+		$rp{} := "</option>"
+		$rp{} := "\n"
+		regex replace($re; $batches; $rp; $results)
+		
+		$sel := "\n<select "+'onchange="window.location.href = this.value;"'+' name="batchOpt" id="batchOpt"'+">"+$results+"\n</select>\n"+ \\
+		'<input type="text" size="6" style="font-size:.8em" value="$currpage" onchange="window.location.href = $burl + ((this.value*$size) + 1 - $size);" />'
+		
+		$prev := choose($prev # "";$prev;'<img style="vertical-align:middle" src="/images/pgBackOff.gif" alt="" /> ')
+		$next := choose($next # "";$next;'<img style="vertical-align:middle" src="/images/pgNextOff.gif" alt="" />')
+		/* Now make the div */
+		$batchDiv := '''
+		<div id="new-batch"> 
+			<div class="left">
+				Records $batch{"start"} - $batch{"end"} of $batch{"row_count"}
+			</div>
+			<div class="center"> 
+				$prev 	Page $currpage of $pagemax 	$next 
+			</div>
+			<div class="right">Go To Page: 
+				<span style="vertical-align:middle">$sel</span>
+			</div>
+		</div>
+		<div style="clear:both"></div>
+		'''
+		
+	end if
+	return($batchDiv)
+	
+end method
+
+end library
+

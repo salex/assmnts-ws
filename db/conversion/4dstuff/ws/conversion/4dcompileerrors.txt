@@ -1,0 +1,188 @@
+  ` LocPLFormat - Format of Location Printlist Pro area of report.
+C_LONGINT($Error;$i;$NumRecs)
+$NumRecs:=Records in selection([Inventory])
+If (Arr_AvailableRAM ($NumRecs;0;0;0;1;1;5;125))
+	SELECTION TO ARRAY([Inventory]Barcode;asBarcode;[Inventory_POLine]Composite;asComposite;[Inventory]Responsible;asResp;[Inventory]Last Scanned;Loct_LastScanned_ad;[Inventory]Value;arValue;[Inventory]Status;asStatus)
+	$Error:=PL_SetArraysNam (epLocInv;1;6;"asBarcode";"asComposite";"asResp";"arValue";"adLastScan";"asStatus")
+	PL_SetHeaders (epLocInv;1;4;"BC#";"Composite Description";"Responsible";"Value")
+	PL_SetHdrStyle (epLocInv;0;"Palatino";9;1)
+	PL_SetStyle (epLocInv;0;"Palatino";9;0)
+	PL_SetHdrOpts (epLocInv;2;0)
+	PL_SetFrame (epLocInv;0.25;"Black";"Black";0;0.25;"Black";"Black";0)
+	PL_SetBrkText (epLocInv;0;4;"\\Sum";1;3)
+	PL_SetBrkColOpt (epLocInv;0;4;0;0.25;"Black";"Black";0)
+	PL_SetBrkHeight (epLocInv;0;1;8)
+	PL_SetBrkStyle (epLocInv;0;4;"Palatino";10;1)
+	PL_SetColOpts (epLocInv;2;0)
+	PL_SetWidths (epLocInv;1;4;30;310;85;75)
+	PL_SetForeClr (epLocInv;1;"Black";0;"Red";0)
+	PL_SetFormat (epLocInv;1;"#####";1;1;0)
+	PL_SetFormat (epLocInv;4;◊MoneyFmt;3;3;0)
+	PL_SetSort (epLocInv;aiInvSort1;aiInvSort2;aiInvSort3;aiInvSort4)
+	For ($i;1;Size of array(asStatus))
+		Case of 
+			: (asStatus{$i}="Missing")
+				PL_SetRowStyle (epLocInv;$i;4)  ` Underlined
+			: (asStatus{$i}="Disposed")
+				PL_SetRowStyle (epLocInv;$i;2)  ` Italics
+		End case 
+	End for 
+End if
+
+
+  ` ----------------------------------------------------
+  ` Method: Person_PLPProfile
+  ` Author: dhall
+  ` Date and time: 01/28/05, 15:54:16
+  ` ----------------------------------------------------
+  ` Called from: 
+  ` Description: 
+  ` 
+  ` 
+  ` Parameters
+  ` ----------------------------------------------------
+C_POINTER($1;$pPLPArea)
+C_LONGINT($2;$Evt;$lNumScheduleRecs;$Error)
+$pPLPArea:=$1
+$Evt:=$2
+Case of 
+	: ($Evt=On Load )
+		$lNumScheduleRecs:=Records in selection([TRNSchedule])
+		Person_InitScheduleArrs ($lNumScheduleRecs)
+		SELECTION TO ARRAY([TRNSchedule]LastEvent;Pers_LastTrainEvent_ad;[TRNSchedule]NextEvent;adNextEvent;[Training]Description;asTrainingDescription;[Training]Identifier;asTrainingIdentifier)
+		$Error:=PL_SetArraysNam ($pPLPArea->;1;4;"asTrainingIdentifier";"asTrainingDescription";"adLastEvent";"adNextEvent")
+		If ($Error#0)
+			ALERT("PrintList Pro Error#"+String($Error)+" occured.")
+		Else 
+			PL_SetHeaders ($pPLPArea->;1;4;"Trng. ID";"Training Description";"Last Taken";"Next Date")
+			PL_SetHdrStyle ($pPLPArea->;0;"Palatino";9;1)
+			PL_SetStyle ($pPLPArea->;0;"Palatino";9;0)
+			PL_SetHdrOpts ($pPLPArea->;1;0)
+			PL_SetFormat ($pPLPArea->;3;"6";0;0;0)
+			PL_SetFormat ($pPLPArea->;4;"6";0;0;0)
+			PL_SetWidths ($pPLPArea->;1;4;50;250;85;85)
+			PL_SetSort ($pPLPArea->;1)
+		End if 
+	: ($Evt=On Unload )
+		Person_InitScheduleArrs (0)
+End case
+
+
+  ` MiscPLFormat - GP - Formats Misc area of printouts
+C_LONGINT($Error)
+If (Not(gInput))
+	SELECTION TO ARRAY([Misc_Loc];alMiscRec;[Misc_Loc]Quantity;aiQty;[Misc]Description;asMiscDesc;[Misc_Loc]Responsible;asMiscResp)
+End if 
+$Error:=PL_SetArraysNam (epInvMisc;1;4;"aiQty";"asMiscDesc";"asMiscResp";"alMiscRec")
+PL_SetHeaders (epInvMisc;1;3;"Qty";"Description";"Responsible")
+PL_SetHdrStyle (epInvMisc;0;"Palatino";9;1)
+PL_SetStyle (epInvMisc;0;"Palatino";9;0)
+PL_SetHdrOpts (epInvMisc;2;0)
+PL_SetWidths (epInvMisc;1;2;30;0)
+PL_SetColOpts (epInvMisc;1;0)
+PL_SetFrame (epInvMisc;0.25;"Black";"Black";0;0.25;"Black";"Black";0)
+PL_SetFormat (epInvMisc;1;"###,##0";0;3;0)
+PL_SetSort (epInvMisc;2)
+
+
+  `OM:  ePL_PrintArea
+  `LM:  8/12/04, 7.8
+
+Case of 
+	: (Form event=On Load )
+		
+		C_TEXT($format;$fontName)
+		C_LONGINT($mode;$ret;$mainTableNo;$size)
+		C_LONGINT($colJust;$headJust;$footJust;$usePictHeight)
+		C_LONGINT($fontSize;$fontStyle)
+		
+		$mainTableNo:=0
+		$size:=0
+		$mode:=0
+		
+		$format:=""
+		$colJust:=0
+		$headJust:=0
+		$footJust:=0
+		$usePictHeight:=0
+		
+		$fontName:=""
+		$fontSize:=0
+		$fontStyle:=0
+		
+		ARRAY TEXT(atAL_PrintHeaders;0)
+		$mode:=AL_GetMode (iAL_PrintAreaRef)
+		$ret:=AL_GetHeaders (iAL_PrintAreaRef;atAL_PrintHeaders)
+		
+		If ($mode=1)  `fields
+			ARRAY LONGINT(aiAL_PrintTableNo;0)
+			ARRAY LONGINT(aiAL_PrintFieldNo;0)
+			
+			$ret:=AL_GetFields (iAL_PrintAreaRef;aiAL_PrintTableNo;aiAL_PrintFieldNo)
+			$mainTableNo:=AL_GetTable (iAL_PrintAreaRef)
+			$ret:=PL_SetFile (ePL_PrintArea;$mainTableNo)
+			$size:=Size of array(aiAL_PrintTableNo)
+			For ($i;1;$size)
+				$ret:=PL_SetFields (ePL_PrintArea;aiAL_PrintTableNo{$i};$i;1;aiAL_PrintFieldNo{$i})
+				PL_SetHdrOpts (ePL_PrintArea;iAL_PrintColumnHeaderOpts;0)
+				If (Size of array(atAL_PrintHeaders)>=$i)
+					PL_SetHeaders (ePL_PrintArea;$i;1;atAL_PrintHeaders{$i})
+					AL_GetFormat (iAL_PrintAreaRef;$i;$format;$colJust;$headJust;$footJust;$usePictHeight)
+					PL_SetFormat (ePL_PrintArea;$i;$format;$colJust;$headJust;$usePictHeight)
+				End if 
+			End for 
+			
+		Else 
+			
+			ARRAY TEXT(atAL_PrintArrays;0)
+			$ret:=AL_GetArrayNames (iAL_PrintAreaRef;atAL_PrintArrays)
+			$size:=Size of array(atAL_PrintArrays)
+			For ($i;1;$size)
+				$ret:=PL_SetArraysNam (ePL_PrintArea;$i;1;atAL_PrintArrays{$i})
+				PL_SetHdrOpts (ePL_PrintArea;iAL_PrintColumnHeaderOpts;0)
+				If (Size of array(atAL_PrintHeaders)>=$i)
+					PL_SetHeaders (ePL_PrintArea;$i;1;atAL_PrintHeaders{$i})
+					AL_GetFormat (iAL_PrintAreaRef;$i;$format;$colJust;$headJust;$footJust;$usePictHeight)
+					If ($format#"")
+						If ($format="X")
+							$format:="X; "
+						End if 
+					End if 
+					PL_SetFormat (ePL_PrintArea;$i;$format;$colJust;$headJust;$usePictHeight)
+				End if 
+			End for 
+			
+		End if 
+		
+		ARRAY LONGINT(aiAL_PrintColWidth;0)
+		$ret:=AL_GetColumnWidths (iAL_PrintAreaRef;->aiAL_PrintColWidth)
+		
+		$size:=Size of array(aiAL_PrintColWidth)
+		For ($i;1;$size)
+			
+			  `set list and header font attributes (unless option has been turned off)
+			If (Not(iAL_PrintOpts ?? 2))
+				
+				AL_GetStyle (iAL_PrintAreaRef;$i;$fontName;$fontSize;$fontStyle)
+				PL_SetStyle (ePL_PrintArea;$i;$fontName;$fontSize;$fontStyle)
+				
+				AL_GetHdrStyle (iAL_PrintAreaRef;$i;$fontName;$fontSize;$fontStyle)
+				PL_SetHdrStyle (ePL_PrintArea;$i;$fontName;$fontSize;$fontStyle)
+				
+			Else 
+				
+				PL_SetStyle (ePL_PrintArea;$i;sAL_PrintListFont;iAL_PrintListSize;iAL_PrintListStyle)
+				PL_SetHdrStyle (ePL_PrintArea;$i;sAL_PrintHeaderFont;iAL_PrintHeaderSize;iAL_PrintHeaderStyle)
+				
+			End if 
+			
+			
+			  `set column widths (unless option has been turned off)
+			If (Not(iAL_PrintOpts ?? 1))
+				$colWidth:=aiAL_PrintColWidth{$i}
+				PL_SetWidths (ePL_PrintArea;$i;1;$colWidth)
+			End if 
+			
+		End for 
+		
+End case 

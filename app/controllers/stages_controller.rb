@@ -114,11 +114,7 @@ class StagesController < ApplicationController
     end
   end
   
-  
-  def details
-    render :text => "hi details"
-  end
-  
+    
   def rescore
     @stage = Stage.find(params[:id])
     @stage.rescore

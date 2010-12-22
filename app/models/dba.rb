@@ -17,7 +17,7 @@ class Dba < User
       users = users.where('users.phone_primary LIKE ?', "#{params[:phone]}%")
     end
     if params[:email] && params[:email] != ""
-      users = users.where('users.phone_primary LIKE ?', "#{params[:email]}%")
+      users = users.where('users.email LIKE ?', "#{params[:email]}%")
     end
     users
   end

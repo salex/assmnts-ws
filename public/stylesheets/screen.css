@@ -34,6 +34,10 @@ a { padding: 2px 2px}
 a { text-decoration: none; color: #456}
 a:hover { color: white;background-color:#4C6D99;  }
 
+.p100 {width:100%;}
+.p30 {width:32%;}
+.p50 {width:48%;}
+
 #register {background-color: #A5BFDA;}
 #header {
  background: #fff;}
