@@ -146,6 +146,10 @@ a.route { background: transparent url(/images/table_action.png) no-repeat center
 a.route a.route:hover { color: #f00!important; }
 a.help { background: transparent url(/images/information.png) no-repeat center left; margin-left: 2px; padding: 4px 4px 1px 18px; }
 a.help:hover { color: #00f!important; }
+a.l-or { background: transparent url(/images/o.png) no-repeat center left; margin-left: 0px; padding: 1px 1px 1px 10px; }
+a.l-and { background: transparent url(/images/a.png) no-repeat center left; margin-left: 0px; padding: 1px 1px 1px 10px; }
+a.l-or1 { background: transparent url(/images/vb1.png) no-repeat center left; margin-left: 0px; padding: 1px 1px 1px 8px; }
+a.l-and1 { background: transparent url(/images/amp.png) no-repeat center left; margin-left: 0px; padding: 1px 1px 1px 10px; }
 a.area-show { background: transparent url(/images/page_add.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
 a.area-show a.crud:hover { color: #f00!important; }
 a.area-hide { background: transparent url(/images/page_delete.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
@@ -188,6 +192,7 @@ span.detail-button {border:solid 1px #aaa;vertical-align:middle;margin-right:2px
 }
 .little-box { border: solid 1px #567; background: #fff;white-space:nowrap; margin-right:4px;padding:2px;margin-top:2px;}
 
+.fixed-box {position:fixed;top:40%;right:0px;width:320px;background: #f8f8ff;border:solid 1px #16b;font-weight:bold;}
 .profile {
 	padding:6px;
 	background:#fff;

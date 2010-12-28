@@ -1,0 +1,52 @@
+<h4>
+  Assessment QA Summary
+</h4>
+<div class="actions">
+  <div style="width:650px">
+    <p class="annotate">
+      Okay, this is not that hard! Assessments have many questions that have many answers. 
+      Each answer (and question) has a key that is basically the first character of the category 
+      (w = work experience, g = general, s= skills, e = education, c = custom) and then the sequence number of the question followed 
+      by the sequence number of the answer.
+    </p>
+    <p class="annotate">
+      e0107 is the 7th answer for the 1st question in the education area
+    </p>
+    <p class="annotate">
+      To find who had that answer, simply put in e0107 into the aKey search box
+    </p>
+    <p class="annotate">
+      You can AND or OR answers e0107|e0108 looks for answers e0107 OR e0108.<br>
+      e0107&amp;e0108 looks for answers e0107 AND e0108.
+    </p>
+    <p class="annotate">
+      You can nest queries by using parentheses<br>
+      (e0107|e0108)&amp;(c0404|c0405|c0406) = anyone who answered military training or some associate work and 4 or more years in 
+      telephone support! etc., etc.
+    </p>
+    <p class="annotate">
+      You can use the little helper form to select answers by clicking on the the AND or OR icon next the the answer 
+      and direct it to the Answers, or optional group. The group can then be combined with the Answers by using the Wrap link.
+    </p>
+    <div class="fixed-box">
+      Select Input: 
+      <input type="radio" name="group" id="akey" checked="checked" />Answers
+      <input type="radio" name="group" id="group" />Group<br>
+      <a class="route" href="javascript:wrap_keys('&amp;');return(false);">AND Wrap</a> : 
+      <a class="route" href="javascript:wrap_keys('|');return(false);">OR Wrap</a><br>
+      <input type="text" size="40" id="akeys" value="<%=params[:answers]%>">Answers<br>
+      <input type="text" size="40" id="agroup" value="">Group<br>
+      <input type="button" value="Search" onclick="set_uri(window.opener.location.href); self.close();">
+      <%= hidden_field_tag(:name,  params[:name])%>
+      <%= hidden_field_tag(:email,  params[:eamil])%>
+      <%= hidden_field_tag(:phone, params[:phone])%>
+      <%= hidden_field_tag(:status,  params[:status])%>
+      
+      <a href="javascript: win = top.opener; win.location.href = win.location.href; self.close();">Close Summary</a>
+      
+    </div>
+  </div>
+</div>
+<% @assessors.each do |ass| %>
+ <%= answer_keys(ass.assessment_id) %>
+<% end %>

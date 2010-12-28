@@ -65,6 +65,10 @@ class ApplyController < ApplicationController
         session[:steps][@assessor.sequence][:score_id] = @score.id
         if !@score.score_object.blank?
           params[:post] = json_parse(@score.score_object)
+        else
+          if !session[:take][:last_apply_id].nil?
+            params[:post] = Applicant.last_post_to_new_post(session[:take][:last_apply_id],@assessment) if @assessment.category != "application.custom"
+          end
         end
         render :template => "apply/display"      
       end

@@ -4,7 +4,12 @@
       Name <%= text_field_tag :name, params[:name], :size =>15 %>  
       Phone <%= text_field_tag :phone, params[:phone], :size =>15 %>  
       eMail <%= text_field_tag :email, params[:email], :size =>15 %>
-      <a class="help" href="<%=qa_summary_company_path(@stage)%>" target="_blank">aKey</a> <%= text_field_tag :answers, params[:answers] %>  
+      <% 
+      query = {:status => params[:status], :name => params[:name],:email => params[:email], :phone => params[:phone], :answers => params[:answers] ? CGI::escape(params[:answers])  : ""}
+      %>
+      <a class="help" href="javascript:mypopup('<%=qa_summary_company_path(@stage, query)%>');return(false);" >
+        aKey
+      </a> <%= text_field_tag :answers, params[:answers] %>  
         
       Status <%= select_tag :status, applicant_status_options_all(params[:status]) %>
       <%if params[:filter]%>

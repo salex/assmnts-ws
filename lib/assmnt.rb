@@ -23,7 +23,7 @@ module Assmnt
     if display_type.nil?
       display_type = ""
     end
-    types = %W( List Inline)
+    types = %W(List Inline None)
     result = options_for_select(types,display_type.capitalize)
     return result.html_safe
   end

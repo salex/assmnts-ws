@@ -3,6 +3,14 @@ class ApplicantsController < ApplicationController
   # GET /applicants/1
   # GET /applicants/1.xml
   load_and_authorize_resource
+  def index
+    #@applicant = Applicant.find(params[:id])
+    @applicants = Applicant.all.paginate(:per_page => 20, :page => params[:page])
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @applicant }
+    end
+  end
   
   def show
     #@applicant = Applicant.find(params[:id])

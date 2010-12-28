@@ -177,6 +177,9 @@ module AssessmentsHelper
   
   def build_question(question)
     html = ""
+    if !(question.display_type =~ /none/i).nil?
+      return(html)
+    end
     selectDisplay = !(question.answer_type =~   /select/i).nil?
     isTextform = !(question.answer_type =~  /textform/i).nil?
     isInline = !(question.display_type =~ /inline/i).nil?

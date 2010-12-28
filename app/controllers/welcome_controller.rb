@@ -5,6 +5,7 @@ class WelcomeController < ApplicationController
   
   def citizen
     check_type("citizen")
+    @applications = Applicant.where(:user_id => current_user.id)
   end
   
   def admin

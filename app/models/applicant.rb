@@ -3,6 +3,62 @@ class Applicant < ActiveRecord::Base
   belongs_to :stage
   belongs_to :user
   has_many :scores, :as => :assessed, :dependent => :destroy
+  
+  def self.last_post_to_new_post(applicant_id,assessment)
+    applicant = Applicant.find(applicant_id)
+    last_assessor = applicant.stage.assessors.joins(:assessment).where("assessments.category" => assessment.category).first
+    score = last_assessor.scores.where(:assessed_id => applicant.id).last
+    answers = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{assessment.id}")
+    questions = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{assessment.id}")
+    last_answers = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{last_assessor.assessment_id}")
+    last_questions = Question.select(["questions.id","questions.xml_key","questions.answer_type"]).joins(:assessment).where("questions.assessment_id = #{last_assessor.assessment_id}")
+    ans_ids = answers.map(&:id)
+    ans_xml = answers.map(&:xml_key)
+    ques_ids = questions.map(&:id)
+    ques_xml = questions.map(&:xml_key)
+    lans_ids = last_answers.map(&:id)
+    lans_xml = last_answers.map(&:xml_key)
+    lques_ids = last_questions.map(&:id)
+    lques_xml = last_questions.map(&:xml_key)
+    lques_ans_type = last_questions.map(&:answer_type)
+    
+    post = ActiveSupport::JSON.decode(score.score_object)
+    new_answers = {}
+    answers_other = {}
+    all_answers = []
+    post["answers"].each do |ques,ans_array|
+      lques_pos = lques_ids.index(ques.to_i)
+      lqxml = lques_xml[lques_pos]
+      ques_pos = ques_xml.index(lqxml)
+      ques_id = ques_ids[ques_pos].to_s
+      ans_type = lques_ans_type[lques_pos]
+      new_answers[ques_id.to_s] = []
+      isText =  !(ans_type =~ /text/i).nil?
+      astep = isText ? 2 : 1
+      0.step( ans_array.length - 1, astep) {|i|
+        ans_id = ans_array[i].to_i
+        lans_pos = lans_ids.index(ans_id)
+        laxml = lans_xml[lans_pos]
+        ans_pos = ans_xml.index(laxml)
+        new_ans_id = ans_ids[ans_pos].to_s
+        all_answers << ans_ids[ans_pos]
+        new_answers[ques_id.to_s] << new_ans_id
+        if isText 
+          new_answers[ques_id.to_s] <<  ans_array[i + 1]
+        end
+      }
+    end
+    post["answers_other"].each do |other_ans,other_ans_text|
+      lans_pos = lans_ids.index(other_ans.to_i)
+      laxml = lans_xml[lans_pos]
+      ans_pos = ans_xml.index(laxml)
+      ans_id = ans_ids[ans_pos].to_s
+      answers_other[ans_id] = other_ans_text
+    end
+    new_post = {"answers" => new_answers, "answers_other" => answers_other, "all_answers" => all_answers}
+  end
+  
+  
 
   def application_reviewed?
     not_reviewed = %w{incomplete completed failed}.include?(self.status.downcase)
@@ -45,6 +101,7 @@ class Applicant < ActiveRecord::Base
     end
     summary
   end
+  
   def update_4d
     citizen_update = {"citizen" => citizen}
     fdata = citizen_update.to_json
@@ -58,6 +115,7 @@ class Applicant < ActiveRecord::Base
     return citizen
 		
   end
+  
   def citizen_to_4d
     user = self.user
     if user.citizen_id.nil? || user.citizen_id == 0
@@ -147,28 +205,38 @@ class Applicant < ActiveRecord::Base
     end
   end
   
-  def conv_4d_scores
-    stage = self.stage
-    aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
-    ans_ids = []
-    ans_xml = []
-    ques_ids = []
-    ques_xml = []
-    categories = {}
-    aids.each do |aid|
-      assmnt = Assessment.find(aid)
-      categories[assmnt.category] = aid
-      ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aid}")
-      ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aid}")
-      ans_ids << ans.map(&:id)
-      ans_xml << ans.map(&:xml_key)
-      ques_ids << ques.map(&:id)
-      ques_xml << ques.map(&:xml_key)
+  def conv_4d_scores(assessor_hash = nil)
+    if assessor_hash
+      aids = assessor_hash[:aids]
+      ans_ids = assessor_hash[:ans_ids]
+      ans_xml = assessor_hash[:ans_xml]
+      ques_ids = assessor_hash[:ques_ids]
+      ques_xml = assessor_hash[:ques_xml]
+      categories = assessor_hash[:categories]
+      stage = self.stage
+    else
+      stage = self.stage
+      aids = stage.assessors.select(:assessment_id).map(&:assessment_id)
+      ans_ids = []
+      ans_xml = []
+      ques_ids = []
+      ques_xml = []
+      categories = {}
+      aids.each do |aid|
+        assmnt = Assessment.find(aid)
+        categories[assmnt.category] = aid
+        ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aid}")
+        ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aid}")
+        ans_ids << ans.map(&:id)
+        ans_xml << ans.map(&:xml_key)
+        ques_ids << ques.map(&:id)
+        ques_xml << ques.map(&:xml_key)
+      end
+      ans_ids = ans_ids.flatten
+      ans_xml = ans_xml.flatten
+      ques_ids = ques_ids.flatten
+      ques_xml = ques_xml.flatten
     end
-    ans_ids = ans_ids.flatten
-    ans_xml = ans_xml.flatten
-    ques_ids = ques_ids.flatten
-    ques_xml = ques_xml.flatten
     fdata = {"jobstageid" => stage.jobstage_id, "citizenid" => self.user.citizen_id}.to_json
     
     score =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.jobstage.conv_score']
@@ -211,6 +279,7 @@ class Applicant < ActiveRecord::Base
     return true
     
   end
+  
   
   
 end

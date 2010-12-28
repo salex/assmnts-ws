@@ -50,3 +50,64 @@ function hidediv(e) {
 	// posx and posy contain the mouse position relative to the document
 	// Do something with this information
 }
+
+function mypopup(url)
+ {
+   mywindow = window.open (url,
+  "mywindow","location=0,status=0,scrollbars=1,width=850");
+  mywindow.moveTo(0,0);
+ } 
+
+function and_ans(ans){
+	if ($("group").checked) {group_ans(ans,"&"); return};
+	var curr_akeys = $("akeys").value
+	if (curr_akeys == ""){
+		$("akeys").value = ans
+	}else{
+		$("akeys").value = curr_akeys + "&" +  ans
+	}
+}
+
+function or_ans(ans){
+	if ($("group").checked) {group_ans(ans,"|"); return};
+	var curr_akeys = $("akeys").value
+	if (curr_akeys == ""){
+		$("akeys").value = ans
+	}else{
+		$("akeys").value = curr_akeys + "|" +  ans
+	}
+}
+function group_ans(ans,join){
+	var curr_gkeys = $("agroup").value
+	if (curr_gkeys == ""){
+		$("agroup").value = ans
+	}else{
+		$("agroup").value = curr_gkeys + join +  ans
+	}
+}
+
+function wrap_keys(join){
+	var curr_gkeys = $("agroup").value
+	var curr_akeys = $("akeys").value
+	if ((curr_gkeys != "") &&  (curr_akeys != "")) {
+		$("agroup").value = ""
+		$("akeys").value = "(" + curr_akeys +")" + join + "(" + curr_gkeys +")"
+	};
+}
+
+function set_uri(uri){
+	var spos = uri.indexOf("qa_summary")
+	var epos = uri.indexOf("&status=")
+	var ss = uri.substring(0,spos)
+	var ans = $("akeys").value
+	var nans = escape(ans)
+	var name = $("name").value
+	var phone = $("phone").value
+	var email = $("email").value
+	var status = $("status").value
+	var nuri = ss + "search?answers="+nans+"&filter=search&name="+ name +"&phone="+ phone +"&email=" + email +"&status=" + status 
+	//alert(ss+"-"+nuri)
+	win = top.opener;
+	win.location.href = nuri;
+	
+}

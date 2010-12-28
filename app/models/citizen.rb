@@ -42,4 +42,5 @@ class Citizen < User
     end
   end
   
+  
 end
