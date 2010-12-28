@@ -14,7 +14,7 @@ module ApplicantsHelper
     if status.nil?
       status = ""
     end
-    types = {"--Status--" => "", "Dropped" => "Dropped", "Selected" => "Selected",
+    types = {"--Default--" => "", "Dropped" => "Dropped", "Selected" => "Selected",
       "Failed" => "Failed", "Incomplete" => "Incomplete", "Hold" => "Hold", "Completed" => "Completed", "Withdrew" => "Withdrew","All" => "All"}
     result = options_for_select(types,status.capitalize)
     return result.html_safe

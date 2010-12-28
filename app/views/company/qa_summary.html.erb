@@ -25,15 +25,15 @@
       telephone support! etc., etc.
     </p>
     <p class="annotate">
-      You can use the little helper form to select answers by clicking on the the AND or OR icon next the the answer 
-      and direct it to the Answers, or optional group. The group can then be combined with the Answers by using the Wrap link.
+      You can use the little helper form to select answers by clicking on the the <a class="blue-italic" href="#">&radic;And</a> or <a class="blue-italic" href="#">&radic;Or</a> icon next the the answer 
+      and direct it to the Answers, or optional Group. The group can then be combined with the Answers by using the Wrap link.
     </p>
     <div class="fixed-box">
       Select Input: 
       <input type="radio" name="group" id="akey" checked="checked" />Answers
       <input type="radio" name="group" id="group" />Group<br>
-      <a class="route" href="javascript:wrap_keys('&amp;');return(false);">AND Wrap</a> : 
-      <a class="route" href="javascript:wrap_keys('|');return(false);">OR Wrap</a><br>
+      <a class="blue-italic" href="javascript:wrap_keys('&amp;');return(false);">Wrap(And)</a> : 
+      <a class="blue-italic" href="javascript:wrap_keys('|');return(false);">Wrap(Or)</a><br>
       <input type="text" size="40" id="akeys" value="<%=params[:answers]%>">Answers<br>
       <input type="text" size="40" id="agroup" value="">Group<br>
       <input type="button" value="Search" onclick="set_uri(window.opener.location.href); self.close();">
@@ -42,7 +42,7 @@
       <%= hidden_field_tag(:phone, params[:phone])%>
       <%= hidden_field_tag(:status,  params[:status])%>
       
-      <a href="javascript: win = top.opener; win.location.href = win.location.href; self.close();">Close Summary</a>
+      <a href="javascript: self.close();">Close Summary</a>
       
     </div>
   </div>

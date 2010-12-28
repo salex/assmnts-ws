@@ -10,7 +10,7 @@
 
 %fieldset{:class => "f-left col-24"}
   %legend= "Area - #{session[:take][:current_area]}"
-  = form_tag "/apply/next", :method => :post, :id => "assessarea"
+  = form_tag "/apply/next", :method => :post, :id => "assessarea", :"data-behaviors" => "validate"
   %div
     = hidden_field_tag "id",  @assessor.id
     = hidden_field_tag  "score_id",  @score.id

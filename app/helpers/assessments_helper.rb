@@ -183,7 +183,7 @@ module AssessmentsHelper
     selectDisplay = !(question.answer_type =~   /select/i).nil?
     isTextform = !(question.answer_type =~  /textform/i).nil?
     isInline = !(question.display_type =~ /inline/i).nil?
-    ques_attr = {:required => question.score_method != "none",
+    ques_attr = {:required => question.score_method.downcase != "none",
       :quesID => question.id.to_s,
       :ansType => question.answer_type.downcase,
       :isText => !(question.answer_type =~  /text/i).nil? }

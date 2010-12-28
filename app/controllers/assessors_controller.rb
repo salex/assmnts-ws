@@ -26,6 +26,7 @@ class AssessorsController < ApplicationController
   # GET /assessors/new.xml
   def new
     @assessor = Assessor.new
+    @stage = Stage.find(params[:stage_id])
 
     respond_to do |format|
       format.html # new.html.erb

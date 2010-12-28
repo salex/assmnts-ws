@@ -23,12 +23,6 @@ class JobsController < ApplicationController
       session[:take][:assessed_id] = applicant.id #params[:assessed_id]
       session[:take][:assessing_id] =  params[:id]
       session[:take][:assessing_type] =  "Stage" #params[:assessed]
-      #ession[:take][:total_raw] = 0 #remove
-      #sesssion[:take][:total_weighted] = 0 #remove
-      #session[:take][:max_raw] = 0 #remove
-      #session[:take][:max_weighted] = 0 #remove
-      #session[:take][:answers] = "" #remove
-      #session[:take][:score_ids] = [] #remove
       session[:take][:current_area] = "Profile"
       session[:take][:last_apply_id] = last_apply.nil? ? nil : last_apply.id
       assessors = Assessor.order(:sequence).where(:assessing_id => params[:id])
@@ -36,16 +30,6 @@ class JobsController < ApplicationController
         category = assessor.assessment.category
         chunks = category.split(".")
         section = chunks[1].capitalize
-        #session[:steps][category] = {} #remove
-        #session[:steps][category][:id] = assessor.id #remove
-        #session[:steps][category][:complete] = false #remove
-        #session[:steps][category][:section] = section #remove
-        #session[:steps][category][:score_id] = nil #remove
-        #session[:steps][category][:total_raw] = 0 #remove
-        #session[:steps][category][:total_weighted] = 0 #remove
-        #session[:steps][category][:max_raw] = 0 #remove
-        #session[:steps][category][:max_weighted] = 0 #remove
-        #session[:steps][category][:answers] =  "" #remove
         session[:steps][assessor.sequence] = {}
         session[:steps][assessor.sequence][:id] = assessor.id
         session[:steps][assessor.sequence][:complete] = false
@@ -55,6 +39,7 @@ class JobsController < ApplicationController
         session[:steps][assessor.sequence][:total_weighted] = 0
         session[:steps][assessor.sequence][:max_raw] = 0
         session[:steps][assessor.sequence][:max_weighted] = 0
+        session[:steps][assessor.sequence][:failed] = false
         session[:steps][assessor.sequence][:answers] =  ""
         
       end

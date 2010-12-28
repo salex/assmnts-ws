@@ -7,7 +7,9 @@ class Applicant < ActiveRecord::Base
   def self.last_post_to_new_post(applicant_id,assessment)
     applicant = Applicant.find(applicant_id)
     last_assessor = applicant.stage.assessors.joins(:assessment).where("assessments.category" => assessment.category).first
+    return nil if last_assessor.nil?
     score = last_assessor.scores.where(:assessed_id => applicant.id).last
+    return nil if score.nil?
     answers = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{assessment.id}")
     questions = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{assessment.id}")
     last_answers = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{last_assessor.assessment_id}")

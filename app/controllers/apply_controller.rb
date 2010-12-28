@@ -94,6 +94,7 @@ class ApplyController < ApplicationController
       session[:steps][@assessor.sequence][:max_raw] = result["max_raw"]
       session[:steps][@assessor.sequence][:max_weighted] = result["max_weighted"]
       session[:steps][@assessor.sequence][:answers] =  result["all_keys"]
+      session[:steps][@assessor.sequence][:failed] =  result["failed"]
       session[:steps][@assessor.sequence][:score_id] =  @score.id
       
       area # see if any more assessments
@@ -117,11 +118,13 @@ class ApplyController < ApplicationController
       max_raw = 0
       max_weighted = 0
       answers = ""
+      failed = false
       session[:steps].each do |key,value|
         total_raw += session[:steps][key][:total_raw]
         total_weighted += session[:steps][key][:total_weighted]
         max_raw += session[:steps][key][:max_raw]
         max_weighted += session[:steps][key][:max_weighted]
+        failed = true if !session[:steps][key][:failed].nil?
         answers += session[:steps][key][:answers].join
       end
       if max_raw > 0
@@ -135,7 +138,7 @@ class ApplyController < ApplicationController
         applicant.score = summary_score
         applicant.weighted = summary_score_weighted
         applicant.answers =  answers
-        applicant.status = "Completed"
+        applicant.status = failed ? "Failed" : "Completed"
         applicant.status_date = Date.today
         applicant.save
       end

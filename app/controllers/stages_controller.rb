@@ -15,7 +15,7 @@ class StagesController < ApplicationController
   # GET /stages/1.xml
   def show
     #@stage = Stage.find(params[:id])
-    @assessors = @stage.assessors
+    @assessors = @stage.assessors.order(:sequence)
     @ass = Assessment.search("job."+@stage.job_id.to_s)
     respond_to do |format|
       format.html # show.html.erb

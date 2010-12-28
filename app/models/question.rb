@@ -24,9 +24,10 @@ class Question < ActiveRecord::Base
   private
   
   def set_defaults
-    if (self.score_method.downcase == "sum") && ((self.answer_type.downcase == "checkbox") || (self.answer_type.downcase == "select-multiple") )
+    if ((self.score_method.downcase == "sum") || (self.score_method.downcase == "max")) && ((self.answer_type.downcase == "checkbox") || (self.answer_type.downcase == "select-multiple") )
+      self.score_method = self.score_method.capitalize
     else
-      self.score_method = "Value"
+      self.score_method = "Value" unless self.score_method.downcase == "none"
     end
   end
   

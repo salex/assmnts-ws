@@ -15,25 +15,23 @@
 
   <table>
     <tr class="list-header">
-      <th>Name</th>
       <th>Job</th>
       <th>Project</th>
       <th>Date Applied</th>
       <th>Status</th>
       <th>Status Date</th>
-      <th>Actions</th>
+      <th>Application Actions</th>
     </tr>
 
   <% @applications.each do |applicant| %>
     <tr>
-      <td><%= applicant.user.name_full %></td>
       <td><%= applicant.stage.job_title %></td>
       <td><%= applicant.stage.project_name %></td>
       <td><%= applicant.applied_date %></td>
-      <td><%= applicant.application_reviewed? ? "Reviewd" : "Not yet Reviewed" %></td>
+      <td><%= applicant.application_reviewed? ? "Reviewed" : "Not Reviewed" %></td>
       <td><%= applicant.status_date %></td>
       <td>
-        <%= link_to "Update Application", apply_job_path(applicant.stage.id) if !applicant.application_reviewed? %>
+        <%= link_to "Update", apply_job_path(applicant.stage.id) if !applicant.application_reviewed? %>
         <%= link_to "Bitch", "javascript:alert('Noted!')" %>
       </td>
     </tr>

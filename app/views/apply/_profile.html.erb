@@ -1,6 +1,6 @@
 
 <div class="form-list">
-<%= form_for(@citizen) do |f| %>
+<%= form_for(@citizen, :"data-behaviors" => "validate") do |f| %>
   <% if @citizen.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@citizen.errors.count, "error") %> prohibited this member from being saved:</h2>
