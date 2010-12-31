@@ -1,4 +1,3 @@
-= javascript_include_tag "/javascripts/assmnt.js" 
 %fieldset{:class => "f-left col-6 ", :style => "margin-right:6px"}
   %legend Instructions
   .box
@@ -10,7 +9,7 @@
 
 %fieldset{:class => "f-left col-24"}
   %legend= "Area - #{session[:take][:current_area]}"
-  = form_tag "/apply/next", :method => :post, :id => "assessarea", :"data-behaviors" => "validate"
+  = form_tag "/apply/next", :method => :post, :id => "assessarea", :"data-behaviors" => "validateRequired"
   %div
     = hidden_field_tag "id",  @assessor.id
     = hidden_field_tag  "score_id",  @score.id

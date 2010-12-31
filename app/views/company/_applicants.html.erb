@@ -1,3 +1,4 @@
+<%#= javascript_include_tag "/javascripts/assmnt.js" %>
 
 <fieldset class="index-list">
   <legend>Applicants
@@ -38,11 +39,9 @@
           <td>
             <%= check_box_tag  "applicant[id][]", applicant.id, false,:class => "sel", :id => nil if applicant.status != "Selected"%>
           </td>
-          <td><a class="help" href="#" 
-            onclick="if ($(sum<%=applicant.id%>).style.display == 'table-row') { $(sum<%=applicant.id%>).style.display = 'none'}else {$(sum<%=applicant.id%>).style.display = 'table-row'} ;"
-            
-            ><%= citizen.name_full %></a>
-            </td>
+          <td>
+            <a class="help" href="#" id="toggle_sum<%=applicant.id%>" data-behavior="toggleSummary"><%= citizen.name_full %></a>
+          </td>
           <td><%= citizen.city %> <%= citizen.state %></td>
           <td><%= format_money(applicant.weighted) %></td>
           <td>

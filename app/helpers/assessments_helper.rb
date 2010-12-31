@@ -90,7 +90,7 @@ module AssessmentsHelper
     html = make_heredoc(:answer_header,question.question)
     for answer in question.answers
       ans, chkd, othans = getAnswerData(answer,ques_attr)
-      if question.score_method.downcase != "none"
+      if ( answer.value > 0 ) && (ques_attr[:required])
         isRequired = "required"
       else
         isRequired = nil

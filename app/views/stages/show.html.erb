@@ -78,11 +78,11 @@
 <fieldset  class="relations">
   <legend>Related
     <span class="route">
-    	<%= link_to 'Assessors', assessors_stage_path(@stage), :remote => true %> 
+    	<%= link_to 'Assessors', assessors_stage_path(@stage) %> 
     	<%= link_to 'Applicants', applicants_stage_path(@stage) %> 
     </span>
     </legend>
     <div id="related">
-	    <%= render :partial => "assessors" %>
+	    <%= render :partial => "applicants" %>
 	  </div>
 </fieldset>

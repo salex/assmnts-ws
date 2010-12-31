@@ -1,5 +1,15 @@
-hi root
+<h5>Hi! Root Welcome</h5>
 
-<p>I did an end to end import from 4d just using web services on all job stages that had on-line applications. I only imported scores and users from the first stage and the last two.</p>
+<p>I did an end to end import from 4D just using web services on all job stages that had on-line applications (no conversion files). I only imported scores and users from the first stage and the last two.</p>
 
 <p>Password have been set to "please" for special users (admin, company,project)</p>
+
+<p>Javascript framework has been changed to jquery from prototype - pain, but seems a little easier. Zipcode lookup implemented using a webservice at geonames.org</p>
+
+<p>Some basic changes made to assessments</p>
+  
+<ul>
+  <li>A Question.display_type set to None will basically NOP the question. It will not display on assessment, so won't be scored</li>
+  <li>A Question.scored_method set to None will make the item not required and bypass client side validation.</li>
+  <li>An Answer.value of 0 will not be required and bypass validation. Only useful on text/textform question when one of the answers is optional.</li>
+</ul>

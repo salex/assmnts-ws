@@ -27,7 +27,7 @@ module AssessorsHelper
   
   def answer_summary(answer)
     key = answer.xml_key.gsub("_","").delete(answer.xml_key.slice(1..1))
-    sel = "[<a class=\"blue-italic\" href=\"javascript:and_ans('#{key}');return(false);\">&radic;And</a>:<a class=\"blue-italic\" href=\"javascript:or_ans('#{key}');return(false)\">&radic;Or</a>]"
+    sel = "[<a class=\"blue-italic\" href=\"javascript:and_ans('#{key}');\">&radic;And</a>:<a class=\"blue-italic\" href=\"javascript:or_ans('#{key}');\">&radic;Or</a>]"
     html = "<div class=\"f-left little-box\">#{sel} #{answer.shortname.blank? ? truncateText(answer.answer,30,"middle") : truncateText(answer.shortname,30,"middle") } - #{key}</div>"
   end
   

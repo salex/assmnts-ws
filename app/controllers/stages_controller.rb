@@ -16,6 +16,8 @@ class StagesController < ApplicationController
   def show
     #@stage = Stage.find(params[:id])
     @assessors = @stage.assessors.order(:sequence)
+    @applicants = @stage.applicants.order("weighted DESC").paginate(:per_page => 20, :page => params[:page])
+    
     @ass = Assessment.search("job."+@stage.job_id.to_s)
     respond_to do |format|
       format.html # show.html.erb
@@ -93,7 +95,7 @@ class StagesController < ApplicationController
   end
   
   def applicants
-    #@stage = Stage.find(params[:id])
+    @stage = Stage.find(params[:id])
     @applicants = @stage.applicants.order("weighted DESC").paginate(:per_page => 20, :page => params[:page])
     respond_to do |format|
       format.html {render :template => "stages/_applicants"}
@@ -116,7 +118,7 @@ class StagesController < ApplicationController
   
     
   def rescore
-    @stage = Stage.find(params[:id])
+    #@stage = Stage.find(params[:id])
     @stage.rescore
     redirect_to @stage
     

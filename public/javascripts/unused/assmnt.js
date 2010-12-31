@@ -5,6 +5,7 @@
 var Behaviors = {
   add: function(trigger, behavior, handler) {
     document.observe(trigger, function(event) {
+		//$('document').ready(function(event) {
       var element = event.findElement("*[data-behaviors~=" + behavior + "]");
       if (element) handler(element, event);
     });
@@ -45,6 +46,27 @@ Behaviors.add("submit", "validate", function(element) {
   if (!valid) {
     event.stop()
     };
+});
+
+Behaviors.add("click", "toggleSummary", function(element) {
+  var id = element.id;
+	var sum = id.gsub(/toggle_/,"")
+/* prototype */
+	if ($(sum).style.display == 'table-row') { 
+		$(sum).style.display = 'none'
+	}else {
+		$(sum).style.display = 'table-row'
+	} ;
+	
+/*
+if ($(sum).css("display") == 'table-row') { 
+	$(sum).css("display", 'none')
+}else {
+	$(sum).css("display", 'table-row')
+} ;
+*/
+//  onclick="if ($(sum<%=applicant.id%>).style.display == 'table-row') { $(sum<%=applicant.id%>).style.display = 'none'}else {$(sum<%=applicant.id%>).style.display = 'table-row'} ;"
+
 });
 
 Behaviors.add("click", "toggleOther", function(element) {

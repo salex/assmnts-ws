@@ -1,4 +1,4 @@
-<%= javascript_include_tag "/javascripts/assmnt.js" %>
+<%#= javascript_include_tag "/javascripts/assmnt.js" %>
 <fieldset class="f-left col-6">
   <legend>Instructions</legend>
   <div class="box">
@@ -14,7 +14,7 @@
 </fieldset>
 <fieldset class="f-left col-24">
   <legend>Section - <%=@assessment.category%></legend>
-<%=form_tag post_admin_assessment_path(@assessment), :id => "assessarea", :name => "assessarea", :"data-behaviors" => "validate" %>
+<%=form_tag post_admin_assessment_path(@assessment), :id => "assessarea", :name => "assessarea", :"data-behaviors" => "validateRequired" %>
     <div class="box"><%= @assessment.instructions %></div>
     <div class="box">
       <div class="assmnt-actions"><%= @assessment.description %></div>

@@ -27,7 +27,10 @@
     
     <tr class="field">
       <th><%= f.label :zip ,"Zip Code"%></th>
-      <td><%= f.text_field :zip, :size => 11 %></td>
+      <td><%= f.text_field :zip, :size => 11, :"data-behavior" => "zipcodeLookup" %>
+        <%= f.hidden_field :city %>
+        <%= f.hidden_field :state %>
+        </td>
     </tr>
     <tr class="field">
       <th><label>Phone</label></th>

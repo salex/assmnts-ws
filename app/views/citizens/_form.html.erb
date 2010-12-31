@@ -32,7 +32,8 @@
     </tr>
     <tr class="field">
       <th><%= f.label :zip ,"Zip Code"%></th>
-      <td><%= f.text_field :zip, :size => 11, :class => "required"  %></td>
+      <td><%= f.text_field :zip, :size => 11, :class => "required" , :"data-behavior" => "zipcodeLookup"%></td>
+        
     </tr>
     
     <tr class="field">
@@ -59,7 +60,7 @@
       <th><%= f.label :email %></th>
       <td><%= f.text_field :email, :class => "required"  %>
         <span class="annotate"><%= link_to_function "Click here if you do not have an email address",
-         "r = confirm('You will be assigned a fictitious email that is your login name @jobs.aidt.edu. Leave the email address blank and just fill in the login name. If the login name is unique, you can use it to login. New registrations without an email address will first be screened for duplicates before any applications are released to the application process.');if ( r)   {$('citizen_email').value = ''; $('citizen_email').style.display = 'none';; $('no_email').style.display = 'inline'}; "%></span>
+         "r = confirm('You will be assigned a fictitious email that is your login name @jobs.aidt.edu. Leave the email address blank and just fill in the login name. If the login name is unique, you can use it to login. New registrations without an email address will first be screened for duplicates before any applications are released to the application process.');if ( r)   {$('#citizen_email').val(''); $('#citizen_email').css('display' , 'none'); $('#no_email').css('display' , 'inline');}; "%></span>
         </td>
     </tr>
     
