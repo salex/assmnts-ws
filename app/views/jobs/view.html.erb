@@ -2,4 +2,9 @@
 <div >
   <img src='<%=@stage.ad_url%>' width="500"  />
 </div>
-<%= link_to "Apply", apply_job_path(@stage)%>
+<%if user_signed_in?%>
+
+<%= link_to "Apply", apply_job_path(@stage), :class => "route"%>
+<% else%>
+<span class="annotate">Your must be logged in to apply for this training.</span>
+<% end%>

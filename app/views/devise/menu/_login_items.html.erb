@@ -1,8 +1,5 @@
 <% if user_signed_in? %>
-  <li> |
-    <%= link_to('Logout', destroy_user_session_path) %>        
-  </li>
-  <li>
-      | User: <%= current_user.name_full %>
-  </li>
+  <span> |
+    <%= link_to('Logout', destroy_user_session_path, :class => "route") %>        
+  </span>
 <% end %>

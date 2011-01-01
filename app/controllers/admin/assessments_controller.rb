@@ -94,8 +94,8 @@ module Admin
   
     def display
       @assessment = Assessment.find(params[:id])
-      if !session["post-#{params[:id]}"].nil?
-        params[:post] =session["post-#{params[:id]}"]
+      if session.has_key?("post") && session["post"].has_key?(params[:id])
+        params[:post] = session["post"][params[:id]]
       end
     end
   
@@ -135,7 +135,13 @@ module Admin
     def post
       @assessment = Assessment.find(params[:id])
       result = @assessment.scoreAssessment(params)
-      session["post-#{params[:id]}"] = result
+      if session.has_key?("post")
+        session["post"][params[:id]] = result
+      else
+        session["post"] = {}
+        session["post"][params[:id]] = result
+        
+      end
       qa = @assessment.getQandA
     
       #testing dumping post

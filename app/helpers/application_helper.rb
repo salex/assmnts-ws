@@ -22,6 +22,8 @@ module ApplicationHelper
         navbar << (link_to "Jobs",jobs_path)
       else
       end
+    else
+      navbar << (link_to "Jobs",jobs_path)
     end
     return  navbar.html_safe
   end

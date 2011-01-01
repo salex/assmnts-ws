@@ -1,5 +1,6 @@
 class ApplyController < ApplicationController
   def first
+    session.delete("post") if session.has_key?("post") #this is testing only TODO
     @citizen = Citizen.find(current_user.id)
     @sidebar = ""
     cbc = '<input type="checkbox" checked="checked" disabled="disabled" />'
@@ -107,6 +108,8 @@ class ApplyController < ApplicationController
   def confirm
     applicant = Applicant.find(session[:take][:assessed_id])
     @profile = applicant.display_profile
+    session.delete(:take)
+    session.delete(:steps)
     render :template => "apply/display_profile"
   end
   

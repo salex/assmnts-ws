@@ -1,17 +1,31 @@
-<h2>Sign in</h2>
-
+<fieldset  class="form-list">
+  <legend>Login</legend>
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <p><%= f.label :email %><br />
-  <%= f.text_field :email %></p>
+<table>
+  <caption class="actions annotate">Any login/signup instructions?</caption>
+  <tr>
+    <th><%= f.label :email %></th>
+    <td><%= f.text_field :email %></td>
+  </tr>
+  <tr>
+    <th><%= f.label :password %></th>
+    <td><%= f.password_field :password %></td>
+  </tr>
+  <tr>
+    <th><%= f.submit "Sign in" %></th>
+    <td>
+      <% if devise_mapping.rememberable? -%>
+        <p><%= f.check_box :remember_me %> <%= f.label :remember_me %></p>
+      <% end -%>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><%= render :partial => "devise/shared/links" %></td>
+  </tr>
+  </table>
+  
 
-  <p><%= f.label :password %><br />
-  <%= f.password_field :password %></p>
 
-  <% if devise_mapping.rememberable? -%>
-    <p><%= f.check_box :remember_me %> <%= f.label :remember_me %></p>
-  <% end -%>
 
-  <p><%= f.submit "Sign in" %></p>
 <% end %>
-
-<%= render :partial => "devise/shared/links" %>
+</fieldset>

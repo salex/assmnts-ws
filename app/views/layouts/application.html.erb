@@ -31,7 +31,15 @@
 			</div>
 			
 			<div id="header" style="background-image:url('/images/aidt_bkg.jpg');height:96px">
-				<img src='/images/logo1.jpg' class="f-left" />hi
+				<img src='/images/logo1.jpg' class="f-left" />
+				
+				<% if user_signed_in? %>
+				<br />
+				  <span class="actions">
+				      Logged in as: <%= current_user.name_full %>
+				  </span>
+				<% end %>
+				
 			</div>
 			
 			<div id="navbar" class="navspan ">

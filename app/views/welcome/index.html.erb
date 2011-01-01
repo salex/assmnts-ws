@@ -13,3 +13,19 @@
   <li>A Question.scored_method set to None will make the item not required and bypass client side validation.</li>
   <li>An Answer.value of 0 will not be required and bypass validation. Only useful on text/textform question when one of the answers is optional.</li>
 </ul>
+<hr >
+<% if !user_signed_in? 
+  %>
+  <span>
+    <%= link_to('Sign up', "/citizen/find", :class => "route")  %> 
+  </span>
+  <span class="annotate">
+    If you have not previously registered.
+  </span>
+  <span>
+    <%= link_to('Login', new_user_session_path, :class => "route")  %>  
+  </span>
+  <span class="annotate">
+    If you have.
+  </span>
+<% end%>

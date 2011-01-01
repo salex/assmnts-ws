@@ -25,10 +25,11 @@ class ApplicantsController < ApplicationController
     #@applicant = Applicant.find(params[:id])
     result = @applicant.status.include?("conv.") ? @applicant.conv_4d_scores : true
     if result
-      @scores = @applicant.stage.get_applicant_scores(@applicant)
-      @citizen = @applicant.user
+      #@scores = @applicant.stage.get_applicant_scores(@applicant)
+      #@citizen = @applicant.user
+      @applicants = [@applicant]
       respond_to do |format|
-        format.html # show.html.erb
+        format.html {render :template => "applicants/profiles", :layout => "print"}
         format.xml  { render :xml => @applicant }
       end
     else
@@ -42,4 +43,11 @@ class ApplicantsController < ApplicationController
     @applicant.rescore
     redirect_to @applicant
   end
+  
+  def profiles
+    ids = session[:ids].collect {|i| i.to_i}
+    @applicants = Applicant.where(:id => ids)
+    render :template => "applicants/profiles", :layout => "print"
+  end
+  
 end

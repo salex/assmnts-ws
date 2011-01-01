@@ -1,10 +1,13 @@
 AssmntsWs::Application.routes.draw do
   resources :exports
-
+  resources :pdf, :only => [:show,:create]
   resources :applicants do
     member do
       get "profile"
       get "rescore"
+    end
+    collection do
+      get "profiles"
     end
   end
   resources :company, :only => [:index] do

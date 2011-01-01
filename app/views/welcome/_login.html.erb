@@ -1,0 +1,17 @@
+<h2>Login</h2>
+<div  class="form-list">
+<%= form_for(@user, :as => :user, :url => session_path(:user)) do |f| %>
+
+<table><tr>  <th><%= f.label :email %></th>
+  <td><%= f.text_field :email %></td>
+</tr>
+<tr>  <th><%= f.label :password %></th>
+  <td><%= f.password_field :password %></td>
+</tr>
+  <th><%= f.submit "Sign in" %></th>
+  <td><%= link_to('Sign up', "/citizen/find",:class => "route")  %><span class="annotate">If you have not registered</span></td>
+  </table>
+  
+<% end %>
+</div>
+<%#= render :partial => "devise/shared/links", :locals => {:resource => @user, :resource_name => :user} %>

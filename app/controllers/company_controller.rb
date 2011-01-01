@@ -19,8 +19,12 @@ class CompanyController < ApplicationController
     stage = Stage.find(params[:id])
     request = params[:applicant][:fullpath]
     params[:current_user_id] = current_user.id
-    result = stage.process_selection(params)
-    redirect_to request, :notice => result
+    if  params[:applicant][:selection] == "Profile"
+      doprofile
+    else
+      result = stage.process_selection(params)
+      redirect_to request, :notice => result
+    end
   end
   
   def qa_summary
@@ -29,6 +33,9 @@ class CompanyController < ApplicationController
     render :template => "company/qa_summary", :layout => "print"
     
   end
-  
+  def doprofile
+    session[:ids] = params[:applicant][:id]
+    redirect_to "/applicants/profiles.pdf"
+  end
   
 end

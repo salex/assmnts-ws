@@ -10,7 +10,7 @@ class WsController < ApplicationController
     logger.info request.ip
     export = Export.getwork
     if export
-     result =  %x[curl  --form-string 'params=#{export.request}'  http://localhost:8080/ws.work.#{export.token}]
+      result =  %x[curl  --form-string 'params=#{export.request}'  http://localhost:8080/ws.work.#{export.token}]
     else
       result = %x[curl  --form-string 'params=nowork'  http://localhost:8080/ws.work.nowork]
     end
@@ -24,12 +24,12 @@ class WsController < ApplicationController
   end
   
   def getprofile
-    @applicant = Applicant.joins(:user).where("users.citizen_id" => 141708).joins(:stage).where("stages.jobstage_id" => 1840).first
+    @applicant = Applicant.joins(:user).where("users.citizen_id" => 132704).joins(:stage).where("stages.jobstage_id" => 1852).first
     @scores = @applicant.stage.get_applicant_scores(@applicant)
     @citizen = @applicant.user
-    respond_to do |format|
-      format.html {render :template => "applicants/profile"}
-    end
+      render :template => "/applicants/profile", :layout => "print"
+      
+    
   end
   
 =begin
@@ -37,6 +37,27 @@ class WsController < ApplicationController
   test routines. Most can deleted after conversion.
 
 =end
+
+  def test
+    # generic test get test routine, pass id and append params in query string  /ws/:id/test?x=y;y=x
+    a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    m = params[:id].to_i % 52
+    r = a[m..m]
+    r = rand(53)
+    
+=begin
+    x = Admintest.new
+    x.current_user = current_user
+    x.params = params
+    puts "BBBBBBBBBBBBBBBBBB #{x.inspect}"
+    response = Admintest::Conv.xxx("h8")+"<br />"
+    response << Admintest.test("ht")+"<br />"
+    response << x.classtest("ct")
+=end   
+    render :text => r, :layout => true
+  
+  end
+
   def get_xml_assmnt
     assmnt =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://localhost:8080/ws.jobstage.get_xml_assmnt']
     hash = ActiveSupport::JSON.decode(assmnt)
@@ -44,11 +65,6 @@ class WsController < ApplicationController
     render :text => "<textarea>#{assmnt}</textarea>", :layout => true
   end
   
-  def verify_authenticity_token
-    return true
-    #curl -X PUT -d '"jobstage":{"jobstage_id":1852,"responses":[{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153517,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153843,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154004,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154020,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154260,"result":"success"},"citizen_stage":{"result":"Success"}}],"result":"Success"}' -H "Content-Type: application/json" http://localhost:3000/ws/88788/didwork
-    #curl -X POST -d 'jobstage={"jobstage_id":1852,"responses":[{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153517,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":153843,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154004,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154020,"result":"success"},"citizen_stage":{"result":"Success"}},{"application_date":{"result":"Success"},"citizen":{"action":"update","citizen_id":154260,"result":"success"},"citizen_stage":{"result":"Success"}}],"result":"Success"}' -H "Content-Type: application/json" http://localhost:8080/ws.test.87887
-  end
   
   def get_stages
     stages =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://localhost:8080/ws.jobstage.get_stages']
@@ -78,12 +94,6 @@ class WsController < ApplicationController
   end
   
   
-  def test
-    # generic test get test routine, pass id and append params in query string  /ws/:id/test?x=y;y=x
-    
-    render :text => current_user.to_json, :layout => true
-    
-  end
   
   def test_scores
     stage = Stage.where(:id => params[:id]).first

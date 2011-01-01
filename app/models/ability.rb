@@ -12,7 +12,6 @@ class Ability
     elsif user.user_type  == "company"
       can [:read,:profile], Applicant
     elsif user.role? :site_admin
-      can :manage, [Estimate,Task,Task_item,Sales_order,Coa,Customer, Vendor, Sales_order,Purchase_order,Memo]
     elsif user.role? :admin
     elsif user.role? :designer
       

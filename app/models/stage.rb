@@ -78,7 +78,7 @@ class Stage < ActiveRecord::Base
     if params[:applicant][:selection] == "Selected"
       result = process_selected(applicants,params[:current_user_id])
       
-    elsif params[:applicant][:selection] == "AppPDF"
+    elsif params[:applicant][:selection] == "Profile"
       result = print_profiles(applicants)
     else
       result = change_status(applicants, params[:applicant][:selection])

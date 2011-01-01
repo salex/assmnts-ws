@@ -1,6 +1,9 @@
 
 class WelcomeController < ApplicationController
   def index
+    if !user_signed_in? 
+      @user = User.new
+    end
   end
   
   def citizen
