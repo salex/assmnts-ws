@@ -1,18 +1,66 @@
-<h5>Hi! Root Welcome</h5>
+<h5>Hi! Root Welcome (Dashboard)</h5>
 
-<p>I did an end to end import from 4D just using web services on all job stages that had on-line applications (no conversion files). I only imported scores and users from the first stage and the last two.</p>
+<p>Ynglish is needed</p>
 
-<p>Password have been set to "please" for special users (admin, company,project)</p>
+<a class="crud" href="javascript:$('#demo').fadeIn('slow')" >What's new and What's left to do</a>
+<div id="demo" style="display:none">
+  <h5> Recent changes (since Cristmas)</h5>
+  <ul>
+    <li>I did an end to end import from 4D just using web services on all job stages that had on-line applications (no conversion files from 4D). 
+      I only imported users from CSC, MFG and RYLA. I only imported scores from the CSC and RYLA. 
+      MFG will dynamically load score from 4D if a profile is requested (and status starts
+      with "conv."). 
+    </li>
 
-<p>Javascript framework has been changed to jquery from prototype - pain, but seems a little easier. Zipcode lookup implemented using a webservice at geonames.org</p>
+    <li>Password have been set to "please" for special users (admin, company,project)</li>
 
-<p>Some basic changes made to assessments</p>
-  
-<ul>
-  <li>A Question.display_type set to None will basically NOP the question. It will not display on assessment, so won't be scored</li>
-  <li>A Question.scored_method set to None will make the item not required and bypass client side validation.</li>
-  <li>An Answer.value of 0 will not be required and bypass validation. Only useful on text/textform question when one of the answers is optional.</li>
-</ul>
+    <li>Javascript framework has been changed to jquery from prototype - pain, but seems a little easier. 
+      Zipcode lookup implemented using a webservice at geonames.org
+    </li>
+    <li>Some basic changes made to assessments</li>
+
+    <ul>
+      <li>A Question.display_type set to None will basically NOP the question. It will not display on assessment, so won't be scored</li>
+      <li>A Question.scored_method set to None will make the item not required and bypass client side validation.</li>
+      <li>An Answer.value of 0 will not be required and bypass validation. Only useful on text/textform question when one of the answers is optional.</li>
+    </ul>
+    <li>The company selection process, mainly to specific question search has been given helper screen that aids in creating complex queries.
+      You still have to know what your are doing (ANDs and ORs and Groups)
+    </li>
+  </ul>
+  <br />
+  <h5>What has been done to this point</h5>
+  <p>A lot! I consider that functionally, the system is 95% complete (but that last 5% can be hell). 
+    That is why I've really stopped now until I get some feedback. It will do all of what the current system does.
+    <ul>
+      <li>Create an manage assessments</li>
+      <li>Publish jobs</li>
+      <li>Collect and scores Applications</li>
+      <li>Provides a selection process</li>
+    </ul>
+  </p>
+  <o>
+    What is left to do depends on how you want to proceed. Their is very little done in 4D, other than create/update citizen, 
+    applicationData and citizen_stage records. 
+    What goes in application data needs defined - applicant_id from rails and a form type is all that is really needed. It does do the basic 30 year
+    old profile stuff and sticks something in xml, but why? 
+    Again, once the applicant is pushed to 4D, 4D owns it and about the only thing you need from Rails 
+    is the profile and there is a means to get that.
+  </p>
+  <br />
+  <h5>What is left to do</h5>
+  <p>Decide if you want to proceed, or dwell on it for a couple more years!</p>
+  <p>I understand the reluctance to use "Steve's" code again and the desire to
+    create a newer and better approach. If that is what you want to do, I'll go away.
+    I just wanted to finish what I couldn't complete - for various reasons.
+  </p>
+  <p>If you want to proceed, at least a little to evaluate what has been done, there
+    needs to be some collaboration. The generic assessments was and is a great idea, 
+    but if targeted to a more specific use, there are some things that can be improved.
+    I don't want to define those by myself. The code is on github.
+    </p>
+  <p class="annotate">Steve</p>
+</div>
 <hr >
 <% if !user_signed_in? 
   %>

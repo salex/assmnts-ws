@@ -20,7 +20,7 @@ class ScoresController < ApplicationController
     if !@score.score_object.blank?
       result =  ActiveSupport::JSON.decode(@score.score_object)
       @assessment = Assessment.find(result["assessment_id"])
-      @html = dumpPost(result,@assessment.getQandA).html_safe
+      @html = dumpSummary(result,@assessment.getQandA).html_safe
     end
 
     respond_to do |format|

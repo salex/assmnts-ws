@@ -1,36 +1,31 @@
 class WsController < ApplicationController
-  skip_before_filter :verify_authenticity_token
+  
+  before_filter :ws_valid_ip
+  
+  def ws_valid_ip
+    logger.info request.ip
+    if not(%w(localhost 127.0.0.1 10.0.0.1 192.211.32.).include?(request.ip))
+      render :nothing => true
+    end
+  end
   
   def ruok
-    logger.info request.ip
-    render :text => '{"yes":"I am okay","rail":"rails"}'
+    render :text => '{"Yes":"I am okay","Result":"Yes"}'
   end
   
   def getwork
-    logger.info request.ip
     export = Export.getwork
     if export
       result =  %x[curl  --form-string 'params=#{export.request}'  http://localhost:8080/ws.work.#{export.token}]
     else
       result = %x[curl  --form-string 'params=nowork'  http://localhost:8080/ws.work.nowork]
     end
-    if result.blank?
-      #logger.info "BBBBBBBBBBBBBB got blank back"
-    else
+    if !result.blank?
       Export.didwork(result)
-      #logger.info "RRRRRRRRRRRRRRRR #{result}"
     end
     render :nothing => true
   end
   
-  def getprofile
-    @applicant = Applicant.joins(:user).where("users.citizen_id" => 132704).joins(:stage).where("stages.jobstage_id" => 1852).first
-    @scores = @applicant.stage.get_applicant_scores(@applicant)
-    @citizen = @applicant.user
-      render :template => "/applicants/profile", :layout => "print"
-      
-    
-  end
   
 =begin
   Everything below here is either convervion routines or
@@ -41,9 +36,15 @@ class WsController < ApplicationController
   def test
     # generic test get test routine, pass id and append params in query string  /ws/:id/test?x=y;y=x
     a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    m = params[:id].to_i % 52
-    r = a[m..m]
-    r = rand(53)
+    idi = params[:id].to_i
+    ids = idi.to_s
+    
+    result = ""
+    while 
+    0.upto(15) {
+      r = rand(53)
+      result << a[r..r]
+    }
     
 =begin
     x = Admintest.new
@@ -54,7 +55,7 @@ class WsController < ApplicationController
     response << Admintest.test("ht")+"<br />"
     response << x.classtest("ct")
 =end   
-    render :text => r, :layout => true
+    render :text => result, :layout => true
   
   end
 

@@ -63,7 +63,7 @@ if !result.include?("Yes")
   
 end
 
-stages = Stage.where(:id => [1,11,12])
+stages = Stage.where(:id => [10])
 
 stages.each do |stage|
   users =  %x[curl http://localhost:8080/ws.getusercount?jobstageid=#{stage.jobstage_id}]
