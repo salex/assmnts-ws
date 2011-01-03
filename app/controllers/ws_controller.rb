@@ -40,25 +40,11 @@ class WsController < ApplicationController
     ids = idi.to_s
     
     result = ""
-    while 
     0.upto(15) {
       r = rand(53)
       result << a[r..r]
     }
-    
-=begin
-    x = Admintest.new
-    x.current_user = current_user
-    x.params = params
-    puts "BBBBBBBBBBBBBBBBBB #{x.inspect}"
-    response = Admintest::Conv.xxx("h8")+"<br />"
-    response << Admintest.test("ht")+"<br />"
-    response << x.classtest("ct")
-=end   
-    render :text => result, :layout => true
-  
   end
-
   def get_xml_assmnt
     assmnt =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://localhost:8080/ws.jobstage.get_xml_assmnt']
     hash = ActiveSupport::JSON.decode(assmnt)
@@ -272,4 +258,6 @@ class WsController < ApplicationController
       end
     end
   end
+  
+
 end

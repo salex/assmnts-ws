@@ -152,11 +152,11 @@ input.validation-passed, textarea.validation-passed, select.validation-failed { 
 .route a { background: transparent url(/images/table_action.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
 .route a:hover { color: #f00!important; }
 a.cancel { background: transparent url(/images/arrow_undo.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
-a.cancel a.cancel:hover { color: #f00!important; }
+a.cancel:hover { color: #f00!important; }
 a.crud { background: transparent url(/images/table_go.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
-a.crud a.crud:hover { color: #f00!important; }
+a.crud:hover { color: #f00!important; }
 a.route { background: transparent url(/images/table_action.png) no-repeat center left; font-style: italic; text-decoration: none; color: #369!important; font-size: .8em; font-weight: bold; margin-left: 2px; padding: 4px 4px 1px 18px; }
-a.route a.route:hover { color: #f00!important; }
+a.route:hover { color: #f00!important; }
 a.help { background: transparent url(/images/information.png) no-repeat center left; margin-left: 2px; padding: 4px 4px 1px 18px; }
 a.help:hover { color: #00f!important; }
 a.l-or { background: transparent url(/images/or.png) no-repeat center left; margin-left: 0px; padding: 1px 1px 1px 20px; }
