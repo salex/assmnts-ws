@@ -4,22 +4,10 @@ class Question < ActiveRecord::Base
   belongs_to :assessment
   has_many :answers, :order => "sequence", :dependent => :destroy
   before_validation :set_defaults
-  attr_accessor :status, :assessor_count
   after_save :updateMax
   after_destroy :updateMax
 
 
-  def status
-    assessment.status
-  end
-
-  def assessor_count
-    assessment.assessors.count
-  end
-  
-  def can_destroy?
-    (assessor_count == 0) && (status != "Master")
-  end
 
   private
   

@@ -17,7 +17,8 @@ module Admin
     # GET /questions/1.xml
     def show
       #@question = Question.find(params[:id])
-      @answers = @question.answers
+      @status = @question.assessment.get_status
+      #@answers = @question.answers
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @question }

@@ -59,6 +59,35 @@
     but if targeted to a more specific use, there are some things that can be improved.
     I don't want to define those by myself. The code is on github.
     </p>
+    <br />
+  <h5>Things that need to be looked at</h5>
+  <ul>
+    <li>I think that decimal (big decimal) is overkill and float will work fine. Big decimal does not work on sqlite3, but may on postgres. won't know until moved to postgres.</li>
+    <li>Timoutable is not turned on, but when it is turned on, I know there are problems with Devise and the regular session verses Devise user_session.</li>
+    <li>Might need a better way to get between score and assessment. (score.assessing.assessment)</li>
+    <li>In assessments, the generic assessment.category and assessment.name may need to be formalized and controlled. Assessment.name is informally used as a key to group assessments by job. Since Assessors is basically a many to many table, it may be best to move the concept of assessment.category to Assessors to limit having to get the assessment to get some basic information.</li>
+    <li>Consider moving stuff out of lib/assmnts.rb to a model (tableless)</li>
+    <li>The concept of the xml_key has proven to be quite valuable in referencing questions/answers. It needs a better definition and control. Currently if blank, it is set to the assessment xml_key, + question sequence + answer sequence.  Sequences are not checked for valid (sequential, no dups, no holes). This raises a little issue in that converted xml versions of a few categories starts with question sequence 2. This may be a conversion issue only. Anything new can check and reset the key.</li>
+  </ul>
+  <br />
+  <h5>Versioning</h5>
+  <p>There is no simple soloution, if fact I'll say there is no solution to this problem, other than strict db administration.</p>
+  <p>Changing an assessment once applications have been collected cannot have an automated solution. 
+    Re-scoring applications is fairly trivial with this system
+    and takes less than a second per applicant. So in the case of just a minor value change, there is little impact, but someone who has already
+    taken the assessment and was selected or not based on the score, can't be reversed. It even gets worse.
+    <ul>
+      <li>A question or answer that had poor wording that caused many to not answer the question as intended. I've seen answers to "Have you previously been employed by this company?" answer with yes and they missed the word "company" and put in some other company name. Now that is stupid, but other question could be worse. Changing the question will not allow those to answered it before to change their answer. All you can do is throw out the question. You could put in another question, but then those who already took the assessment didn't have an opportunity to answer it.</p> 
+      </li>
+      <li>An answers critical attribute is changed. What do you do? Not easy</li>
+    </ul>
+    <p>While some controls need to be put in (e.g., locked/active status can't be changed without confirmation. Assessment marked as dirty and must be re-scored before being reactivated. ), it requires thought and explaining the consequences to the customer.</p>
+    <p>You could try putting in some version number in the score and capture some information, but after trying to do all of that, I'm sure you'd find numerous instances where it does not help. Once a person is selected and progressed, you can't do anything about it. I still remember all the crap at MB because Doug had something wrong in the scoring and some people were selected that should not have been. Sorry, that is what testing is for - and not just
+      IT testing, but user/customer testing. 
+That is the the reason turquoise is on the project flow document! But IT has to be assertive and make sure dumb things don't get in - again, not an 
+easy task!
+      
+      </p>
   <p class="annotate">Steve</p>
 </div>
 <hr >

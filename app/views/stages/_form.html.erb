@@ -19,7 +19,7 @@
     </tr>
     <tr class="field">
       <th><%= f.label :status %></th>
-      <td><%= f.text_field :status %></td>
+      <td><%= f.select :status, stage_status_options(@stage[:status]) %></td>
     </tr>
     <tr class="field">
       <th><%= f.label :note %></th>

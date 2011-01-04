@@ -1,16 +1,19 @@
 class Assessment < ActiveRecord::Base
   has_many :questions, :order => "sequence", :dependent => :destroy
   has_many :assessors
-  attr_accessor :assessor_count
     
   def assessor_count
     assessors.count
   end
   
-  def can_destroy?
-    (assessor_count == 0) && (status != "Master")
+  def can_modify?
+    active_count = self.assessors.where("assessors.status" => "Active").count
+    (active_count == 0) && (status != "Master")
   end
   
+  def get_status
+    return {:can_modify? => self.can_modify?, :status => self.status}
+  end
   def self.search(search)  
     if search  
       where('name LIKE ?', "%#{search}%")  

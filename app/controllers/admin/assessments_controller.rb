@@ -25,7 +25,8 @@ module Admin
     # GET /assessments/1.xml
     def show
       @assessment = Assessment.find(params[:id])
-      @questions = @assessment.questions
+      @status = @assessment.get_status
+      #@questions = @assessment.questions
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @assessment }

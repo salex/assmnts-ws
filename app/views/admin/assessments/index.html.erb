@@ -39,8 +39,8 @@
         <td><%= assessment.max_weighted %></td>
         <td>
         <%= link_to 'Show', admin_assessment_path(assessment) %>
-        <%= link_to 'Edit', edit_admin_assessment_path(assessment) %>
-        <%= link_to 'Destroy', admin_assessment_path(assessment), :confirm => 'Are you sure?', :method => :delete if assessment.can_destroy? %>
+        <%= link_to 'Edit', edit_admin_assessment_path(assessment) if assessment.can_modify? %>
+        <%= link_to 'Destroy', admin_assessment_path(assessment), :confirm => 'Are you sure?', :method => :delete if assessment.can_modify? %>
       </td>
     </tr>
   <% end %>
