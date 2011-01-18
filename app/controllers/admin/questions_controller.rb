@@ -86,6 +86,18 @@ module Admin
         format.xml  { head :ok }
       end
     end
+    
+    def edit_answers
+      @question = Question.find(params[:id])
+      max = @question.answers.maximum(:sequence) 
+      seq = max.nil? ? 0  : max 
+      3.times do
+        seq += 1
+        answer = @question.answers.build({:sequence => seq})
+      end
+      
+      #render :text => params.inspect, :layout => true
+    end
   
     private
     def setNewDefaults

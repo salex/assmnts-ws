@@ -109,10 +109,9 @@ class StagesController < ApplicationController
     @stage = Stage.find(params[:id])
     @assessors = @stage.assessors
     respond_to do |format|
+      format.js 
       format.html {render :template => "stages/_assessors"}
       
-      format.xml  { render :xml => @stage }
-      format.js
     end
   end
   

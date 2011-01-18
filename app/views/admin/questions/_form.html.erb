@@ -12,7 +12,7 @@
     </ul>
   </div>
   <% end %>
-  <table>
+	<table class="f-left">
     <tr class="field">
       <th><%= f.label :sequence %></th>
       <td><%= f.text_field :sequence %></td>
@@ -37,6 +37,8 @@
       <th><%= f.label :score_method %></th>
       <td><%= f.select :score_method, score_method_options(@question.score_method) %></td>
     </tr>
+  </table>
+	<table class="f-left">
     <tr class="field">
       <th><%= f.label :weight %></th>
       <td><%= f.text_field :weight %></td>
@@ -64,7 +66,7 @@
       <td><%= f.text_area :note , :rows => 3%></td>
     </tr>
     </table>
-    
+    <div class="f-clear"></div>
   <div class="assmnt-actions">
     <%= f.submit %>
   </div>

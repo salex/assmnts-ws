@@ -96,6 +96,9 @@ AssmntsWs::Application.routes.draw do
 
        resources :questions, :only => [:show, :edit, :update, :destroy] do
          resources :answers, :only => [:index, :new, :create] 
+         member do
+           get :edit_answers
+         end
        end
        resources :answers, :only => [:show, :edit, :update, :destroy]
        

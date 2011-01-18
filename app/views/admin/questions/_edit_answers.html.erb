@@ -1,0 +1,63 @@
+<%= form_for([:admin,@question]) do |f| %>
+
+<div class="assmnt-list">
+  <div class="actions">
+    <%= f.submit %><span><%= @question.question%>
+  </div>
+
+  <table>
+    <tr class="list-header">
+        <th>Seq</th>
+        <th>Answer</th>
+        <th>Shortname</th>
+        <th>Value</th>
+        <th>Other?</th>
+        <th>OtherQ</th>
+        <th>Eval</th>
+        <th>Actions</th>
+    </tr>
+    <% alt = true%>
+    
+    <%= f.fields_for :answers do |builder| %>
+      <%#= render "list_items", :f => builder %>      
+    
+    <%# @question.answers.each do |answer| %>
+      <% alt = !alt %>
+
+    <tr <%=raw alt ? "class=\"alt\"" : ""%>>
+        <td>
+          <%= builder.text_field :sequence ,:size => 2 %>
+        </td>
+        <td>
+          <%= builder.text_field :answer, :size => 20 %>  
+        </td>
+        <td>
+          <%= builder.text_field :shortname, :size => 12 %>  
+        </td>
+        <td>
+          <%= builder.text_field :value, :size => 2 %>  
+        </td>
+        <td>
+          <%= builder.check_box :requires_other %>
+        </td>
+        <td>
+          <%= builder.text_field :other_question, :size => 12 %>  
+        </td>
+        <td>
+          <%= builder.text_field :answer_eval, :size => 12 %> 
+        </td> 
+        <td>
+          <span > 
+            <%if !builder.object.answer.nil? %>
+            <%= builder.check_box :_destroy, :"data-confirm" => "Are you sure?" %>
+            <%= builder.label :_destroy, "Delete" %>
+            <%else%>
+            &nbsp;
+            <%end%>
+          </span>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+</div>
+<% end %>

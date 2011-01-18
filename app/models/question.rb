@@ -6,6 +6,7 @@ class Question < ActiveRecord::Base
   before_validation :set_defaults
   after_save :updateMax
   after_destroy :updateMax
+  accepts_nested_attributes_for :answers, :reject_if => lambda { |a| a[:answer].blank? }, :allow_destroy => true
 
 
 

@@ -1,6 +1,6 @@
 <fieldset class="assmnt-show">
 	<legend>Question</legend>
-	<table>
+	<table class="f-left">
   	<tr>
   	  <th>Sequence:</th>
   	  <td><%= @question.sequence %></td>
@@ -30,6 +30,8 @@
   	  <th>Score method:</th>
   	  <td><%= @question.score_method %></td>
   	</tr>
+  </table>
+  	<table class="f-left">
 
   	<tr>
   	  <th>Weight:</th>
@@ -57,7 +59,7 @@
 	</tr>
 		<tr>
 	  <th>Assmnt Status:</th>
-	  <td><%= @question.status %><%= @question.assessor_count%></td>
+	  <td><%#= @question.status %><%#= @question.assessor_count%></td>
 	</tr>
 
 	</table>
@@ -77,11 +79,8 @@
 <fieldset class="relations">
   <legend>Answers  	
     <span class="crud">
-      <%if params[:question_id] %>
-      <%= link_to 'New Answer', new_admin_question_answer_path(params[:question_id]) %>
-      <%else%>
-      <%= link_to 'New Answer', new_admin_question_answer_path(params[:id]) %>
-      <%end%>
+      <%= link_to 'Edit/Add Answers', edit_answers_admin_question_path(params[:id]), :"data-remote" => true %>
+      
   	</span>
   </legend>
 	<div id="related">
