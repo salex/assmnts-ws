@@ -5,7 +5,7 @@ class Citizen < User
     result, citizen = self.find_citizen(params)        
     if !result 
       fdata = params.to_json
-      citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.citizen.lookup']
+      citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://192.211.32.248:8010/ws.citizen.lookup']
       if citizen[0..0] == "{"
         citizen = ActiveSupport::JSON.decode(citizen)
       else

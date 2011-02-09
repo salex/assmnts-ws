@@ -27,7 +27,7 @@ class StagesController < ApplicationController
   
   def import
     @stage = Stage.find(params[:id])
-    assmnt =  %x[curl --form-string  'fdata=#{@stage[:jobstage_id]}' 'http://localhost:8080/ws.jobstage.get_xml_assmnt']
+    assmnt =  %x[curl --form-string  'fdata=#{@stage[:jobstage_id]}' 'http://192.211.32.248:8010/ws.jobstage.get_xml_assmnt']
     @stage["assessment_json"] = assmnt
     @stage.save
     

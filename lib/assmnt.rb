@@ -1,5 +1,16 @@
 module Assmnt
   
+  def a4d_fcurl(fdata, ws_path, params=false)
+    if params
+      result =  %x[curl --form-string  'params=#{fdata}' 'http://localhost:8080/#{ws_path}']
+    else
+      result =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/#{ws_path}']
+    end
+  end
+  
+  def a4d_qcurl(ws_path)
+    result =  %x[curl 'http://localhost:8080/#{ws_path}']
+  end
   
   def status_options(status)
     if status.nil?

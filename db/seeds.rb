@@ -12,7 +12,7 @@ end
 
 #require File.expand_path('../conversion/export_masters', __FILE__)
 #require File.expand_path('../conversion/import_masters', __FILE__)
-#require File.expand_path('../conversion/susers', __FILE__)
+#require File.expand_path('../conversion/test_users', __FILE__)
 #require File.expand_path('../conversion/stages', __FILE__)
 require File.expand_path('../conversion/stage_users', __FILE__)
 #require File.expand_path('../conversion/stage_scores', __FILE__)

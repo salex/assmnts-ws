@@ -213,9 +213,9 @@ class Stage < ActiveRecord::Base
     export.sent = Time.now
     export.request = selected_hash.to_json
     export.save
-    result =  %x[curl --form-string  'fdata=#{""}' 'http://localhost:8080/ws.ruok']
+    result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.ruok']
     if result.include?("Yes")
-      result =  %x[curl --form-string  'fdata=#{""}' 'http://localhost:8080/ws.gotwork']
+      result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.gotwork']
     end
     return "Applicants status change to selected. Export scheduled #{result}"
   end

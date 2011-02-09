@@ -34,7 +34,7 @@ $params:=$2
 
 add an active cron task with parameters. I have it running on my machine, but not sure how If I put my machine name in or init did.
 
-a4dx_launch_curl("curl http://localhost:8080/ws.getwork";"")
+a4dx_launch_curl("curl http://192.211.32.248:8010/ws.getwork";"")
 
 That should be about it, except active4d should be running on that machine.
 

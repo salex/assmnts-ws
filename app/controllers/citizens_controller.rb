@@ -2,10 +2,12 @@ class CitizensController < ApplicationController
 
   load_and_authorize_resource :only => [:show, :edit, :update]
   def show
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @member }
-    end
+    logger.info "AAAAAAAAAAAAAAAAAAAAA #{params.inspect}"
+    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.citizen.get']
+    
+    render :text => citizen, :layout => true
+    
+    
   end
 
   def new
@@ -14,7 +16,8 @@ class CitizensController < ApplicationController
   end
   
   def get
-    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://localhost:8080/ws.citizen.get']
+    logger.info "AAAAAAAAAAAAAAAAAAAAA #{params.inspect}"
+    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.citizen.get']
     
     render :text => citizen, :layout => true
     

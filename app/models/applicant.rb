@@ -107,7 +107,7 @@ class Applicant < ActiveRecord::Base
   def update_4d
     citizen_update = {"citizen" => citizen}
     fdata = citizen_update.to_json
-    citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.citizen.update4d']
+    citizen =  %x[curl --form-string  'fdata=#{fdata}' 'http://192.211.32.248:8010/ws.citizen.update4d']
     if citizen[0..0] == "{"
       citizen = ActiveSupport::JSON.decode(citizen)
     else
@@ -241,7 +241,7 @@ class Applicant < ActiveRecord::Base
     end
     fdata = {"jobstageid" => stage.jobstage_id, "citizenid" => self.user.citizen_id}.to_json
     
-    score =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/ws.jobstage.conv_score']
+    score =  %x[curl --form-string  'fdata=#{fdata}' 'http://192.211.32.248:8010/ws.jobstage.conv_score']
     if score.include?("Error")
       puts "bad score json"
       return false
