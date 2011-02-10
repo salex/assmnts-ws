@@ -13,8 +13,12 @@ module Admin
     end
     
     def group
-      @assessments = Assessment.group(:name).paginate(:per_page => 20, :page => params[:page])
-
+      x = Assessment.select("distinct on (name) id")
+      logger.info "AAAAAAAAAAAAAAAAAAAA #{x.inspect}"
+      ids = x.map(&:id)
+      @assessments = Assessment.where(:id => ids).order(:name).paginate(:per_page => 20, :page => params[:page])
+      #@assessments = Assessment.all.paginate(:per_page => 20, :page => params[:page]) #group([:name,:id,:master_id]).paginate(:per_page => 20, :page => params[:page])
+      #@assessments = Assessment.order(:name).select('DISTINCT(name), name, description,status,category').paginate(:per_page => 20, :page => params[:page])
       respond_to do |format|
         format.html # index.html.erb
         format.xml  { render :xml => @assessments }

@@ -33,13 +33,13 @@ ActiveRecord::Schema.define(:version => 20101219122118) do
   create_table "applicants", :force => true do |t|
     t.integer  "user_id"
     t.integer  "stage_id"
-    t.decimal  "score"
+    t.decimal  "score",                        :precision => 8, :scale => 2
     t.text     "answers"
     t.string   "status"
     t.date     "status_date"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "weighted"
+    t.decimal  "weighted",                        :precision => 8, :scale => 2
     t.date     "applied_date"
   end
 
@@ -51,8 +51,8 @@ ActiveRecord::Schema.define(:version => 20101219122118) do
     t.string   "category"
     t.string   "answer_type",  :limit => 20
     t.string   "display_type", :limit => 20
-    t.decimal  "max_raw"
-    t.decimal  "max_weighted"
+    t.decimal  "max_raw",                        :precision => 8, :scale => 2
+    t.decimal  "max_weighted",                        :precision => 8, :scale => 2
     t.string   "xml_key",      :limit => 20
     t.datetime "created_at"
     t.datetime "updated_at"

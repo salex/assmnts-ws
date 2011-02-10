@@ -112,7 +112,7 @@ class Stage < ActiveRecord::Base
           ques = Question.new
           ques.assessment_id = assmnt.id
           ques.sequence = qkey.gsub(/[^0-9]/,"").to_i
-          ques.shortname = question["name"]
+          ques.shortname = question["name"][0..19]
           ques.question = question["text"]
           ques.answer_type = question["type"].downcase.include?("radio") ? "Radio" : question["type"]
           ques.display_type = question["display"].downcase.include?("line") ? "Inline" : "List"
@@ -137,7 +137,7 @@ class Stage < ActiveRecord::Base
             ans = Answer.new
             ans.question_id = ques.id
             ans.sequence = answer["id"].to_i
-            ans.shortname = answer["name"]
+            ans.shortname = answer["name"][0..19]
             ans.answer = answer["text"]
             ans.value = answer["value"].to_i
             ans.requires_other = !answer["other"].blank?

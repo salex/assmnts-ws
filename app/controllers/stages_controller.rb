@@ -3,7 +3,7 @@ class StagesController < ApplicationController
   # GET /stages.xml
   load_and_authorize_resource
   def index
-    @stages = Stage.all
+    @stages = Stage.order(:project_name).all.paginate(:per_page => 20, :page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

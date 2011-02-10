@@ -5,7 +5,7 @@ module Admin
     end
   
     def assessors
-      @assessors = Assessor.all
+      @assessors = Assessor.paginate(:per_page => 20, :page => params[:page])
     end
     
     def users

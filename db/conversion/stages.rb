@@ -4,6 +4,9 @@ if result.include?("Yes")
 end
 
 stages = json_parse(result)
+ActiveRecord::Base.connection.reset_pk_sequence!('assessments')
+ActiveRecord::Base.connection.reset_pk_sequence!('questions')
+ActiveRecord::Base.connection.reset_pk_sequence!('answers')
 
 stages.each do |stage|
   puts stage["job"].inspect

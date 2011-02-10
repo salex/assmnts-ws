@@ -5,7 +5,7 @@ gem 'rails', '3.0.3'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3-ruby', :require => 'sqlite3'
+#gem 'sqlite3-ruby', :require => 'sqlite3'
 
 gem 'devise',           '1.1.3'
 gem 'devise_invitable', '~> 0.3.4'
@@ -13,7 +13,7 @@ gem 'cancan'
 gem 'will_paginate', '~> 3.0.beta'
 gem 'haml'
 gem 'pdfkit'
-
+gem 'pg'
 # Use unicorn as the web server
 # gem 'unicorn'
 

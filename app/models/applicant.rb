@@ -179,17 +179,17 @@ class Applicant < ActiveRecord::Base
       end
       area = ActiveSupport::JSON.decode(score.score_object)
       post = {"post.answer" => area["answers"], "post.answer_other" => area["answers_other"]}
-      scored = assessment.scoreAssessment(post)
+      rescored = assessment.scoreAssessment(post)
       score_params = {}
-      score_params[:score_object] = scored.to_json
-      score_params[:score] = scored["score_raw"]
-      score_params[:score_weighted] = scored["score_weighted"]
-      score_params[:answers]  = "|" + scored["all_answers"].join("|") + "|"
+      score_params[:score_object] = rescored.to_json
+      score_params[:score] = rescored["score_raw"]
+      score_params[:score_weighted] = rescored["score_weighted"]
+      score_params[:answers]  = "|" + rescored["all_answers"].join("|") + "|"
       score.update_attributes(score_params)
-      score_raw << scored["total_raw"]
-      score_weighted << scored["total_weighted"]
+      score_raw << rescored["total_raw"]
+      score_weighted << rescored["total_weighted"]
       #answers << score_params[:answers] 
-      self.answers << scored["all_keys"].join 
+      self.answers << rescored["all_keys"].join 
       score.save
     end
     if score_raw.length > 0

@@ -2,7 +2,7 @@ ts = Time.now
 
 result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.ruok']
 if result.include?("Yes")
-  stages = Stage.where(:id => [1,11,12])
+  stages = Stage.where(:id => [58])
   
 else
   puts "Stage Scores not complete because 4d is down"
