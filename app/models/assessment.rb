@@ -21,6 +21,51 @@ class Assessment < ActiveRecord::Base
       order(:id).scoped  
     end  
   end  
+  
+  def self.computeMax(id)
+    if id.nil?
+      return false
+    end
+    assessment = Assessment.find(id)
+    
+    maxRaw = 0
+    maxWeighted = 0
+    
+    for question in assessment.questions
+      maxQues = 0
+      sumQues = 0
+      
+      weight = question.weight.nil? ? 0 : question.weight.to_f
+      ansType = question.answer_type.blank? ? "" : question.answer_type.downcase
+      scoreMethod = question.score_method.blank? ? "value" : question.score_method.downcase
+      isScored = ((scoreMethod.downcase != "none") ) # and (weight > 0)
+      isText =  !(ansType =~ /text/i).nil?
+      for answer in question.answers
+        isTextScored =  !answer.answer_eval.blank? 
+        value = answer.value.to_f
+        if isScored
+          if ((isText  and isTextScored) or (!isText ))
+            if (value > maxQues)
+              maxQues = value
+            end if
+            sumQues += value        
+          end
+        end
+      end
+      if ((scoreMethod == "sum")  and ((ansType == "checkbox") or (ansType == "select-multiple")))
+        maxRaw += sumQues
+        maxWeighted += (sumQues * weight)
+      else
+        maxRaw += maxQues
+        maxWeighted += (maxQues * weight)
+      end
+    end
+    assessment.max_raw = maxRaw
+    assessment.max_weighted = maxWeighted
+    assessment.save
+    return true
+  end
+  
 #  ans = Answer.select("answers.id").select('answers.xml_key').joins(:question => :assessment).where("questions.id = answers.question_id AND assessments.id = #{aids[0]}")
 #  ques = Question.select("questions.id").select('questions.xml_key').joins(:assessment).where("questions.assessment_id = #{aids[0]}")
   def getQandA
@@ -179,5 +224,69 @@ class Assessment < ActiveRecord::Base
   end 
   
   private
+  
+  def scoreChunk(ansText,chunk)
+    partial = chunk.split("::")
+    if partial.length == 2
+      partialVal = partial[0].to_f
+      chunk = partial[1]
+    else
+      partialVal = 1
+    end
+    if chunk[0..0] != "!" # is answer negated? first character = !, else not
+      eq = true
+    else
+      eq = false
+      chunk = chunk[1..-1]
+    end  
+    re = Regexp.new(chunk,true)
+    ok = !( re =~ ansText).nil? # it is there or not
+    if (ok and eq) or (!ok and !eq)
+      score = partialVal
+    else
+      score = 0
+    end
+    return score, partialVal
+  end
+
+  def scoreText(ansValue,ansEval,ansText,ansType)
+    ansValue = ansValue.to_f # in case big decimal or integer
+    eq = true
+    if (ansEval[0..0] == "!") and (ansEval.include?("&")) # is answer negated? first character = !, else not
+      eq = false
+      ansEval = ansEval[1..-1]
+    end
+    if ansType == "text_numeric"      
+      between = ansEval.split("..")
+      if between.length == 2
+        ok = ((ansText.to_f >= between[0].to_f) and ( ansText.to_f <= between[1].to_f))
+      else
+        ok = ansText.to_f == ansEval.to_f
+      end
+      if ok
+        val = ansValue
+      else
+        val = 0
+      end
+    else
+      and_splits = ansEval.split("&")
+      score = max = 0
+      for chunk in and_splits
+        partialScore, partialMax = scoreChunk(ansText,chunk)
+        if partialMax > 0
+          max += partialMax
+        end
+        score +=  partialScore
+        #puts("ps #{partialScore} pm #{partialMax} sc #{score} mx #{max} eq #{eq}" )
+      end
+      if score > 0 and !eq
+        val = 0
+      else
+        val = (ansValue) * (score/max)
+      end
+    end
+    return val
+  end
+  
   
 end

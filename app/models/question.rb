@@ -1,5 +1,5 @@
 class Question < ActiveRecord::Base
-  include Assmnt
+  #include Assmnt
   
   belongs_to :assessment
   has_many :answers, :order => "sequence", :dependent => :destroy
@@ -21,7 +21,7 @@ class Question < ActiveRecord::Base
   end
   
   def updateMax
-    computeMax(self.assessment.id) if is_dirty?
+    Assessment.computeMax(self.assessment.id) if is_dirty?
   end
   
   def is_dirty?

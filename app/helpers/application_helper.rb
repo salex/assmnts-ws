@@ -27,6 +27,7 @@ module ApplicationHelper
     end
     return  navbar.html_safe
   end
+  
   def format_money(value,dollar=false)
     if value.nil?
       return 
@@ -37,5 +38,24 @@ module ApplicationHelper
       result = ("%0.2f" % value)
     end
   end
+  
+  def truncateText(text,length = 40, where = "end")
+    if text.nil?
+      return text
+    end
+    text_length = text.length
+    if text_length <= length
+      return text
+    end
+    if where.downcase == "end"
+      return( text.first(length)+"&hellip;")
+    elsif where.downcase == "begin"
+      return( text.last(length)+"&hellip;")
+    else
+      return(text.first(length / 2)+"&hellip;"+ text.last(length / 2))
+    end
+  end
+  
+  
   
 end

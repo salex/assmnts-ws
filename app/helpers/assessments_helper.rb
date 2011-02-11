@@ -283,4 +283,162 @@ QUES
     return result
   end
     
+    def dumpPost(post,qa,obj = false,ids = false, css = nil)
+      cclass = css ? css : "assmnt-list"
+      html = "<div class=\"#{cclass}\" style=\"font-size:.8em\">"
+      html << "<table><tr class=\"list-header\"><th style=\"width:130px\">Scores/(Fail)</th><th colspan=\"2\" class=\"center\">#{post["category"]}</th></tr>"
+      html << "<tr class=\"list-header\"><th>rs*w=ws (F)</th><th>Question</th><th>Answer(s)</th></tr>\n"
+      post["answers"].each {|key,value|
+        value_display = ""
+        key_i = key.to_i
+        queIDX = qa[:q_ids].index(key_i)
+        queID = qa[:q_ids][queIDX].to_s
+        dropped = ""
+        if post["failed"].include?(key_i)
+          dropped = " <span style=\"color:red\">(F)</span>"
+        end
+        ques = qa[:questions][queIDX][:shortname].blank? ? truncateText(qa[:questions][queIDX][:question],30) : qa[:questions][queIDX][:shortname]
+        ques = "[#{(key+":") if ids}#{ques}]"
+        ansOther = ""
+        isArray = value.kind_of? Array
+        weight = qa[:questions][queIDX][:weight].nil? ? 0 :qa[:questions][queIDX][:weight]
+        ansType = qa[:questions][queIDX][:answer_type].blank? ? "" : qa[:questions][queIDX][:answer_type].downcase
+        isText =  !(ansType =~ /text/i).nil?
+        if isText
+
+          0.step(value.length-1,2) { |i|
+            ansID = value[i].to_i
+            ansText = value[i+1]
+            ansIDX = qa[:a_ids].index(ansID) 
+
+            if ansIDX.blank?
+              next
+            end
+            ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],30) : qa[:answers][ansIDX][:shortname]
+            if post["answers_other"][value[i]]
+              ansOther = "{"+post["answers_other"][value[i]]+"}"
+            end
+            value_display += "[#{(value[i]+":") if ids}#{ansans}=>#{ansText}#{ansOther}] "
+
+          }
+        elsif isArray
+          for i in 0..value.length-1
+            ansID = value[i].to_i
+            ansIDX = qa[:a_ids].index(ansID) 
+            if ansIDX.blank?
+              next
+            end
+            ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],20) : truncateText(qa[:answers][ansIDX][:shortname],20)
+            if post["answers_other"][value[i]]
+              ansOther = "{"+post["answers_other"][value[i]]+"}"
+            end
+            value_display += "[#{(value[i]+":") if ids}#{ansans}#{ansOther}] "
+          end
+        else
+          ansID = value.to_i
+          ansIDX = qa[:a_ids].index(ansID) 
+          if ansIDX.blank?
+            next
+          end    
+          ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],20) : truncateText(qa[:answers][ansIDX][:shortname],20)
+          if post["answers_other"][value]
+            ansOther = "{"+post["answers_other"][value]+"}"
+          end
+
+          value_display += "[#{value}:#{ansans}#{ansOther}] "
+        end
+
+        val = post["question_raw"][queID]
+        valw = val * weight
+        if val == 0
+          val = "0.0"
+        else
+          val = val.to_s
+        end
+        score = val + " * "+ weight.to_s + " = "+ valw.to_s + dropped
+
+        html << "<tr><td>#{score}</td><td>#{ques}</td><td>#{value_display}</td></tr>"
+      }
+      html << "</table>"
+      if obj
+        html << "<div class=\"actions\">"+post.inspect+"</div>"
+      end
+      html << "</div>"
+      return html
+    end
+
+    def dumpSummary(post,qa,options = {})
+      opt = {"class" => nil,"obj" => false, "twidth" => "p100"}.update(options.stringify_keys)
+
+      cclass = opt["class"] ?  opt["class"] : "assmnt-list"
+      html = "<div class=\"#{cclass}\" >"
+      html << "<table class=\"#{opt["twidth"]}\"><tr class=\"#{cclass}-header\"><th colspan=\"2\" >#{post["category"]}</th>"
+      html << "<th class=\"profile-score\">Scores/(Fail)</th></tr>"
+      html << "<tr class=\"#{cclass}-header\"><th>Question</th><th>Answer(s)</th><th class=\"profile-score\">rs*w=ws (F)</th></tr>\n"
+      post["answers"].each {|key,value|
+        value_display = ""
+        key_i = key.to_i
+        queIDX = qa[:q_ids].index(key_i)
+        queID = qa[:q_ids][queIDX].to_s
+        dropped = ""
+        if post["failed"].include?(key_i)
+          dropped = " <span style=\"color:red\">(F)</span>"
+        end
+        ques = qa[:questions][queIDX][:shortname].blank? ? truncateText(qa[:questions][queIDX][:question],30) : qa[:questions][queIDX][:shortname]
+        #ques = "[#{(key+":") if ids}#{ques}]"
+        ansOther = ""
+        weight = qa[:questions][queIDX][:weight].nil? ? 0 :qa[:questions][queIDX][:weight]
+        ansType = qa[:questions][queIDX][:answer_type].blank? ? "" : qa[:questions][queIDX][:answer_type].downcase
+        isText =  !(ansType =~ /text/i).nil?
+        if isText
+
+          0.step(value.length-1,2) { |i|
+            ansID = value[i].to_i
+            ansText = value[i+1]
+            ansIDX = qa[:a_ids].index(ansID) 
+
+            if ansIDX.blank?
+              next
+            end
+            ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],30) : qa[:answers][ansIDX][:shortname]
+            if post["answers_other"][value[i]]
+              ansOther = "{"+post["answers_other"][value[i]]+"}"
+            end
+            value_display += "[#{ansans}=>#{ansText}#{ansOther}] "
+
+          }
+        else 
+          for i in 0..value.length-1
+            ansID = value[i].to_i
+            ansIDX = qa[:a_ids].index(ansID) 
+            if ansIDX.blank?
+              next
+            end
+            ansans = qa[:answers][ansIDX][:shortname].blank? ? truncateText(qa[:answers][ansIDX][:answer],20) : truncateText(qa[:answers][ansIDX][:shortname],20)
+            if post["answers_other"][value[i]]
+              ansOther = "{"+post["answers_other"][value[i]]+"}"
+            end
+            value_display += "[#{ansans}#{ansOther}] "
+          end
+        end
+
+        val = post["question_raw"][queID]
+        valw = val * weight
+        if val == 0
+          val = "0.0"
+        else
+          val = val.to_s
+        end
+        score = val + " * "+ weight.to_s + " = "+ valw.to_s + dropped
+
+        html << "<tr><td>#{ques}</td><td>#{value_display}</td><td class=\"profile-score\">#{score}</td></tr>"
+      }
+      html << "</table>"
+      if opt["obj"]
+        html << "<div class=\"actions\">"+post.inspect+"</div>"
+      end
+      html << "</div>"
+      return html
+    end
+    
 end

@@ -3,12 +3,12 @@ class Answer < ActiveRecord::Base
   after_save :updateMax
   after_destroy :updateMax
   
-  include Assmnt
+  #include Assmnt
     
   private
 
   def updateMax
-    computeMax(self.question.assessment.id) if is_dirty?
+    Assessment.computeMax(self.question.assessment.id) if is_dirty?
   end
   
   def is_dirty?
