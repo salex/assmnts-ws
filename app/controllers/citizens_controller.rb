@@ -1,12 +1,7 @@
 class CitizensController < ApplicationController
 
   load_and_authorize_resource :only => [:show, :edit, :update]
-  def show
-    logger.info "AAAAAAAAAAAAAAAAAAAAA #{params.inspect}"
-    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.citizen.get']
-    
-    render :text => citizen, :layout => true
-    
+  def show    
     
   end
 
@@ -17,7 +12,8 @@ class CitizensController < ApplicationController
   
   def get
     logger.info "AAAAAAAAAAAAAAAAAAAAA #{params.inspect}"
-    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.citizen.get']
+    #citizen =  a4d_fcurl(params[:id],"ws.citizen.get")
+    citizen = a4d_fcurl(params[:id],"ws.citrizen.get")
     
     render :text => citizen, :layout => true
     

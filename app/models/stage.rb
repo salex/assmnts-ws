@@ -182,7 +182,7 @@ class Stage < ActiveRecord::Base
   
   
   protected
-  
+  # %x\[curl --form-string\s+'fdata=#\{([^\}]+)}'\s*'http://192.211.32.248:8010/([^']+)'\]
   def change_status(applicants,status)
     applicants.each do |applicant|
       applicant.status = status
@@ -213,9 +213,9 @@ class Stage < ActiveRecord::Base
     export.sent = Time.now
     export.request = selected_hash.to_json
     export.save
-    result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.ruok']
+    result =  a4d_fcurl("","ws.ruok")
     if result.include?("Yes")
-      result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.gotwork']
+      result =  a4d_fcurl("","ws.gotwork")
     end
     return "Applicants status change to selected. Export scheduled #{result}"
   end

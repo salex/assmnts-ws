@@ -1,8 +1,8 @@
 ts = Time.now
 
-result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.ruok']
+result =  a4d_fcurl("","ws.ruok")
 if result.include?("Yes")
-  stages = Stage.where(:id => [58])
+  stages = Stage.where(:id => [10])
   
 else
   puts "Stage Scores not complete because 4d is down"

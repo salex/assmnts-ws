@@ -27,7 +27,7 @@ class StagesController < ApplicationController
   
   def import
     @stage = Stage.find(params[:id])
-    assmnt =  %x[curl --form-string  'fdata=#{@stage[:jobstage_id]}' 'http://192.211.32.248:8010/ws.jobstage.get_xml_assmnt']
+    assmnt =  a4d_fcurl(@stage[:jobstage_id],"ws.jobstage.get_xml_assmnt")
     @stage["assessment_json"] = assmnt
     @stage.save
     

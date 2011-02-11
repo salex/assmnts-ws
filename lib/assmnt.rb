@@ -1,15 +1,18 @@
 module Assmnt
+  def a4d_host
+    return "http://192.211.32.248:8010/"
+  end
   
   def a4d_fcurl(fdata, ws_path, params=false)
     if params
-      result =  %x[curl --form-string  'params=#{fdata}' 'http://localhost:8080/#{ws_path}']
+      result =  %x[curl --form-string  'params=#{fdata}' '#{a4d_host}#{ws_path}']
     else
-      result =  %x[curl --form-string  'fdata=#{fdata}' 'http://localhost:8080/#{ws_path}']
+      result =  %x[curl --form-string  'fdata=#{fdata}' '#{a4d_host}#{ws_path}']
     end
   end
   
   def a4d_qcurl(ws_path)
-    result =  %x[curl 'http://localhost:8080/#{ws_path}']
+    result =  %x[curl '#{a4d_host}#{ws_path}']
   end
   
   def status_options(status)

@@ -31,4 +31,3 @@ class Score < ActiveRecord::Base
   end
 end
 
-#http://192.211.32.248:8010/public/ws/conv_score.a4d?fdata={%22jobstageid%22:1852,%22citizenid%22:153156}

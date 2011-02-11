@@ -1,7 +1,7 @@
 # get the stages
 # query 4d for citizen count
 # import users/applicants in chunks of 500
-#http://192.211.32.248:8010/ws.getusercount?jobstageid=1852
+#http://192.211.32.248:8010/ws.getusercount?jobstageid=2115
 ts = Time.now
 def make_applicant_user(jobstage,stage) 
   stuff = "" 
@@ -15,7 +15,7 @@ def make_applicant_user(jobstage,stage)
     elsif user["key"] == 'email'
       citizen["email"] = user["email"].gsub(/,/,".").gsub(/ /,"")
     else
-      stuff <<  citizen["email"] +"-"+ user["key"] + " cid #{citizen["citizen_id"]} Not imported\n"
+      stuff <<  citizen["email"] +" - "+ user["key"] + " cid #{citizen["citizen_id"]} Not imported\n"
       next
     end
     if user["password"].length < 6
@@ -57,22 +57,24 @@ def make_applicant_user(jobstage,stage)
   puts stuff
 end
 
-result =  %x[curl --form-string  'fdata=#{""}' 'http://192.211.32.248:8010/ws.ruok']
+result =  a4d_fcurl("","ws.ruok")
 if !result.include?("Yes")
   raise::Active4DisDown
   
 end
 
-stages = Stage.where(:id => [58])
+stages = Stage.where(:id => [10])
 
 stages.each do |stage|
-  users =  %x[curl http://192.211.32.248:8010/ws.getusercount?jobstageid=#{stage.jobstage_id}]
+  #users =  %x[curl http://192.211.32.248:8080/ws.getusercount?jobstageid=#{stage.jobstage_id}]
+  users = a4d_qcurl("ws.getusercount?jobstageid=#{stage.jobstage_id}")
   webusers = users.to_i
   puts "webusers #{webusers} jobstage #{stage.jobstage_id}"
   1.step(webusers,500) {|start|
-    curl = "curl 'http://192.211.32.248:8010/ws.get_users?jobstageid=#{stage.jobstage_id}&start=#{start}'"
-    puts "webusers #{webusers} jobstage #{stage.jobstage_id} start #{start} curl #{curl}"
-    batch = json_parse(%x[#{curl}])
+    #curl = "curl 'http://192.211.32.248:8010/ws.get_users?jobstageid=#{stage.jobstage_id}&start=#{start}'"
+    wusers = a4d_qcurl("ws.get_users?jobstageid=#{stage.jobstage_id}&start=#{start}")
+    puts "webusers #{webusers} jobstage #{stage.jobstage_id} start #{start} "
+    batch = json_parse(wusers)
     make_applicant_user(batch,stage)
     
     #call 4d

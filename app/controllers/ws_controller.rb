@@ -16,9 +16,11 @@ class WsController < ApplicationController
   def getwork
     export = Export.getwork
     if export
-      result =  %x[curl  --form-string 'params=#{export.request}'  http://192.211.32.248:8010/ws.work.#{export.token}]
+      #result =  %x[curl  --form-string 'params=#{export.request}'  'http://192.211.32.248:8080/ws.work.#{export.token}']
+      result =  a4d_fcurl(export.request,"ws.work.#{export.token}",true)
     else
-      result = %x[curl  --form-string 'params=nowork'  http://192.211.32.248:8010/ws.work.nowork]
+      #result = %x[curl  --form-string 'params=nowork'  'http://192.211.32.248:8080/ws.work.nowork']
+      result = a4d_fcurl("nowork","ws.work.nowork")
     end
     if !result.blank?
       Export.didwork(result)
@@ -35,13 +37,13 @@ class WsController < ApplicationController
 
   def test
     logger.info "AAAAAAAAAAAAAAAAAAAAA #{params.inspect}"
-    citizen =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.citizen.get']
+    citizen = a4d_fcurl("","ws.ruok")
     
     render :text => citizen, :layout => true
   end
   
   def get_xml_assmnt
-    assmnt =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.jobstage.get_xml_assmnt']
+    assmnt =  a4d_fcurl(params[:id],"ws.jobstage.get_xml_assmnt")
     hash = ActiveSupport::JSON.decode(assmnt)
     
     render :text => "<textarea>#{assmnt}</textarea>", :layout => true
@@ -60,7 +62,7 @@ class WsController < ApplicationController
   
   
   def get_stages
-    stages =  %x[curl --form-string  'fdata=#{params[:id]}' 'http://192.211.32.248:8010/ws.jobstage.get_stages']
+    stages =  a4d_fcurl(params[:id],"ws.jobstage.get_stages")
     hash = ActiveSupport::JSON.decode(stages)
     hash.each do |key,stage|
       ns = Stage.create(stage)
@@ -71,7 +73,7 @@ class WsController < ApplicationController
   
   def conv_score
     fdata = {"jobstageid" => params[:id], "citizenid" => params[:citizen_id]}.to_json
-    score =  %x[curl --form-string  'fdata=#{fdata}' 'http://192.211.32.248:8010/ws.jobstage.conv_score']
+    score =  a4d_fcurl(fdata,"ws.jobstage.conv_score")
     
     render :text => "<textarea>#{score}</textarea>", :layout => true
   end
@@ -115,7 +117,7 @@ class WsController < ApplicationController
     
     applicants.each do |applicant|
       fdata = {"jobstageid" => stage.jobstage_id, "citizenid" => applicant.user.citizen_id}.to_json
-      score =  %x[curl --form-string  'fdata=#{fdata}' 'http://192.211.32.248:8010/ws.jobstage.conv_score']
+      score =  a4d_fcurl(fdata,"ws.jobstage.conv_score")
       if score[0..0] != "{"
         puts "bad score json"
         next

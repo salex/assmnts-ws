@@ -13,7 +13,7 @@
         
       Status <%= select_tag :status, applicant_status_options_all(params[:status]) %>
       <%if params[:filter]%>
-        <span class="route"><%= link_to "All", search_company_path(@stage)%></span>
+        <span class="route"><%= link_to "Default", search_company_path(@stage)%></span>
       <%end%>
       
       <%= submit_tag "Search", :name => "filter" %>  
